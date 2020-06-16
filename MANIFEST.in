@@ -1,0 +1,3 @@
+recursive-include transparentai_ui/app *
+recursive-include transparentai_ui/app/templates *
+recursive-include transparentai_ui/app/static *
