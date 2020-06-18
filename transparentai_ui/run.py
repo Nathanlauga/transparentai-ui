@@ -1,8 +1,15 @@
-import sys
-import os 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
+import click
+from .app import app
 
-from app import app
+
+@click.command()
+@click.option('--port', default=5000, help='Port of the application')
+def main():
+    """Run the transparentai-ui program that launch a
+    Flask Webapp
+    """
+    app.run(port=port)
+
 
 if __name__ == '__main__':
-    app.run()
+    main()
