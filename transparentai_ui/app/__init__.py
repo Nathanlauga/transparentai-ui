@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, session
 from flask_babel import Babel
 from flask_sqlalchemy import SQLAlchemy
+from flask_babel import _
 
 config_filename = os.path.abspath(os.path.dirname(__file__)) + "/config.py"
 
@@ -20,6 +21,8 @@ def get_locale():
 
     if request.args.get('lang'):
         lang = request.args.get('lang')
+        print(request.args)
+        print('get :', lang)
 
         if lang not in app.config['ACCEPTED_LANG']:
             session['lang'] = best_match
@@ -29,7 +32,7 @@ def get_locale():
     elif 'lang' not in session:
         session['lang'] = best_match
 
-    # print(session['lang'])
+    print('res :', session['lang'])
     return session['lang']
 
 

@@ -1,7 +1,12 @@
-from enum import Enum
-
 from flask_babel import _
 
 
-class Error(Enum):
-    ReadCsvError = 'ReadCsvError'
+def get_errors():
+    """
+    """
+    errors_dict = {
+        'ReadCsvError': _('Inputed csv file not valid.'),
+        'ReadDatasetFromFileError': _('File not valid')
+    }
+
+    return errors_dict

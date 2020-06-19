@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-19 15:51+0200\n"
+"POT-Creation-Date: 2020-06-19 16:28+0200\n"
 "PO-Revision-Date: 2020-06-19 15:23+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -22,11 +22,23 @@ msgstr ""
 msgid "Home"
 msgstr "Page d'accueil"
 
-#: transparentai_ui/app/controllers/dev/dev.py:9
+#: transparentai_ui/app/controllers/dev/dev.py:10
 msgid "Dev page"
 msgstr "Page de dev"
+
+#: transparentai_ui/app/controllers/dev/dev.py:50
+msgid "Load dataset"
+msgstr "Chargement du jeu de données"
 
 #: transparentai_ui/app/controllers/errors/error_404.py:7
 msgid "404 error"
 msgstr "Erreur 404"
+
+#: transparentai_ui/app/utils/errors.py:8
+msgid "Inputed csv file not valid."
+msgstr "Erreur de chargement du fichier csv."
+
+#: transparentai_ui/app/utils/errors.py:9
+msgid "File not valid"
+msgstr "Le fichier n'est pas valide"
 

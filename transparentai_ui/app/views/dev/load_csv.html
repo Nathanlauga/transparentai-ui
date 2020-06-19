@@ -1,13 +1,11 @@
-<label for="avatar">Choose a profile picture:</label>
-
+<label for="dataset-path">{{title}}</label>
+<hr>
 {{ error }}
-
+<hr>
 <form action="./load" method="post">
-<input type="text" id="dataset-path" name="dataset-path">
+  <input type="text" id="dataset-path" name="dataset-path" />
 
-<input type="submit" value="send">
+  <input type="submit" value="send" />
 
-{% block content %}
-{{dataset | safe}}
-{% endblock %}
+  {% block content %} {{dataset | safe}} {% endblock %}
 </form>
