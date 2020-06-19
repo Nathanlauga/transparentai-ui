@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, request, session
 from flask_babel import Babel
 from flask_sqlalchemy import SQLAlchemy
 
@@ -16,8 +16,21 @@ db = SQLAlchemy(app)
 
 @babel.localeselector
 def get_locale():
-    print(request.accept_languages.best_match(app.config['LANGUAGES']))
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
+    best_match = request.accept_languages.best_match(app.config['LANGUAGES'])
+
+    if request.args.get('lang'):
+        lang = request.args.get('lang')
+
+        if lang not in app.config['ACCEPTED_LANG']:
+            session['lang'] = best_match
+        else:
+            session['lang'] = lang
+
+    elif 'lang' not in session:
+        session['lang'] = best_match
+
+    # print(session['lang'])
+    return session['lang']
 
 
 with app.app_context():
