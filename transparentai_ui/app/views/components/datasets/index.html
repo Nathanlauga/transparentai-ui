@@ -1,0 +1,33 @@
+<h1>Datasets</h1>
+
+{% if error is defined %}
+<div style='color:red;'><strong>{{ error }}</strong></div>
+{% endif %}
+{% if valid is defined %}
+<div style='color:green;'><strong>{{ valid }}</strong></div>
+{% endif %}
+
+
+<form action="/datasets" method="post">
+    <label for="name">Enter dataset name: *</label>
+    <input type="text" name="name" id="name" required> <br>
+    <label for="name">Enter dataset target column: </label>
+    <input type="text" name="target" id="target"><br>
+    <label for="name">Enter dataset score column: </label>
+    <input type="text" name="score" id="score"><br>
+    <label for="name">Enter dataset protected attributes: </label>
+    <input type="text" name="protected_attr" id="protected_attr"><br>
+    <label for="name">Enter dataset model columns: </label>
+    <input type="text" name="model_columns" id="model_columns"><br>
+
+    <input type="submit" value="Add dataset">
+</form>
+
+{% for dataset in datasets %}
+<hr>
+<h3>{{ dataset.name }}</h3>
+<strong>path : </strong> {{ dataset.path }} <br>
+<strong>target : </strong> {{ dataset.target }} <br>
+<strong>score : </strong> {{ dataset.score }} <br>
+<strong>protected_attr : </strong> {{ dataset.protected_attr }} <br>
+{% endfor %}
