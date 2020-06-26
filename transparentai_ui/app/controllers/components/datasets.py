@@ -1,23 +1,7 @@
-import inspect
-from flask import render_template, request, redirect, url_for
-from flask import current_app as app
-from flask_babel import _
-
 from ...models.components.datasets import Dataset
-from ... import db
+from .base_controller import BaseController
 
-
-def add_in_db(obj):
-    """
-    """
-    try:
-        db.session.add(obj)
-        db.session.commit()
-    except Exception as exception:
-        db.session.rollback()
-        return exception
-    return 'added'
-
+from ...utils import add_in_db
 
 def create_test_dataset():
     """
@@ -39,63 +23,38 @@ def create_test_dataset():
     add_in_db(data)
 
 
-def get_all_datasets():
-    """
-    """
-    datasets = Dataset.query.all()
-    return datasets
-
+dataset_controller = BaseController(
+    name='datasets',
+    model=Dataset,
+    id_col='name',
+    columns=['path', 'target', 'score', 'protected_attr', 'model_columns']
+)
 
 def index():
-    """Get the datasets
-    """
     create_test_dataset()
-    datasets = get_all_datasets()
-
-    return render_template("components/datasets/index.html", datasets=datasets)
-
-
-def get_request_attribute(form_data, key, default=''):
-    """
-    """
-    if key not in form_data:
-        return ''
-    return form_data[key]
-
+    return dataset_controller.index()
 
 def create():
-    """Create a dataset based on POST args
-    """
-    data = request.form
-    dataset_attr = ['name', 'path', 'target', 'score', 'protected_attr']
-    dataset_args = dict()
+    # ID CHECK : Check if name is already used
 
-    # Retrieve Dataset Attributes from request.form
-    for attr in dataset_attr:
-        dataset_args[attr] = get_request_attribute(data, attr)
+    # Other attr CHECK
+    # Try to read file csv or excel
+    # Check column in DataFrame
 
-    # Create Dataset object
-    dataset = Dataset(**dataset_args)
+    return dataset_controller.create()
 
-    # Add Dataset object in database
-    res = add_in_db(dataset)
+def get_instance(name):
+    return dataset_controller.get_instance(name)
 
-    datasets = get_all_datasets()
+def post_instance(name):
+    return dataset_controller.post_instance(name)
 
-    if res == 'added':
-        return render_template("components/datasets/index.html", datasets=datasets, valid=res)
+def update(name):
+    # Other attr CHECK
+    # Try to read file csv or excel
+    # Check column in DataFrame
+    return dataset_controller.update()
 
-    print(res)
-    return render_template("components/datasets/index.html", datasets=datasets, error=res)
+def delete(name):
+    return dataset_controller.delete()
 
-
-def update():
-    """Update a dataset based on PUT args
-    """
-    return redirect(url_for('datasets.index'))
-
-
-def delete():
-    """Drop a dataset based on DELETE args
-    """
-    return redirect(url_for('datasets.index'))

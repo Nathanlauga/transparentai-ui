@@ -1,4 +1,5 @@
 from ... import db
+from ...utils.components import list_property, list_property_setter
 
 
 class Dataset(db.Model):
@@ -13,36 +14,26 @@ class Dataset(db.Model):
     score = db.Column(db.String)
     _protected_attr = db.Column(db.String, default='')
     _model_columns = db.Column(db.String, default='')
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(
+        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     def __repr__(self):
         return '<Dataset %r>' % self.name
 
     @property
     def protected_attr(self):
-        return [str(x) for x in self._protected_attr.split(';')][1:]
+        return list_property(self._protected_attr)
 
     @protected_attr.setter
     def protected_attr(self, value):
-        if self._protected_attr is None:
-            self._protected_attr = ''
-            
-        if type(value) == list:
-            for v in value:
-                self._protected_attr += ';%s' % str(v)
-        else:
-            self._protected_attr += ';%s' % str(value)
+        self._protected_attr = list_property_setter(
+            self._protected_attr, value)
 
     @property
     def model_columns(self):
-        return [str(x) for x in self._model_columns.split(';')]
+        return list_property(self._model_columns)
 
-    @protected_attr.setter
+    @model_columns.setter
     def model_columns(self, value):
-        if self._model_columns is None:
-            self._model_columns = ''
-
-        if type(value) == list:
-            for v in value:
-                self._model_columns += ';%s' % v
-        else:
-            self._model_columns += ';%s' % value
+        self._model_columns = list_property_setter(self._model_columns, value)

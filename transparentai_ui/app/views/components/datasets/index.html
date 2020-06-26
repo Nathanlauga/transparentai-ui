@@ -1,23 +1,25 @@
 <h1>Datasets</h1>
 
-{% if error is defined %}
-<div style='color:red;'><strong>{{ error }}</strong></div>
+{% if session['errors'] is defined %}
+<div style='color:red;'><strong>{{ session['errors'] }}</strong></div>
 {% endif %}
-{% if valid is defined %}
-<div style='color:green;'><strong>{{ valid }}</strong></div>
+{% if session['success'] is defined %}
+<div style='color:green;'><strong>{{ session['success'] }}</strong></div>
 {% endif %}
 
 
 <form action="/datasets" method="post">
     <label for="name">Enter dataset name: *</label>
     <input type="text" name="name" id="name" required> <br>
-    <label for="name">Enter dataset target column: </label>
+    <label for="path">Enter file path:</label>
+    <input type="text" name="path" id="path"> <br>
+    <label for="target">Enter dataset target column: </label>
     <input type="text" name="target" id="target"><br>
-    <label for="name">Enter dataset score column: </label>
+    <label for="score">Enter dataset score column: </label>
     <input type="text" name="score" id="score"><br>
-    <label for="name">Enter dataset protected attributes: </label>
+    <label for="protected_attr">Enter dataset protected attributes: </label>
     <input type="text" name="protected_attr" id="protected_attr"><br>
-    <label for="name">Enter dataset model columns: </label>
+    <label for="model_columns">Enter dataset model columns: </label>
     <input type="text" name="model_columns" id="model_columns"><br>
 
     <input type="submit" value="Add dataset">
@@ -25,9 +27,15 @@
 
 {% for dataset in datasets %}
 <hr>
-<h3>{{ dataset.name }}</h3>
+<h3><a href="/datasets/{{dataset.name}}">{{ dataset.name }}</a></h3>
 <strong>path : </strong> {{ dataset.path }} <br>
 <strong>target : </strong> {{ dataset.target }} <br>
 <strong>score : </strong> {{ dataset.score }} <br>
 <strong>protected_attr : </strong> {{ dataset.protected_attr }} <br>
+<strong>model_columns : </strong> {{ dataset.model_columns }} <br>
+
+<form action="/datasets/{{dataset.name}}" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="Delete dataset">
+</form>
 {% endfor %}

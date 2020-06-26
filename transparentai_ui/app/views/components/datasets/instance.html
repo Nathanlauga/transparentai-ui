@@ -1,0 +1,34 @@
+<h1>Dataset</h1>
+
+{% if session['errors'] is defined %}
+<div style='color:red;'><strong>{{ session['errors'] }}</strong></div>
+{% endif %}
+{% if session['success'] is defined %}
+<div style='color:green;'><strong>{{ session['success'] }}</strong></div>
+{% endif %}
+
+{% if instance is defined %}
+<hr>
+<h3>{{ instance.name }}</h3>
+
+<form action="/datasets/{{instance.name}}" method="post">
+    <label for="path">File path:</label>
+    <input type="text" name="path" id="path" value="{{ instance.path }}"> <br>
+    <label for="target">Target column: </label>
+    <input type="text" name="target" id="target" value="{{ instance.target }}"><br>
+    <label for="score">Score column: </label>
+    <input type="text" name="score" id="score" value="{{ instance.score }}"><br>
+    <label for="protected_attr">Protected attributes: </label>
+    <input type="text" name="protected_attr" id="protected_attr" value="{{ instance.protected_attr }}"><br>
+    <label for="model_columns">Model columns: </label>
+    <input type="text" name="model_columns" id="model_columns" value="{{ instance.model_columns }}"><br>
+
+    <input type="hidden" name="_method" value="PUT">
+    <input type="submit" value="Update dataset">
+</form>
+
+<form action="/datasets/{{instance.name}}" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="Delete dataset">
+</form>
+{% endif %}
