@@ -1,7 +1,15 @@
+from flask import request
+import os.path
+import pandas as pd
+
 from ...models.components.datasets import Dataset
 from .base_controller import BaseController
+from .controller_class import Controller
 
-from ...utils import add_in_db
+from ...utils import add_in_db, exists_in_db
+
+from ...utils.controllers import control_dataset
+from ...utils.controllers import format_dataset
 
 def create_test_dataset():
     """
@@ -23,38 +31,34 @@ def create_test_dataset():
     add_in_db(data)
 
 
-dataset_controller = BaseController(
-    name='datasets',
-    model=Dataset,
-    id_col='name',
-    columns=['path', 'target', 'score', 'protected_attr', 'model_columns']
-)
+# dataset_controller = BaseController(
+#     name='datasets',
+#     model=Dataset)
+
+dataset_controller = Controller(name='dataset')
+
+
 
 def index():
     create_test_dataset()
     return dataset_controller.index()
 
+
 def create():
-    # ID CHECK : Check if name is already used
-
-    # Other attr CHECK
-    # Try to read file csv or excel
-    # Check column in DataFrame
-
     return dataset_controller.create()
+
 
 def get_instance(name):
     return dataset_controller.get_instance(name)
 
+
 def post_instance(name):
     return dataset_controller.post_instance(name)
 
+
 def update(name):
-    # Other attr CHECK
-    # Try to read file csv or excel
-    # Check column in DataFrame
-    return dataset_controller.update()
+    return dataset_controller.update(name)
+
 
 def delete(name):
     return dataset_controller.delete()
-

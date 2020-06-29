@@ -19,8 +19,12 @@ def get_component_args(data, attributes):
     return args
 
 
-def list_property(attr):
-    return [str(x).replace('//,', ';') for x in attr.split(';') if str(x) != '']
+def list_property(attr, unique=False):
+    format_list = [str(x).replace('//,', ';')
+                   for x in attr.split(';') if str(x) != '']
+    if unique:
+        return list(set(format_list))
+    return format_list
 
 
 def list_property_setter(attr, value):

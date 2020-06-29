@@ -43,3 +43,10 @@ def update_in_db(obj, args):
         db.session.rollback()
         return errors_dict['UpdateInDB']
     return 'updated'
+
+
+
+def exists_in_db(key, value):
+    """
+    """
+    return db.session.query(db.exists().where(key == value)).scalar()

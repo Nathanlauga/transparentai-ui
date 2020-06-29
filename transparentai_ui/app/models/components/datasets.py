@@ -23,7 +23,7 @@ class Dataset(db.Model):
 
     @property
     def protected_attr(self):
-        return list_property(self._protected_attr)
+        return list_property(self._protected_attr, unique=True)
 
     @protected_attr.setter
     def protected_attr(self, value):
@@ -32,8 +32,9 @@ class Dataset(db.Model):
 
     @property
     def model_columns(self):
-        return list_property(self._model_columns)
+        return list_property(self._model_columns, unique=True)
 
     @model_columns.setter
     def model_columns(self, value):
-        self._model_columns = list_property_setter(self._model_columns, value)
+        self._model_columns = list_property_setter(
+            self._model_columns, value)

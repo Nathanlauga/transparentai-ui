@@ -8,3 +8,4 @@ from .components import list_property_setter
 from .db import add_in_db
 from .db import update_in_db
 from .db import delete_in_db
+from .db import exists_in_db
