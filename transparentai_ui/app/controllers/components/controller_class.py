@@ -3,7 +3,9 @@ from flask_babel import _
 
 from ...utils import set_session_var, check_if_session_var_exists
 from ...utils import add_in_db, update_in_db, delete_in_db
-from ...utils.controllers import format_dataset, control_dataset
+
+from ...utils.controllers.datasets import format_dataset, control_dataset
+from ...utils.controllers.models import format_model, control_model
 
 from ...models.components import Dataset
 from ...models.components import Model
@@ -26,6 +28,8 @@ class Controller():
         elif name == 'model':
             self.Component = Model
             self.route = 'models'
+            self.format_fn = format_model
+            self.control_fn = control_model
 
     def format_and_control(self, form_data, create=False):
         """

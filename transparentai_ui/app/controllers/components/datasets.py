@@ -11,6 +11,7 @@ from ...utils import add_in_db, exists_in_db
 from ...utils.controllers import control_dataset
 from ...utils.controllers import format_dataset
 
+
 def create_test_dataset():
     """
     """
@@ -31,12 +32,7 @@ def create_test_dataset():
     add_in_db(data)
 
 
-# dataset_controller = BaseController(
-#     name='datasets',
-#     model=Dataset)
-
 dataset_controller = Controller(name='dataset')
-
 
 
 def index():

@@ -19,7 +19,7 @@
     <input type="submit" value="Add model">
 </form>
 
-{% for model in models %}
+{% for model in instances %}
 <hr>
 <h3><a href="/models/{{model.name}}">{{ model.name }}</a></h3>
 <strong>path : </strong> {{ model.path }} <br>
