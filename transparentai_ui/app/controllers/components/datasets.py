@@ -3,7 +3,6 @@ import os.path
 import pandas as pd
 
 from ...models.components.datasets import Dataset
-from .base_controller import BaseController
 from .controller_class import Controller
 
 from ...utils import add_in_db, exists_in_db

@@ -4,7 +4,7 @@ from flask_babel import _
 from ...utils import set_session_var, check_if_session_var_exists
 from ...utils import add_in_db, update_in_db, delete_in_db
 
-from ...utils.controllers.datasets import format_dataset, control_dataset
+from ...utils.controllers.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
 from ...utils.controllers.models import format_model, control_model
 
 from ...models.components import Dataset
@@ -51,12 +51,14 @@ class Controller():
             instance = self.Component.query.filter_by(**kwargs).first()
         except Exception as exception:
             return exception
+
         return instance
 
     def get_all_instances(self):
         """
         """
         all_instances = self.Component.query.all()
+
         return all_instances
 
     def index(self):
@@ -93,6 +95,9 @@ class Controller():
             set_session_var('errors', str(res))
         else:
             set_session_var('success', res)
+
+        load_dataset_modules_in_background(instance)
+
         return redirect(url_for('%s.index' % self.route))
 
     def get_instance(self, name):
@@ -146,7 +151,7 @@ class Controller():
             return redirect(url_for('%s.get_instance' % self.route, name=name))
 
         data['name'] = name
-        print(data)
+
         res = update_in_db(instance, data)
 
         if res != 'updated':
@@ -171,4 +176,5 @@ class Controller():
             set_session_var('errors', str(res))
         else:
             set_session_var('success', res)
+
         return redirect(url_for('%s.index' % self.route))

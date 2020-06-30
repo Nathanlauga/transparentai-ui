@@ -16,18 +16,3 @@ def clean_errors(errors):
         if v is not None:
             new_errors[k] = v
     return new_errors
-
-
-def get_file_extension(fpath):
-    """Returns the extension of a given file
-    Parameters
-    ----------
-    fpath: str
-        Path of a file
-    Returns
-    -------
-    str:
-        extension of the given file
-        the text after the last dot
-    """
-    return str(fpath).split('.')[-1]

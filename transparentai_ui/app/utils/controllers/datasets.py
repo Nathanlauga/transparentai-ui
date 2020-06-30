@@ -6,7 +6,8 @@ from ...utils import exists_in_db
 
 from ...utils.errors import get_errors
 
-from .common import format_str_strip, clean_errors, get_file_extension
+from .common import format_str_strip, clean_errors
+from ...utils.file import get_file_extension
 
 
 
@@ -145,6 +146,8 @@ def control_dataset_columns(form_data, key, columns):
 
     if key not in form_data:
         return None
+    if form_data[key] == '':
+        return None
 
     col_names = format_dataset_columns(form_data, key)
 
@@ -201,3 +204,39 @@ def format_dataset(form_data, create=False):
         form_data, key='model_columns')
 
     return data
+
+
+# ====== Modules init ====== #
+
+from ...utils.modules import generate_pandas_prof_report
+from ...utils.file import read_dataset_file
+
+from threading import Thread
+import concurrent.futures
+
+def load_pandas_profiling_module(df, title, explorative):
+    """
+    """
+    thread = Thread(target=generate_pandas_prof_report, args=(df, title, explorative,))
+    thread.start()
+
+
+
+def load_dataset_modules_in_background(dataset):
+    """
+    """
+    if dataset.path is not None:
+        if dataset.path != '':
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                print('load_dataset_modules : launch read_dataset_file thread')
+                future = executor.submit(read_dataset_file, dataset.path)
+                df = future.result()
+
+            print('load_dataset_modules : launch load_pandas_profiling_module thread')
+            load_pandas_profiling_module(df, title=dataset.name, explorative=False)
+
+            print('load_dataset_modules : launch load_pandas_profiling_module thread')
+            load_pandas_profiling_module(df, title=dataset.name, explorative=False)
+
+
+            
