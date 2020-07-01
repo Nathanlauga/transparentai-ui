@@ -1,10 +1,9 @@
 from ...utils.db import init_component_module
-from ...models.modules import ModulePandasProfiling
 import pandas as pd
 import os.path
 
 from ...models import Dataset
-from ...utils import exists_in_db
+from ...utils import exists_in_db, key_in_dict_not_empty
 
 from ...utils.errors import get_errors
 
@@ -12,6 +11,9 @@ from ...utils.components import format_str_strip, clean_errors
 from ...utils.file import get_file_extension, read_dataset_file
 
 from .modules import generate_pandas_prof_report
+from ...models.modules import ModulePandasProfiling
+from ...models.modules import ModulePerformance
+from ...models.modules import ModuleBias
 
 from threading import Thread
 import concurrent.futures
@@ -221,22 +223,56 @@ def load_pandas_profiling_module(df, title, explorative, dataset):
                     args=(df, title, explorative, dataset,))
     thread.start()
 
+def load_dataset_thread(path):
+    """
+    """
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        print('load_dataset_modules : launch read_dataset_file thread')
+        future = executor.submit(read_dataset_file, path)
+        df = future.result()
+
+    return df
+    
+
 
 def load_dataset_modules_in_background(dataset, data):
     """
     """
-    if 'path' in data:
-        if data['path'] != '':
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                print('load_dataset_modules : launch read_dataset_file thread')
-                future = executor.submit(read_dataset_file, data['path'])
-                df = future.result()
+    if key_in_dict_not_empty('path', data):
+        df = load_dataset_thread(data['path'])
 
-            if dataset.module_pandas_profiling is None:
-                # init pandas profiling module
-                init_component_module(
-                    ModulePandasProfiling, dataset)#, module_attr='module_pandas_profiling')
+        if dataset.module_pandas_profiling is None:
+            # init pandas profiling module
+            init_component_module(ModulePandasProfiling, dataset)
 
-            print('load_dataset_modules : launch load_pandas_profiling_module thread')
-            load_pandas_profiling_module(
-                df, title=dataset.name, explorative=False, dataset=dataset)
+        print('load_dataset_modules : launch load_pandas_profiling_module thread')
+        load_pandas_profiling_module(
+            df, title=dataset.name, explorative=False, dataset=dataset)
+
+        print(data)
+        if (key_in_dict_not_empty('score', data)) & (
+            key_in_dict_not_empty('target', data)):
+            
+            if dataset.module_performance is None:
+                # init performance module
+                init_component_module(ModulePerformance, dataset)
+
+            if dataset.protected_attr != '':
+                if dataset.module_bias is None:
+                    # init bias module
+                    init_component_module(ModuleBias, dataset)
+
+    elif (dataset.path != '') & (dataset.score != '') & (dataset.target != ''):
+        df = load_dataset_thread(data.path)
+
+        if dataset.module_performance is None:
+            # init performance module
+            init_component_module(ModulePerformance, dataset)
+
+        if dataset.protected_attr != '':
+            if dataset.module_bias is None:
+                # init bias module
+                init_component_module(ModuleBias, dataset)
+
+            
+

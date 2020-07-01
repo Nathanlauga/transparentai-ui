@@ -2,6 +2,8 @@ from .. import db
 from ..utils.components import list_property, list_property_setter
 
 from ..models.modules import ModulePandasProfiling
+from ..models.modules import ModulePerformance
+from ..models.modules import ModuleBias
 
 
 class Dataset(db.Model):
@@ -23,6 +25,10 @@ class Dataset(db.Model):
     # Modules
     module_pandas_profiling = db.relationship(
         'ModulePandasProfiling', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
+    module_performance = db.relationship(
+        'ModulePerformance', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
+    module_bias = db.relationship(
+        'ModuleBias', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
 
     def __repr__(self):
         return '<Dataset %r>' % self.name

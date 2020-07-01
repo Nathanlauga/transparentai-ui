@@ -35,11 +35,25 @@
 <strong>model_columns : </strong> {{ dataset.model_columns }} <br>
 
 {% if dataset.module_pandas_profiling is defined %}
-
-<strong>Module pandas profiling : </strong> {{ dataset.module_pandas_profiling.status }} <br>
-{{ dataset.module_pandas_profiling.path }}
-<br>
-
+{% if dataset.module_pandas_profiling is not none %}
+    <strong>Module pandas profiling : </strong> {{ dataset.module_pandas_profiling.status }} <br>
+    {{ dataset.module_pandas_profiling.path }}
+    <br>
+{% endif %}
+{% endif %}
+{% if dataset.module_performance is defined %}
+{% if dataset.module_performance is not none %}
+    <strong>Module performance : </strong> {{ dataset.module_performance.status }} <br>
+    {{ dataset.module_performance.results }}
+    <br>
+{% endif %}
+{% endif %}
+{% if dataset.module_pandas_profiling is defined %}
+{% if dataset.module_bias is not none %}
+    <strong>Module Bias : </strong> {{ dataset.module_bias.status }} <br>
+    {{ dataset.module_bias.results }}
+    <br>
+{% endif %}
 {% endif %}
 
 <form action="/datasets/{{dataset.name}}" method="post">

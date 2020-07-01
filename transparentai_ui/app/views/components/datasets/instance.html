@@ -32,6 +32,20 @@
 
     {% endif %}
     {% endif %}
+    {% if instance.module_performance is defined %}
+    {% if instance.module_performance is not none %}
+        <strong>Module performance : </strong> {{ instance.module_performance.status }} <br>
+        {{ instance.module_performance.results }}
+        <br>
+    {% endif %}
+    {% endif %}
+    {% if instance.module_pandas_profiling is defined %}
+    {% if instance.module_bias is not none %}
+        <strong>Module Bias : </strong> {{ instance.module_bias.status }} <br>
+        {{ instance.module_bias.results }}
+        <br>
+    {% endif %}
+    {% endif %}
 
 
     <input type="hidden" name="_method" value="PUT">

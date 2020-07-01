@@ -10,6 +10,7 @@ from .services.models import format_model, control_model
 from ..models import Dataset
 from ..models import Model
 
+
 def get_only_updated_values(instance, data):
     """
     """
@@ -31,6 +32,7 @@ class Controller():
         """
         """
         self.controller_name = name
+        self.module_fn = None
 
         if name == 'dataset':
             self.Component = Dataset
@@ -103,7 +105,8 @@ class Controller():
         else:
             set_session_var('success', res)
 
-        self.module_fn(instance, data)
+        if self.module_fn is not None:
+            self.module_fn(instance, data)
 
         return redirect(url_for('%s.index' % self.route))
 
@@ -158,7 +161,7 @@ class Controller():
             return redirect(url_for('%s.get_instance' % self.route, name=name))
 
         data = get_only_updated_values(instance, data)
-        
+
         if len(data) == 0:
             return redirect(url_for('%s.get_instance' % self.route, name=name))
 
@@ -168,8 +171,9 @@ class Controller():
             set_session_var('errors', str(res))
         else:
             set_session_var('success', res)
-        
-        self.module_fn(instance, data)
+
+        if self.module_fn is not None:
+            self.module_fn(instance, data)
 
         return redirect(url_for('%s.get_instance' % self.route, name=name))
 
