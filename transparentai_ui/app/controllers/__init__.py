@@ -3,8 +3,7 @@ from flask import current_app as app
 __all__ = [
     'index',
     'errors',
-    'dev',
-    'components'
+    'dev'
 ]
 
 # Error handling
@@ -12,8 +11,8 @@ from .errors.error_404 import not_found
 
 # Routes
 from .index import index
-from .components import datasets
-from .components import models
+from . import datasets
+from . import models
 
 
 app.add_url_rule('/', view_func=index, methods=['GET', 'POST'])

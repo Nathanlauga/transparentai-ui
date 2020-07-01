@@ -23,8 +23,21 @@
     <label for="model_columns">Model columns: </label>
     <input type="text" name="model_columns" id="model_columns" value="{{ instance.model_columns }}"><br>
 
+    {% if instance.module_pandas_profiling is defined %}
+    {% if instance.module_pandas_profiling is not none %}
+
+        <strong>Module pandas profiling : </strong> {{ instance.module_pandas_profiling.status }} <br>
+        {{ instance.module_pandas_profiling.path }}
+        <br>
+
+    {% endif %}
+    {% endif %}
+
+
     <input type="hidden" name="_method" value="PUT">
     <input type="submit" value="Update dataset">
+
+    
 </form>
 
 <form action="/datasets/{{instance.name}}" method="post">

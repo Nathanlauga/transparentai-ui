@@ -1,14 +1,26 @@
 from flask import render_template, request, redirect, url_for, session
 from flask_babel import _
 
-from ...utils import set_session_var, check_if_session_var_exists
-from ...utils import add_in_db, update_in_db, delete_in_db
+from ..utils import set_session_var, check_if_session_var_exists
+from ..utils.db import add_in_db, update_in_db, delete_in_db, select_from_db
 
-from ...utils.controllers.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
-from ...utils.controllers.models import format_model, control_model
+from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
+from .services.models import format_model, control_model
 
-from ...models.components import Dataset
-from ...models.components import Model
+from ..models import Dataset
+from ..models import Model
+
+def get_only_updated_values(instance, data):
+    """
+    """
+    new_data = dict()
+
+    for key, value in data.items():
+        current_value = instance.__getattribute__(key)
+        if value != current_value:
+            new_data[key] = value
+
+    return new_data
 
 
 class Controller():
@@ -25,6 +37,7 @@ class Controller():
             self.route = 'datasets'
             self.format_fn = format_dataset
             self.control_fn = control_dataset
+            self.module_fn = load_dataset_modules_in_background
         elif name == 'model':
             self.Component = Model
             self.route = 'models'
@@ -46,13 +59,7 @@ class Controller():
     def get_one_instance(self, col, value):
         """
         """
-        kwargs = {col: value}
-        try:
-            instance = self.Component.query.filter_by(**kwargs).first()
-        except Exception as exception:
-            return exception
-
-        return instance
+        return select_from_db(self.Component, col, value)
 
     def get_all_instances(self):
         """
@@ -96,7 +103,7 @@ class Controller():
         else:
             set_session_var('success', res)
 
-        load_dataset_modules_in_background(instance)
+        self.module_fn(instance, data)
 
         return redirect(url_for('%s.index' % self.route))
 
@@ -150,7 +157,10 @@ class Controller():
             set_session_var('errors', str(errors))
             return redirect(url_for('%s.get_instance' % self.route, name=name))
 
-        data['name'] = name
+        data = get_only_updated_values(instance, data)
+        
+        if len(data) == 0:
+            return redirect(url_for('%s.get_instance' % self.route, name=name))
 
         res = update_in_db(instance, data)
 
@@ -158,6 +168,8 @@ class Controller():
             set_session_var('errors', str(res))
         else:
             set_session_var('success', res)
+        
+        self.module_fn(instance, data)
 
         return redirect(url_for('%s.get_instance' % self.route, name=name))
 

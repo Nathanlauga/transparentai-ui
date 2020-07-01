@@ -1,2 +1,2 @@
-from .components import datasets
-from .components import models
+from .datasets import Dataset
+from .models import Model

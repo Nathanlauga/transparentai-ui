@@ -34,6 +34,14 @@
 <strong>protected_attr : </strong> {{ dataset.protected_attr }} <br>
 <strong>model_columns : </strong> {{ dataset.model_columns }} <br>
 
+{% if dataset.module_pandas_profiling is defined %}
+
+<strong>Module pandas profiling : </strong> {{ dataset.module_pandas_profiling.status }} <br>
+{{ dataset.module_pandas_profiling.path }}
+<br>
+
+{% endif %}
+
 <form action="/datasets/{{dataset.name}}" method="post">
     <input type="hidden" name="_method" value="DELETE">
     <input type="submit" value="Delete dataset">

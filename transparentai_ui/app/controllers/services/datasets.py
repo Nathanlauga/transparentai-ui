@@ -1,14 +1,20 @@
+from ...utils.db import init_component_module
+from ...models.modules import ModulePandasProfiling
 import pandas as pd
 import os.path
 
-from ...models.components import Dataset
+from ...models import Dataset
 from ...utils import exists_in_db
 
 from ...utils.errors import get_errors
 
-from .common import format_str_strip, clean_errors
-from ...utils.file import get_file_extension
+from ...utils.components import format_str_strip, clean_errors
+from ...utils.file import get_file_extension, read_dataset_file
 
+from .modules import generate_pandas_prof_report
+
+from threading import Thread
+import concurrent.futures
 
 
 def is_dataset_extension_valid(path):
@@ -135,7 +141,7 @@ def control_dataset_path(form_data):
     # Check if we can read the file
     if not is_dataset_file_readable(path):
         return errors_dict['DatasetPathCantOpen']
-        
+
     return None
 
 
@@ -208,35 +214,29 @@ def format_dataset(form_data, create=False):
 
 # ====== Modules init ====== #
 
-from ...utils.modules import generate_pandas_prof_report
-from ...utils.file import read_dataset_file
-
-from threading import Thread
-import concurrent.futures
-
-def load_pandas_profiling_module(df, title, explorative):
+def load_pandas_profiling_module(df, title, explorative, dataset):
     """
     """
-    thread = Thread(target=generate_pandas_prof_report, args=(df, title, explorative,))
+    thread = Thread(target=generate_pandas_prof_report,
+                    args=(df, title, explorative, dataset,))
     thread.start()
 
 
-
-def load_dataset_modules_in_background(dataset):
+def load_dataset_modules_in_background(dataset, data):
     """
     """
-    if dataset.path is not None:
-        if dataset.path != '':
+    if 'path' in data:
+        if data['path'] != '':
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 print('load_dataset_modules : launch read_dataset_file thread')
-                future = executor.submit(read_dataset_file, dataset.path)
+                future = executor.submit(read_dataset_file, data['path'])
                 df = future.result()
 
-            print('load_dataset_modules : launch load_pandas_profiling_module thread')
-            load_pandas_profiling_module(df, title=dataset.name, explorative=False)
+            if dataset.module_pandas_profiling is None:
+                # init pandas profiling module
+                init_component_module(
+                    ModulePandasProfiling, dataset)#, module_attr='module_pandas_profiling')
 
             print('load_dataset_modules : launch load_pandas_profiling_module thread')
-            load_pandas_profiling_module(df, title=dataset.name, explorative=False)
-
-
-            
+            load_pandas_profiling_module(
+                df, title=dataset.name, explorative=False, dataset=dataset)

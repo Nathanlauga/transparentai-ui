@@ -1,10 +1,10 @@
 from flask import request
 
-from ...models.components.models import Model
+from ..models import Model
 from .controller_class import Controller
 
-from ...utils import add_in_db
-from ...utils import get_component_args
+from ..utils import add_in_db
+from ..utils import get_component_args
 
 
 def create_test_model():

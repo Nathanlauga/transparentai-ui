@@ -2,13 +2,10 @@ from flask import request
 import os.path
 import pandas as pd
 
-from ...models.components.datasets import Dataset
+from ..models import Dataset
 from .controller_class import Controller
 
-from ...utils import add_in_db, exists_in_db
-
-from ...utils.controllers import control_dataset
-from ...utils.controllers import format_dataset
+from ..utils import add_in_db, exists_in_db
 
 
 def create_test_dataset():

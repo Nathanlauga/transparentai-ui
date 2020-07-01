@@ -1,10 +1,10 @@
 import os.path
 
-from ...models.components import Model
+from ...models import Model
 from ...utils import exists_in_db
 from ...utils.errors import get_errors 
 
-from .common import format_str_strip, clean_errors
+from ...utils.components import format_str_strip, clean_errors
 
 import joblib
 import pickle

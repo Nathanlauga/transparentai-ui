@@ -1,7 +1,8 @@
-from ... import db
-from ...utils.components import list_property, list_property_setter
+from .. import db
+from ..utils.components import list_property, list_property_setter
 
-from ...models.modules import ModulePandasProfiling
+from ..models.modules import ModulePandasProfiling
+
 
 class Dataset(db.Model):
     """
@@ -21,7 +22,7 @@ class Dataset(db.Model):
 
     # Modules
     module_pandas_profiling = db.relationship(
-        'ModulePandasProfiling', uselist=False, back_populates='dataset')
+        'ModulePandasProfiling', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
 
     def __repr__(self):
         return '<Dataset %r>' % self.name
