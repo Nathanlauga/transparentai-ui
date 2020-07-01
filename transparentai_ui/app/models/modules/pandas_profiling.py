@@ -18,4 +18,5 @@ class ModulePandasProfiling(db.Model):
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     def __repr__(self):
-        return '<ModulePandasProfiling %i>' % (self.id)
+        id = 'None' if self.id is None else str(self.id)
+        return '<ModulePandasProfiling %s>' % (id)

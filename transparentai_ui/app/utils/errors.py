@@ -22,6 +22,7 @@ def get_errors():
         'DatasetPathExtension': _('The dataset extension is not valid.'),
         'DatasetPathCantOpen': _('Impossible to open the dataset file. Check that you can open your file with an other application.'),
         'DatasetColumnNotFound': _(' column not found in the data.'),
+        'DatasetModelTypeNotValid': _('The dataset model type is not valid, please use one of the following : binary-classification, multiclass-classification or regression')
     }
 
     return errors_dict

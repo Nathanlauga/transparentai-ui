@@ -3,8 +3,7 @@ from flask import request
 from ..models import Model
 from .controller_class import Controller
 
-from ..utils import add_in_db
-from ..utils import get_component_args
+from ..utils.db import add_in_db
 
 
 def create_test_model():

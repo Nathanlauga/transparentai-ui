@@ -16,14 +16,11 @@ def create_test_dataset():
         'path': '/home/lauga/Documents/workspace/transparentai-ui/tmp/test_comma_point.csv',
         'target': 'income',
         'score': 'score',
+        'model_type': 'binary-classification',
         'protected_attr': ['gender', 'race']
     }
     data = Dataset(
-        name=test['name'],
-        path=test['path'],
-        target=test['target'],
-        score=test['score'],
-        protected_attr=test['protected_attr']
+        **test
     )
     add_in_db(data)
 

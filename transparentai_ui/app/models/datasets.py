@@ -1,5 +1,5 @@
 from .. import db
-from ..utils.components import list_property, list_property_setter
+from ..utils.models import list_property, list_property_setter
 
 from ..models.modules import ModulePandasProfiling
 from ..models.modules import ModulePerformance
@@ -16,6 +16,7 @@ class Dataset(db.Model):
     path = db.Column(db.String, nullable=False)
     target = db.Column(db.String)
     score = db.Column(db.String)
+    model_type = db.Column(db.String)
     _protected_attr = db.Column(db.String, default='')
     _model_columns = db.Column(db.String, default='')
     created_at = db.Column(db.DateTime, server_default=db.func.now())

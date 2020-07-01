@@ -1,5 +1,5 @@
 from .. import db
-from ..utils.components import list_property, list_property_setter
+from ..utils.models import list_property, list_property_setter
 
 
 class Model(db.Model):

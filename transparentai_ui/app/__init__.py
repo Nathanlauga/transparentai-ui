@@ -15,6 +15,12 @@ db = SQLAlchemy(app)
 # app.config.from_object("config")
 
 
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+
+db_session = scoped_session(sessionmaker(bind=db.engine))
+
+
 @babel.localeselector
 def get_locale():
     best_match = request.accept_languages.best_match(app.config['LANGUAGES'])

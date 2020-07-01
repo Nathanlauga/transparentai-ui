@@ -1,7 +1,7 @@
 import os.path
 
 from ...models import Model
-from ...utils import exists_in_db
+from ...utils.db import exists_in_db
 from ...utils.errors import get_errors 
 
 from ...utils.components import format_str_strip, clean_errors

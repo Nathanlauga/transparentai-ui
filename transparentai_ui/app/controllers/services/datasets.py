@@ -1,16 +1,19 @@
-from ...utils.db import init_component_module
 import pandas as pd
 import os.path
 
 from ...models import Dataset
-from ...utils import exists_in_db, key_in_dict_not_empty
+from ...utils import key_in_dict_not_empty, is_empty
 
 from ...utils.errors import get_errors
 
-from ...utils.components import format_str_strip, clean_errors
+from ...utils.components import format_str_strip, clean_errors, init_dataset_module_db
 from ...utils.file import get_file_extension, read_dataset_file
+from ...utils.db import select_from_db, exists_in_db
 
 from .modules import generate_pandas_prof_report
+from .modules import compute_performance_metrics
+from .modules import compute_bias_metrics
+
 from ...models.modules import ModulePandasProfiling
 from ...models.modules import ModulePerformance
 from ...models.modules import ModuleBias
@@ -82,6 +85,12 @@ def format_dataset_path(form_data):
     return format_str_strip(form_data, key='path')
 
 
+def format_dataset_model_type(form_data):
+    """
+    """
+    return format_str_strip(form_data, key='model_type')
+
+
 def format_dataset_columns(form_data, key):
     """
     """
@@ -116,6 +125,27 @@ def control_dataset_name(form_data):
 
     if exists_in_db(Dataset.name, name):
         return errors_dict['DatasetNameAlreadyUsed']
+    return None
+
+
+def control_dataset_model_type(form_data):
+    """
+    """
+    errors_dict = get_errors()
+
+    if 'model_type' not in form_data:
+        return None
+
+    model_type = form_data['model_type']
+
+    if model_type == '':
+        return None
+
+    valid_models = ['binary-classification',
+                    'multiclass-classification', 'regression']
+    if model_type not in valid_models:
+        return errors_dict['DatasetModelTypeNotValid']
+
     return None
 
 
@@ -185,6 +215,7 @@ def control_dataset(form_data, create=False):
         errors['target'] = control_dataset_columns(
             form_data, 'target', columns)
         errors['score'] = control_dataset_columns(form_data, 'score', columns)
+        errors['model_type'] = control_dataset_model_type(form_data)
         errors['protected_attr'] = control_dataset_columns(
             form_data, 'protected_attr', columns)
         errors['model_columns'] = control_dataset_columns(
@@ -206,6 +237,7 @@ def format_dataset(form_data, create=False):
     data['path'] = format_dataset_path(form_data)
     data['target'] = format_dataset_columns(form_data, key='target')
     data['score'] = format_dataset_columns(form_data, key='score')
+    data['model_type'] = format_dataset_model_type(form_data)
     data['protected_attr'] = format_dataset_columns(
         form_data, key='protected_attr')
     data['model_columns'] = format_dataset_columns(
@@ -216,63 +248,84 @@ def format_dataset(form_data, create=False):
 
 # ====== Modules init ====== #
 
+
 def load_pandas_profiling_module(df, title, explorative, dataset):
     """
     """
+    print('Launch dataset module thread : load_pandas_profiling_module')
     thread = Thread(target=generate_pandas_prof_report,
                     args=(df, title, explorative, dataset,))
     thread.start()
 
-def load_dataset_thread(path):
+
+def load_performance_module(df, dataset):
+    """
+    """
+    if (is_empty(dataset.path)) | (is_empty(dataset.score)) | (
+            is_empty(dataset.model_type)) | (is_empty(dataset.target)):
+        return
+
+    print('Launch dataset module thread : compute_performance_metrics')
+    thread = Thread(target=compute_performance_metrics,
+                    args=(df, dataset, None,))
+    thread.start()
+
+
+def load_bias_module(df, dataset):
+    """
+    """
+    if (is_empty(dataset.path)) | (is_empty(dataset.score)) | (is_empty(dataset.model_type)) | (
+            is_empty(dataset.target)) | (is_empty(dataset.protected_attr)):
+        return
+
+    print('Launch dataset module thread : compute_bias_metrics')
+    thread = Thread(target=compute_bias_metrics,
+                    args=(df, dataset,))
+    thread.start()
+
+
+def load_dataset_from_path(path):
     """
     """
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        print('load_dataset_modules : launch read_dataset_file thread')
+        print('Launch dataset module thread : read_dataset_file')
         future = executor.submit(read_dataset_file, path)
         df = future.result()
 
     return df
+
+def init_dataset_modules(dataset):
+    """
+    """
+    # init pandas profiling module
+    if dataset.module_pandas_profiling is None:
+        init_dataset_module_db(ModulePandasProfiling, dataset=dataset)
     
+    # init bias module
+    if dataset.module_bias is None:
+        init_dataset_module_db(ModuleBias, dataset=dataset)
+    
+    # init performance module
+    if dataset.module_performance is None:
+        init_dataset_module_db(ModulePerformance, dataset=dataset)
 
 
 def load_dataset_modules_in_background(dataset, data):
     """
     """
+    name = dataset.name
+    init_dataset_modules(dataset)
+
     if key_in_dict_not_empty('path', data):
-        df = load_dataset_thread(data['path'])
+        df = load_dataset_from_path(data['path'])
 
-        if dataset.module_pandas_profiling is None:
-            # init pandas profiling module
-            init_component_module(ModulePandasProfiling, dataset)
-
-        print('load_dataset_modules : launch load_pandas_profiling_module thread')
         load_pandas_profiling_module(
             df, title=dataset.name, explorative=False, dataset=dataset)
+        load_performance_module(df, dataset=dataset)
+        load_bias_module(df, dataset=dataset)
 
-        print(data)
-        if (key_in_dict_not_empty('score', data)) & (
-            key_in_dict_not_empty('target', data)):
-            
-            if dataset.module_performance is None:
-                # init performance module
-                init_component_module(ModulePerformance, dataset)
+    elif dataset.path != '':
+        df = load_dataset_from_path(dataset.path)
 
-            if dataset.protected_attr != '':
-                if dataset.module_bias is None:
-                    # init bias module
-                    init_component_module(ModuleBias, dataset)
-
-    elif (dataset.path != '') & (dataset.score != '') & (dataset.target != ''):
-        df = load_dataset_thread(data.path)
-
-        if dataset.module_performance is None:
-            # init performance module
-            init_component_module(ModulePerformance, dataset)
-
-        if dataset.protected_attr != '':
-            if dataset.module_bias is None:
-                # init bias module
-                init_component_module(ModuleBias, dataset)
-
-            
-
+        load_performance_module(df, dataset=dataset)
+        load_bias_module(df, dataset=dataset)

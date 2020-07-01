@@ -18,6 +18,8 @@
     <input type="text" name="target" id="target" value="{{ instance.target }}"><br>
     <label for="score">Score column: </label>
     <input type="text" name="score" id="score" value="{{ instance.score }}"><br>
+    <label for="model_type">Model type: </label>
+    <input type="text" name="model_type" id="model_type" value="{{ instance.model_type }}"><br>
     <label for="protected_attr">Protected attributes: </label>
     <input type="text" name="protected_attr" id="protected_attr" value="{{ instance.protected_attr }}"><br>
     <label for="model_columns">Model columns: </label>
@@ -42,7 +44,8 @@
     {% if instance.module_pandas_profiling is defined %}
     {% if instance.module_bias is not none %}
         <strong>Module Bias : </strong> {{ instance.module_bias.status }} <br>
-        {{ instance.module_bias.results }}
+        {{ instance.module_bias.results }} <br>
+        {{ instance.module_bias.privileged_group }} 
         <br>
     {% endif %}
     {% endif %}

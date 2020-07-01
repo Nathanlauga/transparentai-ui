@@ -17,6 +17,8 @@
     <input type="text" name="target" id="target"><br>
     <label for="score">Enter dataset score column: </label>
     <input type="text" name="score" id="score"><br>
+    <label for="model_type">Enter model type: </label>
+    <input type="text" name="model_type" id="model_type"><br>
     <label for="protected_attr">Enter dataset protected attributes: </label>
     <input type="text" name="protected_attr" id="protected_attr"><br>
     <label for="model_columns">Enter dataset model columns: </label>
@@ -31,6 +33,7 @@
 <strong>path : </strong> {{ dataset.path }} <br>
 <strong>target : </strong> {{ dataset.target }} <br>
 <strong>score : </strong> {{ dataset.score }} <br>
+<strong>model_type : </strong> {{ dataset.model_type }} <br>
 <strong>protected_attr : </strong> {{ dataset.protected_attr }} <br>
 <strong>model_columns : </strong> {{ dataset.model_columns }} <br>
 
@@ -51,7 +54,8 @@
 {% if dataset.module_pandas_profiling is defined %}
 {% if dataset.module_bias is not none %}
     <strong>Module Bias : </strong> {{ dataset.module_bias.status }} <br>
-    {{ dataset.module_bias.results }}
+    {{ dataset.module_bias.results }} <br>
+    {{ dataset.module_bias.privileged_group }} 
     <br>
 {% endif %}
 {% endif %}
