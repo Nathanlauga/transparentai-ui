@@ -8,7 +8,7 @@ from ...utils.errors import get_errors
 
 from ...utils.components import format_str_strip, clean_errors, init_dataset_module_db
 from ...utils.file import get_file_extension, read_dataset_file
-from ...utils.db import select_from_db, exists_in_db
+from ...utils.db import select_from_db, exists_in_db, update_in_db
 
 from .modules import generate_pandas_prof_report
 from .modules import compute_performance_metrics
@@ -294,30 +294,38 @@ def load_dataset_from_path(path):
 
     return df
 
+
 def init_dataset_modules(dataset):
     """
     """
     # init pandas profiling module
     if dataset.module_pandas_profiling is None:
         init_dataset_module_db(ModulePandasProfiling, dataset=dataset)
-    
+
     # init bias module
     if dataset.module_bias is None:
         init_dataset_module_db(ModuleBias, dataset=dataset)
-    
+
     # init performance module
     if dataset.module_performance is None:
         init_dataset_module_db(ModulePerformance, dataset=dataset)
 
 
+def set_dataset_length(dataset, df):
+    """
+    """
+    data = {'length': len(df)}
+    update_in_db(dataset, data)
+
+
 def load_dataset_modules_in_background(dataset, data):
     """
     """
-    name = dataset.name
     init_dataset_modules(dataset)
 
     if key_in_dict_not_empty('path', data):
         df = load_dataset_from_path(data['path'])
+        set_dataset_length(dataset, df)
 
         load_pandas_profiling_module(
             df, title=dataset.name, explorative=False, dataset=dataset)
@@ -326,6 +334,7 @@ def load_dataset_modules_in_background(dataset, data):
 
     elif dataset.path != '':
         df = load_dataset_from_path(dataset.path)
+        set_dataset_length(dataset, df)
 
         load_performance_module(df, dataset=dataset)
         load_bias_module(df, dataset=dataset)

@@ -19,6 +19,8 @@ class Dataset(db.Model):
     model_type = db.Column(db.String)
     _protected_attr = db.Column(db.String, default='')
     _model_columns = db.Column(db.String, default='')
+
+    length = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())

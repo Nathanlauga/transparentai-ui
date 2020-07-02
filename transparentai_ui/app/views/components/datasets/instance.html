@@ -25,6 +25,7 @@
     <label for="model_columns">Model columns: </label>
     <input type="text" name="model_columns" id="model_columns" value="{{ instance.model_columns }}"><br>
 
+    <strong>length : </strong> {{ instance.length }} <br>
     {% if instance.module_pandas_profiling is defined %}
     {% if instance.module_pandas_profiling is not none %}
 
