@@ -15,6 +15,7 @@ def get_errors():
         'ModelPathNoType': _('You need to specify a model type with the path'),
         'ModelPathNotExists': _('The model path is not pointing to a file.'),
         'ModelPathCantOpen': _('Impossible to open the model file.'),
+        'ModelPathNoPredictFunction': _('The model has no predict function.'),
         'ModelFileTypeNotValid': _('Model file type is not a valid one, please use one of the following : pickle or joblib'),
         'DatasetNameNotSet': _('The name of the dataset is not set'),
         'DatasetNameAlreadyUsed': _('The model dataset is already used.'),
@@ -22,7 +23,11 @@ def get_errors():
         'DatasetPathExtension': _('The dataset extension is not valid.'),
         'DatasetPathCantOpen': _('Impossible to open the dataset file. Check that you can open your file with an other application.'),
         'DatasetColumnNotFound': _(' column not found in the data.'),
-        'DatasetModelTypeNotValid': _('The dataset model type is not valid, please use one of the following : binary-classification, multiclass-classification or regression')
+        'DatasetModelTypeNotValid': _('The dataset model type is not valid, please use one of the following : binary-classification, multiclass-classification or regression'),
+        'ModelDatasetNameNotValid': _('This Dataset does not exist in the database.'),
+        'ModelDatasetNoModelColumns': _('The model columns are not set.'),
+        'ModelDatasetModelColumnsNotValid': _('The model columns does not match with the loaded model please use the same number of features.'),
+        'ModelDatasetNoModel': _('You need to use a valid model before linking it with a Dataset'),
     }
 
     return errors_dict

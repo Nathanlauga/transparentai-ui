@@ -15,6 +15,8 @@
     <input type="text" name="path" id="path"> <br>
     <label for="file_type">Enter file type: </label>
     <input type="text" name="file_type" id="file_type"><br>
+    <label for="dataset_name">Enter Dataset name: </label>
+    <input type="text" name="dataset_name" id="dataset_name"><br>
 
     <input type="submit" value="Add model">
 </form>
@@ -24,6 +26,7 @@
 <h3><a href="/models/{{model.name}}">{{ model.name }}</a></h3>
 <strong>path : </strong> {{ model.path }} <br>
 <strong>file_type : </strong> {{ model.file_type }} <br>
+<strong>dataset : </strong> {{ model.dataset }} <br>
 
 <form action="/models/{{model.name}}" method="post">
     <input type="hidden" name="_method" value="DELETE">

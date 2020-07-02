@@ -11,6 +11,11 @@ class Model(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     path = db.Column(db.String, nullable=False)
     file_type = db.Column(db.String)
+
+    dataset_id = db.Column(
+        db.Integer, db.ForeignKey('transparentai-datasets.id'))
+    dataset = db.relationship('Dataset')
+
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())

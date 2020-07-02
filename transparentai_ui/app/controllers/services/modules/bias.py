@@ -26,8 +26,6 @@ def compute_bias_metrics(df, dataset):
 
     results = fairness.model_bias(y_true, y_pred, df, privileged_group)
 
-    print(results)
-
     data = {'status': 'loaded', 'results': results,
             'privileged_group': privileged_group}
 

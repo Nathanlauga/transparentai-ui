@@ -28,16 +28,17 @@ def list_property(attr, unique=False):
     return format_list
 
 
-def list_property_setter(attr, value):
+def list_property_setter(attr, values):
     if attr is None:
         attr = ''
 
-    if type(value) == list:
-        for v in value:
+    attr = ''
+    if type(values) == list:
+        for v in values:
             v = v.replace(';', '//,')
             attr += ';%s' % str(v)
     else:
-        value = value.replace(';', '//,')
+        value = values.replace(';', '//,')
         attr += ';%s' % str(value)
 
     return attr

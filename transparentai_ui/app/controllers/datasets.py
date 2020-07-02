@@ -17,7 +17,8 @@ def create_test_dataset():
         'target': 'income',
         'score': 'score',
         'model_type': 'binary-classification',
-        'protected_attr': ['gender', 'race']
+        'protected_attr': ['gender', 'race'],
+        'model_columns': ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
     }
     data = Dataset(
         **test

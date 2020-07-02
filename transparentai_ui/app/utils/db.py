@@ -5,16 +5,13 @@ from .errors import get_errors
 from .. import db_session
 
 
-def select_from_db(Model, col, value, thread=False):
+def select_from_db(Model, col, value):
     """
     """
     kwargs = {col: value}
     try:
-        if thread:
-            instance = db_session.query(Model).filter_by(**kwargs).first()
-        else:
-            instance = Model.query.filter_by(**kwargs).first()
-
+        instance = Model.query.filter_by(**kwargs).first()
+        
     except Exception as exception:
         db.session.rollback()
         return exception
