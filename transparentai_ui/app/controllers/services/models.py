@@ -1,14 +1,22 @@
+import multiprocessing as mp
 import os.path
+from transparentai.models import explainers
 
 from ...models import Model
 from ...models import Dataset
+from ...models.modules import ModuleInterpretability
 from ...utils.db import exists_in_db, select_from_db
 from ...utils.file import read_dataset_file
 from ...utils.errors import get_errors
 from ...utils import key_in_dict_not_empty, is_empty
 
-from ...utils.components import format_str_strip, clean_errors
+from ...utils.components import format_str_strip, clean_errors, init_model_module_db
+from .modules.interpretability import compute_global_influence
 
+from threading import Thread
+import concurrent.futures
+
+import gc
 import joblib
 import pickle
 
@@ -74,9 +82,9 @@ def is_model_columns_valid(dataset, model):
         model.predict(X)
     except:
         return False
-    
+
     return True
-    
+
 
 # ======= FORMAT MODEL FUNCTIONS ======= #
 
@@ -155,11 +163,11 @@ def control_model_path(form_data, file_type):
 
     # Check if path is valid
     if not os.path.exists(path):
-        return errors_dict['ModelPathNotExists']
+        return errors_dict['ModelPathNotExists'], None
 
     # Check if we can read the file
     if not is_model_file_readable(path, file_type):
-        return errors_dict['ModelPathCantOpen']
+        return errors_dict['ModelPathCantOpen'], None
 
     model = read_model(path, file_type)
 
@@ -263,3 +271,98 @@ def format_model(form_data, create=False):
             data['dataset_id'] = dataset.id
 
     return data
+
+
+# ====== Modules init ====== #
+
+
+def load_model_explainer(model):
+    """
+    """
+    nrows = 1000
+    nrows = model.dataset.length if nrows > model.dataset.length else nrows
+
+    df = read_dataset_file(model.dataset.path, nrows=nrows)
+    df = df[model.dataset.model_columns]
+
+    model_obj = read_model(model.path, model.file_type)
+
+    return load_model_explainer_from_obj(model_obj, df)
+
+
+def load_model_explainer_from_obj(model_obj, df):
+    """
+    """
+    explainer = explainers.ModelExplainer(model_obj, df, model_type=None)
+    explainer.model = None
+    gc.collect()
+
+    return explainer
+
+
+def load_dataset_sample(dataset, nrows=None):
+    """
+    """
+    if nrows is not None:
+        nrows = dataset.length if nrows > dataset.length else nrows
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        print('Launch model module thread : load_dataset_sample')
+        future = executor.submit(read_dataset_file, dataset.path, nrows)
+        df = future.result()
+
+    return df
+
+
+def load_model_thread(model):
+    """
+    """
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        print('Launch module module thread : load_model_thread')
+        future = executor.submit(read_model, model.path, model.file_type)
+        model = future.result()
+
+    return model
+
+
+def load_interpretability_module(model, model_obj, df):
+    """
+    """
+    print('Launch model module thread : compute_global_influence')
+    df = df[model.dataset.model_columns]
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        print('Launch model module thread : load_dataset_sample')
+        future = executor.submit(load_model_explainer_from_obj, model_obj, df)
+        explainer = future.result()
+
+    thread = Thread(target=compute_global_influence,
+                    args=(model, explainer, df,))
+    thread.start()
+
+
+def init_model_modules(model):
+    """
+    """
+    # init interpretability module
+    if model.module_interpretability is None:
+        init_model_module_db(ModuleInterpretability, model=model)
+
+
+def load_model_modules_in_background(model, data):
+    """
+    """
+    init_model_modules(model)
+    gc.collect()
+
+    print(data)
+
+    if key_in_dict_not_empty('dataset', data):
+        df = load_dataset_sample(data['dataset'], nrows=1000)
+        gc.collect()
+
+        model_obj = load_model_thread(model)
+        gc.collect()
+
+        load_interpretability_module(model, model_obj, df)
+        gc.collect()

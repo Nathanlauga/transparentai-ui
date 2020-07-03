@@ -29,3 +29,14 @@ def init_dataset_module_db(ModuleModel, dataset):
         status='init'
     )
     add_in_db(module)
+
+
+def init_model_module_db(ModuleModel, model):
+    """
+    """
+    module = ModuleModel(
+        model_id=model.id,
+        model=model,
+        status='init'
+    )
+    add_in_db(module)

@@ -16,10 +16,26 @@
     <input type="text" name="path" id="path" value="{{ instance.path }}"> <br>
     <label for="file_type">File type: </label>
     <input type="text" name="file_type" id="file_type" value="{{ instance.file_type }}"><br>
+    <label for="dataset_name">Dataset name: </label>
+    {% if instance.dataset is not none %}
+    <input type="text" name="dataset_name" id="dataset_name" value="{{ instance.dataset.name }}"><br>
+    {% else %}
+    <input type="text" name="dataset_name" id="dataset_name"><br>
+    {% endif %}
 
     <input type="hidden" name="_method" value="PUT">
     <input type="submit" value="Update model">
 </form>
+
+{% if instance.module_interpretability is defined %}
+{% if instance.module_interpretability is not none %}
+    <strong>Model interpretability : </strong> {{ instance.module_interpretability.status }} <br>
+    <strong>Explainer path : </strong> {{ instance.module_interpretability.explainer_path }} <br>
+    <strong>Variable influence : </strong> {{ instance.module_interpretability.variable_influence }} <br>
+    <br>
+{% endif %}
+{% endif %}
+
 
 <form action="/models/{{instance.name}}" method="post">
     <input type="hidden" name="_method" value="DELETE">

@@ -5,7 +5,7 @@ from ..utils import set_session_var, check_if_session_var_exists
 from ..utils.db import add_in_db, update_in_db, delete_in_db, select_from_db
 
 from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
-from .services.models import format_model, control_model
+from .services.models import format_model, control_model, load_model_modules_in_background
 
 from ..models import Dataset
 from ..models import Model
@@ -45,6 +45,7 @@ class Controller():
             self.route = 'models'
             self.format_fn = format_model
             self.control_fn = control_model
+            self.module_fn = load_model_modules_in_background
 
     def format_and_control(self, form_data, create=False):
         """

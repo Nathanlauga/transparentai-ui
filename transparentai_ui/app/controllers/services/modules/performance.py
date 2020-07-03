@@ -35,7 +35,6 @@ def compute_performance_metrics(df, dataset, metrics=None):
 
         results = eval_fn(y_true, y_pred, metrics)
 
-
         data = {'status': 'loaded', 'results': results}
         res = update_in_db(module, data)
 

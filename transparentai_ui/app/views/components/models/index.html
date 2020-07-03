@@ -28,6 +28,15 @@
 <strong>file_type : </strong> {{ model.file_type }} <br>
 <strong>dataset : </strong> {{ model.dataset }} <br>
 
+{% if model.module_interpretability is defined %}
+{% if model.module_interpretability is not none %}
+    <strong>Model interpretability : </strong> {{ model.module_interpretability.status }} <br>
+    <strong>Explainer path : </strong> {{ model.module_interpretability.explainer_path }} <br>
+    <strong>Variable influence : </strong> {{ model.module_interpretability.variable_influence }} <br>
+    <br>
+{% endif %}
+{% endif %}
+
 <form action="/models/{{model.name}}" method="post">
     <input type="hidden" name="_method" value="DELETE">
     <input type="submit" value="Delete model">

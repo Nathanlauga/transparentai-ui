@@ -1,6 +1,7 @@
 from .. import db
 from ..utils.models import list_property, list_property_setter
 
+from ..models.modules import ModuleInterpretability
 
 class Model(db.Model):
     """
@@ -19,6 +20,10 @@ class Model(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+    # Modules
+    module_interpretability = db.relationship(
+        'ModuleInterpretability', uselist=False, back_populates='model', cascade='save-update, merge, delete')
 
     def __repr__(self):
         return '<Model %r>' % self.name
