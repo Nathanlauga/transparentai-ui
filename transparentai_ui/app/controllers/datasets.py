@@ -3,6 +3,7 @@ import os.path
 import pandas as pd
 
 from ..models import Dataset
+from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
 from .controller_class import Controller
 
 from ..utils import add_in_db, exists_in_db
@@ -26,7 +27,12 @@ def create_test_dataset():
     add_in_db(data)
 
 
-dataset_controller = Controller(name='dataset')
+dataset_controller = Controller(name='dataset',
+                                component=Dataset,
+                                route='datasets',
+                                format_fn=format_dataset,
+                                control_fn=control_dataset,
+                                module_fn=load_dataset_modules_in_background)
 
 
 def index():

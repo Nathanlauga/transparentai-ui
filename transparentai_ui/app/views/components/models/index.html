@@ -31,7 +31,6 @@
 {% if model.module_interpretability is defined %}
 {% if model.module_interpretability is not none %}
     <strong>Model interpretability : </strong> {{ model.module_interpretability.status }} <br>
-    <strong>Explainer path : </strong> {{ model.module_interpretability.explainer_path }} <br>
     <strong>Variable influence : </strong> {{ model.module_interpretability.variable_influence }} <br>
     <br>
 {% endif %}

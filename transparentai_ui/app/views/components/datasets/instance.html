@@ -12,6 +12,7 @@
 <h3>{{ instance.name }}</h3>
 
 <form action="/datasets/{{instance.name}}" method="post">
+    <strong>Project : </strong> {{ instance.project }} <br>
     <label for="path">File path:</label>
     <input type="text" name="path" id="path" value="{{ instance.path }}"> <br>
     <label for="target">Target column: </label>

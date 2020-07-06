@@ -1,0 +1,42 @@
+<h1>Project</h1>
+
+{% if session['errors'] is defined %}
+<div style='color:red;'><strong>{{ session['errors'] }}</strong></div>
+{% endif %}
+{% if session['success'] is defined %}
+<div style='color:green;'><strong>{{ session['success'] }}</strong></div>
+{% endif %}
+
+{% if instance is defined %}
+<hr>
+<h3>{{ instance.name }}</h3>
+
+<form action="/projects/{{instance.name}}" method="post">
+    <label for="members">Protected attributes: </label>
+    <input type="text" name="members" id="members" value="{{ instance.members }}"><br>
+    <label for="dataset_name">Dataset name: </label>
+    {% if instance.dataset is not none %}
+    <input type="text" name="dataset_name" id="dataset_name" value="{{ instance.dataset.name }}"><br>
+    {% else %}
+    <input type="text" name="dataset_name" id="dataset_name"><br>
+    {% endif %}
+    {% if instance.dataset is defined %}
+    {% if instance.dataset is not none %}
+
+        <strong>Module pandas profiling : </strong> {{ instance.dataset }} <br>
+
+    {% endif %}
+    {% endif %}
+
+
+    <input type="hidden" name="_method" value="PUT">
+    <input type="submit" value="Update project">
+
+    
+</form>
+
+<form action="/projects/{{instance.name}}" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="Delete project">
+</form>
+{% endif %}

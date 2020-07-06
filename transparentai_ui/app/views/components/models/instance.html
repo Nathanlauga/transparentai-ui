@@ -30,7 +30,6 @@
 {% if instance.module_interpretability is defined %}
 {% if instance.module_interpretability is not none %}
     <strong>Model interpretability : </strong> {{ instance.module_interpretability.status }} <br>
-    <strong>Explainer path : </strong> {{ instance.module_interpretability.explainer_path }} <br>
     <strong>Variable influence : </strong> {{ instance.module_interpretability.variable_influence }} <br>
     <br>
 {% endif %}

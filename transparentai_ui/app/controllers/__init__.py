@@ -13,9 +13,24 @@ from .errors.error_404 import not_found
 from .index import index
 from . import datasets
 from . import models
+from . import projects
 
 
 app.add_url_rule('/', view_func=index, methods=['GET', 'POST'])
+
+# Projects
+app.add_url_rule('/projects', endpoint='projects.index',
+                 view_func=projects.index, methods=['GET'])
+app.add_url_rule('/projects', endpoint='projects.create',
+                 view_func=projects.create, methods=['POST'])
+app.add_url_rule('/projects/<name>', endpoint='projects.get_instance',
+                 view_func=projects.get_instance, methods=['GET'])
+app.add_url_rule('/projects/<name>', endpoint='projects.post_instance',
+                 view_func=projects.post_instance, methods=['POST'])
+app.add_url_rule('/projects/<name>', endpoint='projects.update',
+                 view_func=projects.update, methods=['PUT'])
+app.add_url_rule('/projects/<name>', endpoint='projects.delete',
+                 view_func=projects.delete, methods=['DELETE'])
 
 # Datasets
 app.add_url_rule('/datasets', endpoint='datasets.index',

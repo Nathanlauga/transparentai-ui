@@ -30,6 +30,8 @@
 {% for dataset in instances %}
 <hr>
 <h3><a href="/datasets/{{dataset.name}}">{{ dataset.name }}</a></h3>
+<strong>Project : </strong> {{ dataset.project }} <br>
+
 <strong>path : </strong> {{ dataset.path }} <br>
 <strong>target : </strong> {{ dataset.target }} <br>
 <strong>score : </strong> {{ dataset.score }} <br>
@@ -37,6 +39,7 @@
 <strong>protected_attr : </strong> {{ dataset.protected_attr }} <br>
 <strong>model_columns : </strong> {{ dataset.model_columns }} <br>
 <strong>length : </strong> {{ dataset.length }} <br>
+
 
 {% if dataset.module_pandas_profiling is defined %}
 {% if dataset.module_pandas_profiling is not none %}

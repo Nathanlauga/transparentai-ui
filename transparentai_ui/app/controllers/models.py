@@ -1,6 +1,7 @@
 from flask import request
 
 from ..models import Model
+from .services.models import format_model, control_model, load_model_modules_in_background
 from .controller_class import Controller
 
 from ..utils.db import add_in_db
@@ -22,7 +23,12 @@ def create_test_model():
     add_in_db(data)
 
 
-model_controller = Controller(name='model')
+model_controller = Controller(name='model',
+                              component=Model,
+                              route='models',
+                              format_fn=format_model,
+                              control_fn=control_model,
+                              module_fn=load_model_modules_in_background)
 
 
 def index():

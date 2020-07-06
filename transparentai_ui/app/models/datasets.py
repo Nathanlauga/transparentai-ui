@@ -1,9 +1,9 @@
 from .. import db
 from ..utils.models import list_property, list_property_setter
 
-from ..models.modules import ModulePandasProfiling
-from ..models.modules import ModulePerformance
-from ..models.modules import ModuleBias
+# from ..models.modules import ModulePandasProfiling
+# from ..models.modules import ModulePerformance
+# from ..models.modules import ModuleBias
 
 
 class Dataset(db.Model):
@@ -24,6 +24,14 @@ class Dataset(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+    project_id = db.Column(
+        db.Integer, db.ForeignKey('transparentai-projects.id'))
+    project = db.relationship('Project')
+
+    # Modules
+    model = db.relationship(
+        'Model', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
 
     # Modules
     module_pandas_profiling = db.relationship(

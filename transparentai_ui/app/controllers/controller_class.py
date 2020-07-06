@@ -4,9 +4,6 @@ from flask_babel import _
 from ..utils import set_session_var, check_if_session_var_exists
 from ..utils.db import add_in_db, update_in_db, delete_in_db, select_from_db
 
-from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
-from .services.models import format_model, control_model, load_model_modules_in_background
-
 from ..models import Dataset
 from ..models import Model
 
@@ -28,24 +25,30 @@ class Controller():
     """
     """
 
-    def __init__(self, name):
+    def __init__(self, name, component, route, 
+                 format_fn, control_fn, module_fn=None):
         """
         """
         self.controller_name = name
-        self.module_fn = None
+        self.Component = component
+        self.route = route
+        self.format_fn = format_fn
+        self.control_fn = control_fn
+        self.module_fn = module_fn
 
-        if name == 'dataset':
-            self.Component = Dataset
-            self.route = 'datasets'
-            self.format_fn = format_dataset
-            self.control_fn = control_dataset
-            self.module_fn = load_dataset_modules_in_background
-        elif name == 'model':
-            self.Component = Model
-            self.route = 'models'
-            self.format_fn = format_model
-            self.control_fn = control_model
-            self.module_fn = load_model_modules_in_background
+        # self.module_fn = None
+        # if name == 'dataset':
+        #     self.Component = Dataset
+        #     self.route = 'datasets'
+        #     self.format_fn = format_dataset
+        #     self.control_fn = control_dataset
+        #     self.module_fn = load_dataset_modules_in_background
+        # elif name == 'model':
+        #     self.Component = Model
+        #     self.route = 'models'
+        #     self.format_fn = format_model
+        #     self.control_fn = control_model
+        #     self.module_fn = load_model_modules_in_background
 
     def format_and_control(self, form_data, create=False):
         """

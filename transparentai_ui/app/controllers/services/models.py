@@ -303,7 +303,7 @@ def load_model_explainer_from_obj(model_obj, df):
 def load_dataset_sample(dataset, nrows=None):
     """
     """
-    if nrows is not None:
+    if (nrows is not None) & (dataset.length is not None):
         nrows = dataset.length if nrows > dataset.length else nrows
 
     with concurrent.futures.ThreadPoolExecutor() as executor:

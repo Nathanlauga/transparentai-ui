@@ -1,0 +1,37 @@
+<h1>Projects</h1>
+
+{% if session['errors'] is defined %}
+<div style='color:red;'><strong>{{ session['errors'] }}</strong></div>
+{% endif %}
+{% if session['success'] is defined %}
+<div style='color:green;'><strong>{{ session['success'] }}</strong></div>
+{% endif %}
+
+
+<form action="/projects" method="post">
+    <label for="name">Enter project name: *</label>
+    <input type="text" name="name" id="name" required> <br>
+    <label for="members">Enter project members: </label>
+    <input type="text" name="members" id="members"><br>
+    <label for="dataset_name">Enter Dataset name: </label>
+    <input type="text" name="dataset_name" id="dataset_name"><br>
+
+    <input type="submit" value="Add project">
+</form>
+
+{% for project in instances %}
+<hr>
+<h3><a href="/projects/{{project.name}}">{{ project.name }}</a></h3>
+<strong>members : </strong> {{ project.members }} <br>
+
+{% if project.dataset is defined %}
+{% if project.dataset is not none %}
+    <strong>Dataset : </strong> {{ project.dataset }} <br>
+{% endif %}
+{% endif %}
+
+<form action="/projects/{{project.name}}" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="Delete project">
+</form>
+{% endfor %}
