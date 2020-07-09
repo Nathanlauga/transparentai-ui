@@ -1,15 +1,15 @@
 from .. import db
 from ..utils.models import list_property, list_property_setter
+from .base_model import BaseModel
 
-# from ..models import Dataset
 
-
-class Project(db.Model):
+class Project(BaseModel):
     """
     """
     __tablename__ = 'transparentai-projects'
 
     id = db.Column(db.Integer, primary_key=True)
+    desc = db.Column(db.String)
     name = db.Column(db.String, unique=True, nullable=False)
     _members = db.Column(db.String, default='')
     
@@ -20,6 +20,18 @@ class Project(db.Model):
     # Modules
     dataset = db.relationship(
         'Dataset', uselist=False, back_populates='project')
+
+    
+    _default_fields = [
+        "name",
+        "desc",
+        "members",
+    ]
+    _hidden_fields = [
+        "dataset"
+    ]
+    _readonly_fields = []
+
 
     def __repr__(self):
         return '<Project %r>' % self.name

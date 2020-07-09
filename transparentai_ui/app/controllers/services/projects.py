@@ -23,6 +23,11 @@ def format_project_dataset_name(form_data):
     """
     return format_str_strip(form_data, key='dataset_name')
 
+def format_project_desc(form_data):
+    """
+    """
+    return format_str_strip(form_data, key='desc')
+
 
 def get_model_dataset_from_name(form_data):
     """
@@ -118,6 +123,7 @@ def format_project(form_data, create=False):
     if create:
         data['name'] = format_project_name(form_data)
 
+    data['desc'] = format_project_desc(form_data)
     data['members'] = format_project_members(form_data)
 
     if key_in_dict_not_empty('dataset_name', form_data):

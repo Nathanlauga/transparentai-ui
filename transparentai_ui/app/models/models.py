@@ -1,9 +1,10 @@
 from .. import db
 from ..utils.models import list_property, list_property_setter
+from .base_model import BaseModel
 
 from ..models.modules import ModuleInterpretability
 
-class Model(db.Model):
+class Model(BaseModel):
     """
     """
     __tablename__ = 'transparentai-models'
@@ -24,6 +25,19 @@ class Model(db.Model):
     # Modules
     module_interpretability = db.relationship(
         'ModuleInterpretability', uselist=False, back_populates='model', cascade='save-update, merge, delete')
+
+    
+    _default_fields = [
+        "name",
+        "path",
+        "file_type",
+        "dataset_id"
+    ]
+    _hidden_fields = [
+        "module_interpretability"
+    ]
+    _readonly_fields = []
+
 
     def __repr__(self):
         return '<Model %r>' % self.name

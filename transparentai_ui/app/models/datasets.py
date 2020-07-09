@@ -1,12 +1,9 @@
 from .. import db
 from ..utils.models import list_property, list_property_setter
-
-# from ..models.modules import ModulePandasProfiling
-# from ..models.modules import ModulePerformance
-# from ..models.modules import ModuleBias
+from .base_model import BaseModel
 
 
-class Dataset(db.Model):
+class Dataset(BaseModel):
     """
     """
     __tablename__ = 'transparentai-datasets'
@@ -19,8 +16,8 @@ class Dataset(db.Model):
     model_type = db.Column(db.String)
     _protected_attr = db.Column(db.String, default='')
     _model_columns = db.Column(db.String, default='')
-
     length = db.Column(db.Integer)
+
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
@@ -40,6 +37,26 @@ class Dataset(db.Model):
         'ModulePerformance', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
     module_bias = db.relationship(
         'ModuleBias', uselist=False, back_populates='dataset', cascade='save-update, merge, delete')
+
+    _default_fields = [
+        "name",
+        "path",
+        "target",
+        "score",
+        "model_type",
+        "protected_attr",
+        "model_columns",
+        "length",
+        "project_id"
+    ]
+    _hidden_fields = [
+        "model",
+        "project",
+        "module_pandas_profiling",
+        "module_performance",
+        "module_bias",
+    ]
+    _readonly_fields = []
 
     def __repr__(self):
         return '<Dataset %r>' % self.name
