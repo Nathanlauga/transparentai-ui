@@ -2,21 +2,23 @@ from flask import current_app as app
 
 __all__ = [
     'index',
-    'errors',
-    'dev'
+    'errors'
 ]
 
 # Error handling
 from .errors.error_404 import not_found
 
 # Routes
-from .index import index
+from .index import index, temp
 from . import datasets
 from . import models
 from . import projects
 
 
 app.add_url_rule('/', view_func=index, methods=['GET', 'POST'])
+
+app.add_url_rule('/temp', view_func=temp, methods=['GET', 'POST'])
+
 
 # Projects
 app.add_url_rule('/projects', endpoint='projects.index',
