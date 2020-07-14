@@ -1,10 +1,13 @@
 from flask import render_template, session
 from flask_babel import _
+from .services.commons import get_header_attributes
 
 
 def index():
     title = _('Home')
-    return render_template("index.html", title=title)
+    header = get_header_attributes()
+
+    return render_template("index.html", title=title, header=header, session=session)
 
 
 def temp():

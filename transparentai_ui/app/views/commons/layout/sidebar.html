@@ -1,5 +1,8 @@
-{% from "commons/sidebar/item.html" import sidebar_item with context %}
+{% from "commons/layout/sidebar/item.html" import sidebar_item with context %}
 {% block sidebar %}
+
+{% set not_in_project =  (header['current_project'] is not defined) or (header['current_project']|length == 0) %}
+
 <!-- Sidebar -->
 <ul
   class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
@@ -8,14 +11,13 @@
   <!-- Sidebar - Brand -->
   <a
     class="sidebar-brand d-flex align-items-center justify-content-center"
-    href="index.html"
+    href="/"
   >
     <div class="sidebar-brand-icon">
       <i class="fas fa-balance-scale"></i>
     </div>
     <div class="sidebar-brand-text mx-3">TransparentAI</div>
   </a>
-
   <!-- Divider -->
   <hr class="sidebar-divider my-0" />
 
@@ -31,9 +33,9 @@
   </div>
 
   <!-- Datasets -->
-  {{ sidebar_item(name='Données', href='#datasets', fa='database', disabled=True) }}
+  {{ sidebar_item(name='Données', href='#datasets', fa='database', disabled=not_in_project) }}
   <!-- Models -->
-  {{ sidebar_item(name='Modèles', href='#models', fa='share-alt', disabled=True) }}
+  {{ sidebar_item(name='Modèles', href='#models', fa='share-alt', disabled=not_in_project) }}
 
   <!-- Divider -->
   <hr class="sidebar-divider" />
@@ -42,19 +44,19 @@
     Evalutation de l'IA
   </div>
   <!-- Cadrage -->
-  {{ sidebar_item(name='Cadrage', href='#frame', fa='cubes', disabled=True) }}
+  {{ sidebar_item(name='Cadrage', href='#frame', fa='cubes', disabled=not_in_project) }}
   <!-- Validation -->
-  {{ sidebar_item(name='Validation', href='#validation', fa='check', disabled=True) }}
+  {{ sidebar_item(name='Validation', href='#validation', fa='check', disabled=not_in_project) }}
   <!-- Sécurité -->
-  {{ sidebar_item(name='Sécurité', href='#security', fa='shield-alt', disabled=True) }}
+  {{ sidebar_item(name='Sécurité', href='#security', fa='shield-alt', disabled=not_in_project) }}
   <!-- Suivi -->
-  {{ sidebar_item(name='Suivi', href='#monitoring', fa='video', disabled=True) }}
+  {{ sidebar_item(name='Suivi', href='#monitoring', fa='video', disabled=not_in_project) }}
 
   <!-- Divider -->
   <hr class="sidebar-divider" />
 
   <!-- Synthèse -->
-  {{ sidebar_item(name='Synthèse', href='#dashboard', fa='tachometer-alt', disabled=True) }}
+  {{ sidebar_item(name='Synthèse', href='#dashboard', fa='tachometer-alt', disabled=not_in_project) }}
 
   <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block" />

@@ -1,0 +1,32 @@
+{% from "commons/forms/input.html" import form_input with context %}
+{% from "commons/forms/textarea.html" import form_textarea with context %}
+
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
+<!-- {% block head %}{% endblock %} -->
+{% block h1 %}{{ title }}{% endblock %} {% block content %}
+<!-- Content Row -->
+<div class="row">
+  <form action="/new-project" method="post" class="w-50 ml-3">
+    {% set error_name = session['errors']['name'] is defined %}
+
+    <div class="form-group">
+    {{ form_input(name='name', label=_("Project's name"), placeholder=_('e.g. Risk detection'), required=True)}}
+    </div>
+
+    <div class="form-group">
+        {{ form_input(name='members', label=_("Members"), placeholder=_('e.g. Alice and Bob'))}}
+    </div>
+
+    <div class="form-group">
+        {{ form_textarea(name='desc', label=_("Description"), rows=3) }}
+      <!-- <label for="desc">{{ _("Description") }}</label>
+      <textarea name="desc" class="form-control" id="desc" rows="3" {% if session['previous'] is defined %}value="{{ session['previous']['desc'] }}"{% endif %}></textarea> -->
+    </div>
+
+    <button class="btn btn-primary" type="submit">Create new project</button>
+  </form>
+</div>
+{% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+<!-- {% block scripts %}{% endblock %} -->

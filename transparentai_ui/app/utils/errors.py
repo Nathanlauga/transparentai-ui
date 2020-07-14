@@ -18,7 +18,7 @@ def get_errors():
         'ModelPathNoPredictFunction': _('The model has no predict function.'),
         'ModelFileTypeNotValid': _('Model file type is not a valid one, please use one of the following : pickle or joblib'),
         'DatasetNameNotSet': _('The name of the dataset is not set'),
-        'DatasetNameAlreadyUsed': _('The model dataset is already used.'),
+        'DatasetNameAlreadyUsed': _('This dataset name is already used.'),
         'DatasetPathNotExists': _('The dataset path is not pointing to a file.'),
         'DatasetPathExtension': _('The dataset extension is not valid.'),
         'DatasetPathCantOpen': _('Impossible to open the dataset file. Check that you can open your file with an other application.'),
@@ -28,6 +28,9 @@ def get_errors():
         'ModelDatasetNoModelColumns': _('The model columns are not set.'),
         'ModelDatasetModelColumnsNotValid': _('The model columns does not match with the loaded model please use the same number of features.'),
         'ModelDatasetNoModel': _('You need to use a valid model before linking it with a Dataset'),
-    }
+        'ProjectNameNotSet': _('The name of the project is not set.'),
+        'ProjectNameAlreadyUsed': _('This project name is already used.'),
+        'ProjectDatasetNameNotValid': _('This Dataset does not exist in the database.'),
+     }
 
     return errors_dict

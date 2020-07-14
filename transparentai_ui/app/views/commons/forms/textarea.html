@@ -1,0 +1,23 @@
+{% macro form_textarea(name, label, rows, placeholder='', required=False) -%} {%
+set is_not_valid = session['errors'][name] is defined %}
+
+<label for="name">{{ label }}</label>
+<textarea
+  name="{{ name }}"
+  class="form-control {% if is_not_valid %}is-invalid{% endif %}"
+  id="{{ name }}"
+  rows="{{ rows }}"
+  placeholder="{{ placeholder }}"
+  {%
+  if
+  required
+  %}required{%
+  endif
+  %}
+>
+{% if previous is defined %}{{ previous[name] }}{% endif %}
+</textarea>
+<div class="invalid-feedback">
+  {{ session['errors'][name] }}
+</div>
+{%- endmacro %}

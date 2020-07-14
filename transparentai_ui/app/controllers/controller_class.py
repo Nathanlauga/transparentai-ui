@@ -68,7 +68,6 @@ class Controller():
         }
 
         return all_instances
-        # return render_template("components/%s/index.html" % self.route, **args)
 
     def get_instance(self, name):
         """
@@ -78,7 +77,6 @@ class Controller():
         if type(instance) != self.Component:
             set_session_var('errors', str(instance))
             return None
-            # return redirect(url_for('%s.index' % self.route))
 
         check_if_session_var_exists('errors')
         check_if_session_var_exists('success')
@@ -89,7 +87,6 @@ class Controller():
         }
 
         return instance
-        # return render_template("components/%s/instance.html" % self.route, **args)
 
     def create(self):
         """Create a dataset based on POST args
@@ -97,9 +94,9 @@ class Controller():
         errors, data = self.format_and_control(request.form, create=True)
 
         if len(errors) > 0:
-            set_session_var('errors', str(errors))
+            set_session_var('errors', dict(errors))
+            set_session_var('previous', request.form)
             return None
-            # return redirect(url_for('%s.index' % self.route))
 
         # Create object
         instance = self.Component(**data)
@@ -117,9 +114,6 @@ class Controller():
 
         return instance
 
-        # return redirect(url_for('%s.index' % self.route))
-
-
     def update(self, name):
         """Update a dataset based on PUT args
         """
@@ -128,20 +122,17 @@ class Controller():
         if type(instance) != self.Component:
             set_session_var('errors', str(instance))
             return None
-            # return redirect(url_for('%s.index' % self.route))
 
         errors, data = self.format_and_control(request.form)
 
         if len(errors) > 0:
             set_session_var('errors', str(errors))
             return None
-            # return redirect(url_for('%s.get_instance' % self.route, name=name))
 
         data = get_only_updated_values(instance, data)
 
         if len(data) == 0:
             return None
-            # return redirect(url_for('%s.get_instance' % self.route, name=name))
 
         res = update_in_db(instance, data)
 
@@ -154,7 +145,6 @@ class Controller():
             self.module_fn(instance, data)
 
         return instance
-        # return redirect(url_for('%s.get_instance' % self.route, name=name))
 
     def delete(self, name):
         """Drop a dataset based on DELETE args
@@ -164,7 +154,6 @@ class Controller():
         if type(instance) != self.Component:
             set_session_var('errors', str(instance))
             return None
-            # return redirect(url_for('%s.index' % self.route))
 
         res = delete_in_db(instance)
 
@@ -174,5 +163,3 @@ class Controller():
             set_session_var('success', res)
 
         return True
-        # return redirect(url_for('%s.index' % self.route))
-

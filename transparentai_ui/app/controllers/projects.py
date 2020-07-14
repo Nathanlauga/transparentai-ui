@@ -1,9 +1,11 @@
 from flask import request, render_template, redirect, url_for, session, jsonify
+from flask_babel import _
 import os.path
 import pandas as pd
 
 from ..models import Project
 from .services.projects import format_project, control_project
+from .services.commons import get_header_attributes
 from .controller_class import Controller
 
 from ..utils import add_in_db, exists_in_db
@@ -15,8 +17,11 @@ project_controller = Controller(component=Project,
 
 
 def index():
+    title = _('Projects')
+    header = get_header_attributes()
     projects = project_controller.index()
-    return render_template("components/projects/index.html", session=session, instances=projects)
+
+    return render_template("projects/index.html", title=title, session=session, projects=projects, header=header)
 
 
 def get_all_instances_json():
@@ -25,11 +30,29 @@ def get_all_instances_json():
     return jsonify(projects)
 
 
+def new():
+    title = _('Create a new project')
+    header = get_header_attributes()
+    previous = request.form
+
+    if request.method == 'POST':
+        project = project_controller.create()
+        if project is not None:
+            return redirect(url_for('projects.get_instance', name=project.name))
+
+    return render_template("projects/new.html", title=title, session=session, header=header, previous=previous)
+
+
 def get_instance(name):
     project = project_controller.get_instance(name)
     if project is None:
         return redirect(url_for('projects.index'))
-    return render_template("components/projects/instance.html", session=session, instance=project)
+
+    title = name
+    header = get_header_attributes()
+    header['current_project'] = name
+
+    return render_template("projects/instance.html", session=session, instance=project, header=header, title=title)
 
 
 def get_instance_json(name):
@@ -65,5 +88,5 @@ def post_instance(name):
         return update(name)
     elif method == 'DELETE':
         return delete(name)
-    
+
     return redirect(url_for('projects.get_instance', name=name))

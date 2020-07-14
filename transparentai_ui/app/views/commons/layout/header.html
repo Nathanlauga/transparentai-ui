@@ -3,18 +3,25 @@
 
     <!-- Topbar Search -->
     <div class="dropdown" id="searchProject">
-      <button class="btn btn-outline-primary dropdown-toggle text-left" type="button" data-toggle="dropdown">Select a project
+      <button class="btn btn-outline-primary dropdown-toggle text-left" type="button" data-toggle="dropdown">
+        {% if  header['current_project'] is defined and header['current_project']|length %}
+          {{ header['current_project'] }}
+        {% else %}   
+          {{ _('Select a project') }}
+        {% endif %}
       <span class="caret"></span></button>
+      {% if  header['projects'] is defined and header['projects']|length %}
       <ul class="dropdown-menu">
         <input class="form-control" id="projectSelect" type="text" placeholder="Search..">
-        <li><a href="#">Project 1</a></li>
-        <li><a href="#">Project 2</a></li>
-        <li><a href="#">Project 3</a></li>
+        {% for project in header['projects'] %}
+        <li><a href="/projects/{{ project.name }}">{{ project.name }}</a></li>
+        {% endfor %}
       </ul>
+      {% endif %}
     </div>
 
     <div class="ml-3">
-      <a href="nouveauprojet.html" class="btn btn-primary">
+      <a href="/new-project" class="btn btn-primary">
         <i class="fa fa-plus"></i><span class="bot-line"></span>
       </a>
     </div>
@@ -25,7 +32,7 @@
       <div class="topbar-divider d-none d-sm-block"></div>
 
       <li class="nav-item mr-auto d-sm-block">
-        <a role="btn" href="#" class="mx-2 d-flex h-100" rel="fr">
+        <a role="btn" href="?lang=fr" class="mx-2 d-flex h-100" rel="fr">
           <span class="align-self-center">
             <img height="25" src="static/images/icon/french-flag.svg" alt="France" />
           </span>
@@ -33,7 +40,7 @@
       </li>
 
       <li class="nav-item mr-auto d-sm-block">
-        <a role="btn" href="#" class="mx-2 d-flex h-100" rel="fr">
+        <a role="btn" href="?lang=en" class="mx-2 d-flex h-100" rel="fr">
           <span class="align-self-center">
             <img height="25" src="static/images/icon/en-flag.svg" alt="English" />
           </span>

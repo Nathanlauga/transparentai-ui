@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% include 'commons/head.html' %}
+    {% include 'commons/layout/head.html' %}
   </head>
   <body id="page-top">
     <div id="wrapper">
-      {% include 'commons/sidebar.html' %}
+      {% include 'commons/layout/sidebar.html' %}
 
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
         <div id="content">
-          {% include 'commons/header.html' %}
+          {% include 'commons/layout/header.html' %}
 
           <!-- Begin Page Content -->
           <div class="container-fluid">
@@ -34,7 +34,7 @@
         </div>
         <!-- End of Main Content -->
 
-        {% include 'commons/footer.html' %}
+        {% include 'commons/layout/footer.html' %}
       </div>
       <!-- End of Content Wrapper -->
     </div>
@@ -45,6 +45,6 @@
       <i class="fas fa-angle-up"></i>
     </a>
 
-    {% include 'commons/scripts.html' %}
+    {% include 'commons/layout/scripts.html' %}
   </body>
 </html>

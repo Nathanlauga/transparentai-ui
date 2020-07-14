@@ -17,12 +17,17 @@ from . import projects
 
 app.add_url_rule('/', view_func=index, methods=['GET', 'POST'])
 
+# Temporary route for development
 app.add_url_rule('/temp', view_func=temp, methods=['GET', 'POST'])
 
 
-# Projects
+# /projects routes
 app.add_url_rule('/projects', endpoint='projects.index',
                  view_func=projects.index, methods=['GET'])
+app.add_url_rule('/projects/', endpoint='projects.index.bis',
+                 view_func=projects.index, methods=['GET'])
+app.add_url_rule('/new-project', endpoint='projects.new',
+                 view_func=projects.new, methods=['GET','POST'])
 app.add_url_rule('/projects', endpoint='projects.create',
                  view_func=projects.create, methods=['POST'])
 app.add_url_rule('/projects/<name>', endpoint='projects.get_instance',
@@ -43,6 +48,8 @@ app.add_url_rule('/api/projects/<name>', endpoint='api.projects.get_instance',
 # Datasets
 app.add_url_rule('/datasets', endpoint='datasets.index',
                  view_func=datasets.index, methods=['GET'])
+app.add_url_rule('/datasets/', endpoint='datasets.index.bis',
+                 view_func=datasets.index, methods=['GET'])
 app.add_url_rule('/datasets', endpoint='datasets.create',
                  view_func=datasets.create, methods=['POST'])
 app.add_url_rule('/datasets/<name>', endpoint='datasets.get_instance',
@@ -61,6 +68,8 @@ app.add_url_rule('/api/datasets/<name>', endpoint='api.datasets.get_instance',
 
 # Models
 app.add_url_rule('/models', endpoint='models.index',
+                 view_func=models.index, methods=['GET'])
+app.add_url_rule('/models/', endpoint='models.index.bis',
                  view_func=models.index, methods=['GET'])
 app.add_url_rule('/models', endpoint='models.create',
                  view_func=models.create, methods=['POST'])
