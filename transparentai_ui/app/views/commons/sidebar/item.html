@@ -1,0 +1,8 @@
+{% macro sidebar_item(name, href, fa, disabled=False) -%}
+<li class="nav-item">
+  <a class="nav-link btn {% if disabled %}disabled{% endif %}" href="{{ href }}">
+    <i class="fas fa-fw fa-{{ fa }}"></i>
+    <span>{{ name }}</span></a
+  >
+</li>
+{%- endmacro %}

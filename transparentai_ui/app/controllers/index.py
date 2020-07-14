@@ -8,4 +8,4 @@ def index():
 
 
 def temp():
-    return render_template("template.html", session=session)
+    return render_template("test.html", session=session)

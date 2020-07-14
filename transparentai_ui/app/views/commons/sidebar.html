@@ -1,0 +1,69 @@
+{% from "commons/sidebar/item.html" import sidebar_item with context %}
+{% block sidebar %}
+<!-- Sidebar -->
+<ul
+  class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+  id="accordionSidebar"
+>
+  <!-- Sidebar - Brand -->
+  <a
+    class="sidebar-brand d-flex align-items-center justify-content-center"
+    href="index.html"
+  >
+    <div class="sidebar-brand-icon">
+      <i class="fas fa-balance-scale"></i>
+    </div>
+    <div class="sidebar-brand-text mx-3">TransparentAI</div>
+  </a>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider my-0" />
+
+  <!-- Nav Item - Dashboard -->
+  {{ sidebar_item(name='Documentation', href='documentation', fa='book', disabled=False) }}
+
+  <!-- Divider -->
+  <hr class="sidebar-divider" />
+
+  <!-- Heading -->
+  <div class="sidebar-heading">
+    Composants de l'IA
+  </div>
+
+  <!-- Datasets -->
+  {{ sidebar_item(name='Données', href='#datasets', fa='database', disabled=True) }}
+  <!-- Models -->
+  {{ sidebar_item(name='Modèles', href='#models', fa='share-alt', disabled=True) }}
+
+  <!-- Divider -->
+  <hr class="sidebar-divider" />
+
+  <div class="sidebar-heading">
+    Evalutation de l'IA
+  </div>
+  <!-- Cadrage -->
+  {{ sidebar_item(name='Cadrage', href='#frame', fa='cubes', disabled=True) }}
+  <!-- Validation -->
+  {{ sidebar_item(name='Validation', href='#validation', fa='check', disabled=True) }}
+  <!-- Sécurité -->
+  {{ sidebar_item(name='Sécurité', href='#security', fa='shield-alt', disabled=True) }}
+  <!-- Suivi -->
+  {{ sidebar_item(name='Suivi', href='#monitoring', fa='video', disabled=True) }}
+
+  <!-- Divider -->
+  <hr class="sidebar-divider" />
+
+  <!-- Synthèse -->
+  {{ sidebar_item(name='Synthèse', href='#dashboard', fa='tachometer-alt', disabled=True) }}
+
+  <!-- Divider -->
+  <hr class="sidebar-divider d-none d-md-block" />
+
+  <!-- Sidebar Toggler (Sidebar) -->
+  <div class="text-center d-none d-md-inline">
+    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+  </div>
+</ul>
+<!-- End of Sidebar -->
+
+{% endblock %}

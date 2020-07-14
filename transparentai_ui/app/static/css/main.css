@@ -2377,9 +2377,9 @@ fieldset:disabled a.btn {
 }
 
 .btn-primary:hover {
-  color: #fff;
-  background-color: #2e59d9;
-  border-color: #2653d4;
+  color: #66327A;
+  background-color: #fff;
+  border-color: #66327A;
 }
 
 .btn-primary:focus, .btn-primary.focus {
@@ -10079,7 +10079,7 @@ a:focus {
 
 .topbar .topbar-divider {
   width: 0;
-  border-right: 1px solid #D60109;
+  border-right: 1px solid #66327A;
   height: calc(4.375rem - 2rem);
   margin: auto 1rem;
 }
