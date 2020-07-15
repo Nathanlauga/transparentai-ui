@@ -1,12 +1,83 @@
-{% extends "commons/layout.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
-{% block h1 %}{{ title }}{% endblock %}
-
-{% block content %}
+{% block h1 %}{{ title }}{% endblock %} {% block content %}
 <!-- Content Row -->
 <div class="row">
-    
+  <div class="card shadow mb-4 w-90 mx-auto">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        {{ _('Projects list') }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered table-list"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th>{{ _('Name') }}</th>
+              <th>{{ _('Members') }}</th>
+              <th>{{ _('Creation date') }}</th>
+              <th>{{ _('Evaluation') }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for project in projects %}
+            <tr>
+              <td class="w-20">
+                <a href="/projects/{{ project.name }}">{{ project.name }}</a>
+              </td>
+              <td class="w-20">{{ ', '.join(project.members) }}</td>
+              <td class="w-20">{{ project.created_at }}</td>
+              <td class="w-20">
+                <div class="row no-gutters align-items-center">
+                  <div class="col-auto">
+                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                      {{ 75 }}%
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="progress progress-sm mr-2">
+                      <div
+                        class="progress-bar bg-info"
+                        role="progressbar"
+                        style="width: {{ 75 }}%;"
+                        aria-valuenow="{{ 75 }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="w-20 text-right">
+                <a href="/edit-project/{{ project.name }}" class="nounderline">
+                  <button class="btn bg-info">
+                    <i class="fa fa-edit text-white"></i>
+                  </button>
+                </a>
+                <form
+                  class="d-inline"
+                  action="/projects/{{project.name}}"
+                  method="post"
+                >
+                  <input type="hidden" name="_method" value="DELETE" />
+                  <button type="submit" class="btn bg-danger">
+                    <i class="fa fa-trash text-white"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 

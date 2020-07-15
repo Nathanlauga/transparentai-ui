@@ -43,6 +43,25 @@ def new():
     return render_template("projects/new.html", title=title, session=session, header=header, previous=previous)
 
 
+def edit(name):
+    title = _('Edit ') + name
+    header = get_header_attributes()
+
+    project = project_controller.get_instance(name)
+    previous = project.to_dict()
+
+    # Temporary until handle list in form
+    previous['members'] = ', '.join(previous['members'])
+
+    if request.method == 'POST':
+        previous = request.form
+        project = project_controller.update(name)
+        if project is not None:
+            return redirect(url_for('projects.get_instance', name=project.name))
+
+    return render_template("projects/edit.html", title=title, session=session, header=header, previous=previous, project=project)
+
+
 def get_instance(name):
     project = project_controller.get_instance(name)
     if project is None:
@@ -52,7 +71,7 @@ def get_instance(name):
     header = get_header_attributes()
     header['current_project'] = name
 
-    return render_template("projects/instance.html", session=session, instance=project, header=header, title=title)
+    return render_template("projects/instance.html", session=session, project=project, header=header, title=title)
 
 
 def get_instance_json(name):

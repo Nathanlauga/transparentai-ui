@@ -1,13 +1,34 @@
-{% extends "commons/layout.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
-{% block h1 %}{{ title }}{% endblock %}
-
-{% block content %}
-<!-- Content Row -->
-<div class="row">
-    
+{% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
+<div class="d-inline-block">
+  <a href="/edit-project/{{ project.name }}" class="nounderline">
+    <button class="btn bg-info"><i class="fa fa-edit text-white"></i></button>
+  </a>
+  <form class="d-inline-block" action="/projects/{{project.name}}" method="post">
+    <input type="hidden" name="_method" value="DELETE" />
+    <button type="submit" class="btn bg-danger">
+      <i class="fa fa-trash text-white"></i>
+    </button>
+  </form>
 </div>
+{% endblock %} {% block content %}
+<!-- Content Row -->
+
+<div class="row">
+  <div class="col">
+    <strong>Created at:</strong> {{ project.created_at.strftime('%Y-%m-%d')}}
+  </div>
+  <div class="col">
+    <strong>Members:</strong> {{ ', '.join(project.members) }}
+  </div>
+  <div class="col">
+    {% if project.desc is defined and project.desc|length %}
+    <p class="mb-1"><strong>Description:</strong> {{ project.desc }}</p>
+    {% endif %}
+  </div>
+</div>
+<hr />
 {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->

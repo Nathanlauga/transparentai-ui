@@ -7,7 +7,6 @@
 <!-- Content Row -->
 <div class="row">
   <form action="/new-project" method="post" class="w-50 ml-3">
-    {% set error_name = session['errors']['name'] is defined %}
 
     <div class="form-group">
     {{ form_input(name='name', label=_("Project's name"), placeholder=_('e.g. Risk detection'), required=True)}}

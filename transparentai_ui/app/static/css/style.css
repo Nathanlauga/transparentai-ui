@@ -1,3 +1,28 @@
 #searchProject .dropdown-toggle::after {
-    margin-left:10vh;
+  margin-left: 10vh;
+}
+.w-90 {
+  width: 90% !important;
+}
+.w-20 {
+  width: 20% !important;
+}
+/* #dataTable_wrapper label {
+    width: 100% !important;
+} */
+.table-list {
+  border: none;
+}
+
+.table-list thead {
+  background-color: #66327a;
+  color: #fff;
+}
+
+.table-list th,
+.table-list td {
+  border: none;
+}
+.nounderline {
+  text-decoration: none !important;
 }

@@ -1,6 +1,4 @@
 {% from "commons/layout/sidebar/item.html" import sidebar_item with context %}
-{% block sidebar %}
-
 {% set not_in_project =  (header['current_project'] is not defined) or (header['current_project']|length == 0) %}
 
 <!-- Sidebar -->
@@ -67,5 +65,3 @@
   </div>
 </ul>
 <!-- End of Sidebar -->
-
-{% endblock %}

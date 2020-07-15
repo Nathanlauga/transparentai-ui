@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% include 'commons/layout/head.html' %}
+    {% include 'commons/layout/head.html' %} {% block head %} {% endblock %}
   </head>
   <body id="page-top">
     <div id="wrapper">
-      {% include 'commons/layout/sidebar.html' %}
+      {% include 'commons/layout/sidebar.html' %} {% block sidebar %} {%
+      endblock %}
 
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
@@ -19,22 +20,25 @@
             <div
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-              <h1 class="h2 mb-0 text-gray-800">{% block h1 %}{% endblock %}</h1>
+              <h1 class="h2 mb-0 text-gray-800">
+                {% block h1 %}{% endblock %}
+              </h1>
+              {% block h1_side %}{% endblock %}
             </div>
-
 
             {% block content %}
             <!-- Content Row -->
             <!-- <div class="row"></div> -->
             {% endblock %}
-
-
           </div>
           <!-- /.container-fluid -->
         </div>
         <!-- End of Main Content -->
 
-        {% include 'commons/layout/footer.html' %}
+        <footer class="sticky-footer bg-white">
+          {% include 'commons/layout/footer.html' %} {% block footer %} {%
+          endblock %}
+        </footer>
       </div>
       <!-- End of Content Wrapper -->
     </div>
@@ -44,7 +48,7 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-
-    {% include 'commons/layout/scripts.html' %}
+    {% include 'commons/layout/scripts.html' %} {% block scripts %} {% endblock
+    %}
   </body>
 </html>

@@ -1,0 +1,25 @@
+{% from "commons/forms/input.html" import form_input with context %}
+{% from "commons/forms/textarea.html" import form_textarea with context %}
+
+{% extends "commons/layout.html" %} {% block title %}Edit {{ project.name }}{% endblock %}
+<!-- {% block head %}{% endblock %} -->
+{% block h1 %}Edit {{ project.name }}{% endblock %} {% block content %}
+<!-- Content Row -->
+<div class="row">
+  <form action="/edit-project/{{project.name}}" method="post" class="w-50 ml-3">
+
+    <div class="form-group">
+        {{ form_input(name='members', label=_("Members"), placeholder=_('e.g. Alice and Bob'))}}
+    </div>
+
+    <div class="form-group">
+        {{ form_textarea(name='desc', label=_("Description"), rows=3) }}
+    </div>
+
+    <button class="btn btn-primary" type="submit">Update project</button>
+  </form>
+</div>
+{% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+<!-- {% block scripts %}{% endblock %} -->

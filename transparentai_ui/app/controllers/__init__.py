@@ -28,6 +28,8 @@ app.add_url_rule('/projects/', endpoint='projects.index.bis',
                  view_func=projects.index, methods=['GET'])
 app.add_url_rule('/new-project', endpoint='projects.new',
                  view_func=projects.new, methods=['GET','POST'])
+app.add_url_rule('/edit-project/<name>', endpoint='projects.edit',
+                 view_func=projects.edit, methods=['GET','POST'])
 app.add_url_rule('/projects', endpoint='projects.create',
                  view_func=projects.create, methods=['POST'])
 app.add_url_rule('/projects/<name>', endpoint='projects.get_instance',
