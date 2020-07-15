@@ -26,3 +26,10 @@
 .nounderline {
   text-decoration: none !important;
 }
+.card-hover-primary:hover {
+    border-left: 0.25rem solid #66327a !important;
+    /* background-color: #fff !important; */
+}
+.card-hover-primary:hover div, .card-hover-primary:hover i{
+    color: #66327a !important;
+}

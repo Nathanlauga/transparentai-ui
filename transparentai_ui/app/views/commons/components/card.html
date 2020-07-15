@@ -1,0 +1,36 @@
+{% macro card(text, href=None, fa=None, subtext=None, color='gray-500',
+border_color='light', bg='None', disable=False) -%}
+
+{% if not disable and href is not none %}
+<a href="{{ href }}" class="nounderline">
+  {% endif %}
+<div
+  class="card 
+        {% if not disable and href is not none %}card-hover-primary{% endif %} 
+        border-left-{{ border_color }} shadow h-100 py-2 
+        {% if bg is not none %} bg-{{ bg }} {% endif %}"
+>
+    <div class="card-body">
+      <div class="row no-gutters align-items-center">
+        <div class="col mr-2">
+          <div class="h5 mb-0 font-weight-bold text-{{ color }}">
+            {{ text }}
+          </div>
+          {% if subtext is not none %}
+          <div
+            class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1"
+          >
+            {{ subtext }}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-auto">
+          <i class="fas fa-{{ fa }} fa-2x text-{{ color }}"></i>
+        </div>
+      </div>
+    </div>
+</div>
+{% if not disable and href is not none %}
+</a>
+{% endif %}
+{%- endmacro %}
