@@ -2,6 +2,7 @@
  <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
     <!-- Topbar Search -->
+    {% if header['projects']|length > 0 %}
     <div class="dropdown" id="searchProject">
       <button class="btn btn-outline-primary dropdown-toggle text-left" type="button" data-toggle="dropdown">
         {% if  header['current_project'] is defined and header['current_project']|length %}
@@ -19,10 +20,11 @@
       </ul>
       {% endif %}
     </div>
+    {% endif %}
 
     <div class="ml-3">
       <a href="/new-project" class="btn btn-primary">
-        <i class="fa fa-plus"></i><span class="bot-line"></span>
+        <i class="fa fa-plus"></i><span class="bot-line">{% if header['projects']|length == 0 %} New project {% endif %}</span>
       </a>
     </div>
 
@@ -34,7 +36,7 @@
       <li class="nav-item mr-auto d-sm-block">
         <a role="btn" href="?lang=fr" class="mx-2 d-flex h-100" rel="fr">
           <span class="align-self-center">
-            <img height="25" src="static/images/icon/french-flag.svg" alt="France" />
+            <img height="25" src="{{ url_for('static', filename='images/icon/french-flag.svg') }}" alt="France" />
           </span>
         </a>
       </li>
@@ -42,7 +44,7 @@
       <li class="nav-item mr-auto d-sm-block">
         <a role="btn" href="?lang=en" class="mx-2 d-flex h-100" rel="fr">
           <span class="align-self-center">
-            <img height="25" src="static/images/icon/en-flag.svg" alt="English" />
+            <img height="25" src="{{ url_for('static', filename='images/icon/en-flag.svg') }}" alt="English" />
           </span>
         </a>
       </li>

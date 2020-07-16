@@ -15,6 +15,12 @@
 <!-- <script src="{{ url_for('static', filename='js/demo/chart-area-demo.js') }}"></script>
   <script src="{{ url_for('static', filename='js/demo/chart-pie-demo.js') }}"></script> -->
 
+<script src="{{ url_for('static', filename='vendor/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-*.min.js') }}"></script> -->
+<script>
+  $("select").selectpicker();
+</script>
+
 <script>
   $(document).ready(function () {
     $("#projectSelect").on("keyup", function () {

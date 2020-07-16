@@ -26,6 +26,11 @@
               {% block h1_side %}{% endblock %}
             </div>
 
+            {% if session['success'] is defined %}
+            <div class="alert alert-success" role="alert">
+              {{ session['success'] }}
+            </div>
+             {% endif %}
             {% block content %}
             <!-- Content Row -->
             <!-- <div class="row"></div> -->

@@ -30,10 +30,10 @@ class Controller():
         self.control_fn = control_fn
         self.module_fn = module_fn
 
-    def format_and_control(self, form_data, create=False):
+    def format_and_control(self, form_data, create=False, obj=None):
         """
         """
-        errors = self.control_fn(form_data, create)
+        errors = self.control_fn(form_data, create, obj=obj)
 
         if len(errors) > 0:
             return errors, None
@@ -95,7 +95,6 @@ class Controller():
 
         if len(errors) > 0:
             set_session_var('errors', dict(errors))
-            set_session_var('previous', request.form)
             return None
 
         # Create object
@@ -123,10 +122,10 @@ class Controller():
             set_session_var('errors', str(instance))
             return None
 
-        errors, data = self.format_and_control(request.form)
+        errors, data = self.format_and_control(request.form, obj=instance)
 
         if len(errors) > 0:
-            set_session_var('errors', str(errors))
+            set_session_var('errors', dict(errors))
             return None
 
         data = get_only_updated_values(instance, data)

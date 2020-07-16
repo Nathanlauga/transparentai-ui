@@ -1,0 +1,32 @@
+{% macro input_search_list(name, label, id, list, value=None, placeholder="") -%}
+
+{% if 'errors' in session %}
+{% set is_not_valid = session['errors'][name] is defined %}
+{% else %}
+{% set is_not_valid = False %}
+{% endif %}
+
+<div class="dropdown" id="searchColumns">
+    <label for="{{ name }}">{{ label }}</label>
+    <input name="{{ name }}" autocomplete="off" class="form-control dropdown-toggle text-left {% if is_not_valid %}is-invalid{% endif %}" id="{{ id }}" data-toggle="dropdown"
+      {% if value is defined and value|length %}
+        value="{{ value }}"
+      {% else %}   
+        placeholder="{{ placeholder }}"
+      {% endif %}
+    />
+    <div class="invalid-feedback">
+    {% if 'errors' in session %}
+    {{ session['errors'][name] }}
+    {% endif %}
+    </div>
+    <span class="caret"></span></button>
+    {% if  list is defined and list|length %}
+    <ul class="dropdown-menu">
+      {% for elem in list %}
+      <li class="w-100"><a class="w-100 d-inline-block nounderline" onclick="updateInputValue(this, '#{{ id }}')" href="#">{{ elem }}</a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+{%- endmacro %}

@@ -1,11 +1,12 @@
 import pandas as pd
 import os.path
 
-from ...models import Dataset
+from ...models import Project, Dataset
 from ...utils import key_in_dict_not_empty, is_empty
 
 from ...utils.errors import get_errors
 
+from ...utils import drop_dupplicates_values
 from ...utils.components import format_str_strip, clean_errors, init_dataset_module_db
 from ...utils.file import get_file_extension, read_dataset_file
 from ...utils.db import select_from_db, exists_in_db, update_in_db
@@ -69,6 +70,20 @@ def get_columns_from_file(path):
         return None
     return list(data.columns.values)
 
+def get_project_from_name(form_data):
+    """
+    """
+    if not key_in_dict_not_empty('project_name', form_data):
+        return None
+
+    project_name = form_data['project_name']
+
+    project = select_from_db(Project, 'name', project_name)
+    if type(project) == Project:
+        return project
+
+    return None
+
 
 # ======= FORMAT DATASET FUNCTIONS ======= #
 
@@ -97,15 +112,17 @@ def format_dataset_columns(form_data, key):
     if key not in form_data:
         return ''
 
-    col_names = form_data[key]
+    col_names = form_data.getlist(key)
+    if len(col_names) == 1:
+        col_names = col_names[0] 
 
     if type(col_names) == str:
         if col_names.startswith('[') & col_names.endswith(']'):
             tmp = col_names[1:-1]
             tmp = tmp.split("'")
-            return list(set([e for e in tmp if e.strip() not in ['', ',']]))
+            return drop_dupplicates_values([e for e in tmp if e.strip() not in ['', ',']])
     else:
-        col_names = list(set(col_names))
+        col_names = drop_dupplicates_values(col_names)
 
     return col_names
 
@@ -160,7 +177,7 @@ def control_dataset_path(form_data):
     path = format_dataset_path(form_data)
 
     if path == '':
-        return None
+        return errors_dict['DatasetPathNotExists']
 
     # Check if path is valid
     if not os.path.exists(path):
@@ -198,7 +215,7 @@ def control_dataset_columns(form_data, key, columns):
     return None
 
 
-def control_dataset(form_data, create=False):
+def control_dataset(form_data, create=False, obj=None):
     """
     """
     errors = dict()
@@ -206,12 +223,15 @@ def control_dataset(form_data, create=False):
     if create:
         errors['name'] = control_dataset_name(form_data)
 
-    errors['path'] = control_dataset_path(form_data)
-    path = format_dataset_path(form_data)
+    if key_in_dict_not_empty('path', form_data):
+        errors['path'] = control_dataset_path(form_data)
+        path = format_dataset_path(form_data)
+    else:
+        path = obj.path
 
-    if (path != '') & (errors['path'] is None):
-        columns = get_columns_from_file(path)
+    columns = get_columns_from_file(path)
 
+    if path != '':
         errors['target'] = control_dataset_columns(
             form_data, 'target', columns)
         errors['score'] = control_dataset_columns(form_data, 'score', columns)
@@ -234,7 +254,10 @@ def format_dataset(form_data, create=False):
     if create:
         data['name'] = format_dataset_name(form_data)
 
-    data['path'] = format_dataset_path(form_data)
+    if key_in_dict_not_empty('path', form_data):
+        data['path'] = format_dataset_path(form_data)
+        data['columns'] = get_columns_from_file(form_data['path'])
+
     data['target'] = format_dataset_columns(form_data, key='target')
     data['score'] = format_dataset_columns(form_data, key='score')
     data['model_type'] = format_dataset_model_type(form_data)
@@ -242,6 +265,13 @@ def format_dataset(form_data, create=False):
         form_data, key='protected_attr')
     data['model_columns'] = format_dataset_columns(
         form_data, key='model_columns')
+    
+    if key_in_dict_not_empty('project_name', form_data):
+        project = get_project_from_name(form_data)
+
+        if project is not None:
+            data['project'] = project
+            data['project_id'] = project.id
 
     return data
 
@@ -334,7 +364,6 @@ def load_dataset_modules_in_background(dataset, data):
 
     elif dataset.path != '':
         df = load_dataset_from_path(dataset.path)
-        set_dataset_length(dataset, df)
 
         load_performance_module(df, dataset=dataset)
         load_bias_module(df, dataset=dataset)

@@ -1,4 +1,5 @@
 import json
+from ..utils import drop_dupplicates_values
 
 def get_request_attribute(form_data, key, default=''):
     """
@@ -24,7 +25,7 @@ def list_property(attr, unique=False):
     format_list = [str(x).replace('//,', ';')
                    for x in attr.split(';') if str(x) != '']
     if unique:
-        return list(set(format_list))
+        return drop_dupplicates_values(format_list)
     return format_list
 
 

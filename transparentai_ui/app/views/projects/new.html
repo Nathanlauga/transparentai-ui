@@ -18,8 +18,6 @@
 
     <div class="form-group">
         {{ form_textarea(name='desc', label=_("Description"), rows=3) }}
-      <!-- <label for="desc">{{ _("Description") }}</label>
-      <textarea name="desc" class="form-control" id="desc" rows="3" {% if session['previous'] is defined %}value="{{ session['previous']['desc'] }}"{% endif %}></textarea> -->
     </div>
 
     <button class="btn btn-primary" type="submit">Create new project</button>

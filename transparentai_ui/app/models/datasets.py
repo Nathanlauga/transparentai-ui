@@ -11,6 +11,7 @@ class Dataset(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     path = db.Column(db.String, nullable=False)
+    _columns = db.Column(db.String, default='')
     target = db.Column(db.String)
     score = db.Column(db.String)
     model_type = db.Column(db.String)
@@ -41,6 +42,7 @@ class Dataset(BaseModel):
     _default_fields = [
         "name",
         "path",
+        "columns",
         "target",
         "score",
         "model_type",
@@ -60,6 +62,15 @@ class Dataset(BaseModel):
 
     def __repr__(self):
         return '<Dataset %r>' % self.name
+
+    @property
+    def columns(self):
+        return list_property(self._columns, unique=True)
+
+    @columns.setter
+    def columns(self, value):
+        self._columns = list_property_setter(
+            self._columns, value)
 
     @property
     def protected_attr(self):

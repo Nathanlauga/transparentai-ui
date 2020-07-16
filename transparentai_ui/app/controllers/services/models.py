@@ -230,7 +230,7 @@ def control_model_dataset(form_data, model):
     return None
 
 
-def control_model(form_data, create=False):
+def control_model(form_data, create=False, obj=None):
     """
     """
     errors = dict()

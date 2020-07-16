@@ -1,0 +1,52 @@
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
+{% block head %}
+<link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+{% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block content %}
+<!-- Content Row -->
+<div class="row">
+  <div class="card shadow mb-4 w-90 mx-auto">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">{{ _('Datasets list') }}</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered table-list"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th>{{ _('Name') }}</th>
+              <th>{{ _('Creation date') }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dataset in datasets %}
+            <tr>
+              <td class="w-40">
+                <a href="/datasets/{{ dataset.name }}">{{ dataset.name }}</a>
+              </td>
+              <td class="w-40">{{ dataset.created_at }}</td>
+              <td class="w-20 text-right">
+                <a href="/edit-dataset/{{ dataset.name }}" class="nounderline">
+                <button class="btn bg-info"><i class="fa fa-edit text-white"></i></button>
+              </a>
+                <form class="d-inline" action="/datasets/{{dataset.name}}" method="post">
+                  <input type="hidden" name="_method" value="DELETE">
+                  <button type="submit" class="btn bg-danger"><i class="fa fa-trash text-white"></i></button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+<!-- {% block scripts %}{% endblock %} -->

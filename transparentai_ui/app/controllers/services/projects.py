@@ -100,7 +100,7 @@ def control_project_dataset(form_data):
     return None
 
 
-def control_project(form_data, create=False):
+def control_project(form_data, create=False, obj=None):
     """
     """
     errors = dict()

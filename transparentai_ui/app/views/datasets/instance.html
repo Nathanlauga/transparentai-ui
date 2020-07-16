@@ -1,0 +1,99 @@
+{% from "commons/forms/input.html" import form_input with context %} {% from
+"commons/forms/input_search_list.html" import input_search_list with context %}
+{% from "commons/forms/select_list.html" import select_list with context %} {%
+extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %} {%
+block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
+<div class="d-inline-block">
+  <a href="/edit-dataset/{{ dataset.name }}" class="nounderline">
+    <button class="btn bg-info"><i class="fa fa-edit text-white"></i></button>
+  </a>
+  <form
+    class="d-inline-block"
+    action="/datasets/{{dataset.name}}"
+    method="post"
+  >
+    <input type="hidden" name="_method" value="DELETE" />
+    <button type="submit" class="btn bg-danger">
+      <i class="fa fa-trash text-white"></i>
+    </button>
+  </form>
+</div>
+{% endblock %} {% block content %}
+
+<!-- Details Row -->
+<div class="row">
+  {% if dataset.project is defined %}
+  <div class="col">
+    <a href="/projects/{{ dataset.project.name }}"><strong>Project:</strong> {{ dataset.project.name }}</a>
+  </div>
+  {% endif %}
+  <div class="col">
+    <strong>Created at:</strong> {{ dataset.created_at.strftime('%Y-%m-%d')}}
+  </div>
+  <div class="col"><strong>Path:</strong> {{ dataset.path }}</div>
+</div>
+<!-- End details row -->
+<hr />
+
+<!-- Components Row -->
+<form action="/datasets/{{ dataset.name }}" method="post" class="ml-3">
+  <div class="form-row">
+    <div class="col-6 col-md">
+      <div class="form-group">
+        {{ input_search_list(name='target', label=_('Target column'),
+        id='selectTarget', list=dataset.columns, value=dataset.target,
+        placeholder=_('Select a column')) }}
+      </div>
+    </div>
+    <div class="col-6 col-md">
+      <div class="form-group">
+        {{ input_search_list(name='score', label=_('Prediction column'),
+        id='selectScore', list=dataset.columns, value=dataset.score,
+        placeholder=_('Select a column')) }}
+      </div>
+    </div>
+    <div class="col-6 col-md">
+      {{ select_list(name='protected_attr', label=_('Protected attributes'),
+      list=dataset.columns, value=dataset.protected_attr) }}
+    </div>
+    <div class="col-6 col-md">
+      {{ select_list(name='model_columns', label=_('Model columns'),
+      list=dataset.columns, value=dataset.model_columns) }}
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="col col-md-3">
+      
+      <label for="model_type">{{ _('Type of model') }}</label>
+      <select name="model_type" class="selectpicker form-control" data-selected-text-format="{{ dataset.model_type }}">
+        <option value="">None</option>
+        <option value="binary-classification" 
+        {% if dataset.model_type is defined %}{% if dataset.model_type == 'binary-classification' %}selected{% endif %}{% endif %}  %}
+          >{{ _('Binary Classification') }}</option
+        >
+        <option value="multiclass-classification"
+        {% if dataset.model_type is defined %}{% if dataset.model_type == 'multiclass-classification' %}selected{% endif %}{% endif %}  %}
+          >{{ _('Multi Classes Classification') }}</option
+        >
+        <option value="regression" {% if dataset.model_type is defined %}{% if dataset.model_type == 'regression' %}selected{% endif %}{% endif %}  %}
+        >{{ _('Regression') }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row mt-3">
+    <input type="hidden" name="_method" value="PUT" />
+    <button class="btn btn-primary" type="submit">
+      {{ _("Update dataset") }}
+    </button>
+  </div>
+</form>
+
+<div class="row">
+  
+</div>
+{% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+{% block scripts %}
+{% endblock %}

@@ -47,7 +47,7 @@
   </div>
   {% else %}
   <div class="col">
-    {{ card(text=_('Add a Dataset'), href='/new-dataset', fa='plus',
+    {{ card(text=_('Add a Dataset'), href='/projects/'+project.name+'/new-dataset', fa='plus',
     color='secondary', border_color='secondary', bg='light') }}
   </div>
   {% endif %}
@@ -72,7 +72,7 @@
   </div>
   {% else %}
   <div class="col">
-    {{ card(text=_('Add a Model'), href='/new-model', fa='plus', subtext=_('You
+    {{ card(text=_('Add a Model'), href='/projects/'+project.name+'/new-model', fa='plus', subtext=_('You
     can add the Model using the same columns refered in the Dataset.'),
     color='secondary', border_color='secondary', bg='light') }}
   </div>
