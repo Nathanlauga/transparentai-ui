@@ -47,8 +47,9 @@
   </div>
   {% else %}
   <div class="col">
-    {{ card(text=_('Add a Dataset'), href='/projects/'+project.name+'/new-dataset', fa='plus',
-    color='secondary', border_color='secondary', bg='light') }}
+    {{ card(text=_('Add a Dataset'),
+    href='/projects/'+project.name+'/new-dataset', fa='plus', color='secondary',
+    border_color='secondary', bg='light') }}
   </div>
   {% endif %}
 
@@ -72,9 +73,10 @@
   </div>
   {% else %}
   <div class="col">
-    {{ card(text=_('Add a Model'), href='/projects/'+project.name+'/new-model', fa='plus', subtext=_('You
-    can add the Model using the same columns refered in the Dataset.'),
-    color='secondary', border_color='secondary', bg='light') }}
+    {{ card(text=_('Add a Model'), href='/projects/'+project.name+'/new-model',
+    fa='plus', subtext=_('You can add the Model using the same columns refered
+    in the Dataset.'), color='secondary', border_color='secondary', bg='light')
+    }}
   </div>
   {% endif %} {% endif %}
 
@@ -92,7 +94,76 @@
   </div>
   {% endif %}
 </div>
-{% endblock %}
+<hr />
+
+<div class="d-sm-flex align-items-center mb-4">
+  <h2 class="h3 mb-0 text-gray-800">
+    <span>{{ _('AI Evaluation') }}</span>
+  </h2>
+</div>
+
+<div id="#frame" class="card shadow mb-4" style="min-height: 100vh;">
+  <!-- Card Header - Accordion -->
+  <!-- <div class="d-sm-flex align-items-center justify-content-between mb-4"> -->
+  <a
+    href="#frameCollapse"
+    class="d-block card-header py-3"
+    data-toggle="collapse"
+    role="button"
+    aria-expanded="true"
+    aria-controls="frameCollapse"
+  >
+    <div class="row">
+      <div class="col">
+        <h2 class="h3 my-auto m-0 font-weight-bold text-secondary">
+          <i class="fas fa-cubes"></i> {{ _('Frame') }}
+        </h2>
+      </div>
+      <div class="col">
+        <span class="small font-weight-bold text-secondary">
+          {{ _('Questions answered') }} <span class="float-right">4/10</span>
+        </span>
+        <div class="progress mb-4">
+          <div
+            class="progress-bar bg-warning"
+            role="progressbar"
+            style="width: 40%;"
+            aria-valuenow="40"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </a>
+  <!-- Card Content - Collapse -->
+  <div class="collapse show" id="frameCollapse">
+    <div class="card-body">
+      {% for aspect in questions['start'] %}
+      <div class="row mb-5">
+        <div class="w-100 text-bold">
+          <h6 class="text-uppercase font-weight-bold">{{ aspect.id }} - {{aspect.name}}</h6>
+        </div>
+        
+        {% for question in aspect['questions'] %}
+        
+        <form>
+          <label for="{{ aspect.id }}_{{ question.order }}">{{ question.question }}</label>
+        </form>
+        
+        {% endfor %}
+      </div>
+      <hr>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% for question in questions %}
+<div class="row">
+  {{ question }}
+</div>
+{% endfor %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
 <!-- {% block scripts %}{% endblock %} -->

@@ -1,5 +1,26 @@
 {% macro card(text, href=None, fa=None, subtext=None, color='gray-500',
-border_color='light', bg='None', disable=False) -%}
+border_color='light', bg='None', disable=False, status='') -%}
+
+{% if status == 'init' %}
+  {% set disable = True %}
+  {% set color = 'gray-500' %}
+  {% set border_color = 'light' %}
+  {% set fa = 'check' %}
+{% elif status == 'failed' %}
+  {% set color = 'danger' %}
+  {% set border_color = 'danger' %}
+  {% set fa = 'times' %}
+{% elif status == 'loading' %}
+  {% set color = 'warning' %}
+  {% set border_color = 'warning' %}
+  {% set fa = 'spinner' %}
+  {% set subtext = _('Loading...') %}
+{% elif status == 'loaded' %}
+  {% set color = 'success' %}
+  {% set border_color = 'success' %}
+  {% set fa = 'check' %}
+  {% set subtext = _('Successfully loaded.') %}
+{% endif %}
 
 {% if not disable and href is not none %}
 <a href="{{ href }}" class="nounderline">

@@ -19,7 +19,7 @@ class Project(BaseModel):
 
     # Modules
     dataset = db.relationship(
-        'Dataset', uselist=False, back_populates='project')
+        'Dataset', uselist=False, back_populates='project', cascade='save-update, merge, delete')
 
     
     _default_fields = [

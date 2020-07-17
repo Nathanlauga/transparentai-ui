@@ -1,7 +1,15 @@
 {% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
+
+{% block before_h1 %}
+{% endblock %} 
 {% block h1 %}{{ title }}{% endblock %} {% block content %}
 <!-- Content Row -->
+<div class="row">
+  <div class="alert w-100 alert-info text-center" role="alert">
+    {{ _('To access all features, you need to select or create a project.') }}
+  </div>
+</div>
 <div class="row">
   <div class="card shadow mb-4 w-90 mx-auto">
     <div class="card-header py-3">

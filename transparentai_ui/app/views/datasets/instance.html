@@ -1,7 +1,8 @@
 {% from "commons/forms/input.html" import form_input with context %} {% from
 "commons/forms/input_search_list.html" import input_search_list with context %}
-{% from "commons/forms/select_list.html" import select_list with context %} {%
-extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %} {%
+{% from "commons/forms/select_list.html" import select_list with context %} 
+{% from "commons/components/card.html" import card with context %}
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %} {%
 block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
 <div class="d-inline-block">
   <a href="/edit-dataset/{{ dataset.name }}" class="nounderline">
@@ -36,33 +37,37 @@ block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1
 <hr />
 
 <!-- Components Row -->
+<div class="row">
+  <div class="col-6">
 <form action="/datasets/{{ dataset.name }}" method="post" class="ml-3">
-  <div class="form-row">
-    <div class="col-6 col-md">
+  <div class="form-row mb-3">
+    <div class="col-12 col-md-6">
       <div class="form-group">
         {{ input_search_list(name='target', label=_('Target column'),
         id='selectTarget', list=dataset.columns, value=dataset.target,
         placeholder=_('Select a column')) }}
       </div>
     </div>
-    <div class="col-6 col-md">
+    <div class="col-12 col-md-6">
       <div class="form-group">
         {{ input_search_list(name='score', label=_('Prediction column'),
         id='selectScore', list=dataset.columns, value=dataset.score,
         placeholder=_('Select a column')) }}
       </div>
     </div>
-    <div class="col-6 col-md">
+  </div>
+  <div class="form-row mb-3">
+    <div class="col-12 col-md-6">
       {{ select_list(name='protected_attr', label=_('Protected attributes'),
       list=dataset.columns, value=dataset.protected_attr) }}
     </div>
-    <div class="col-6 col-md">
+    <div class="col-12 col-md-6">
       {{ select_list(name='model_columns', label=_('Model columns'),
       list=dataset.columns, value=dataset.model_columns) }}
     </div>
   </div>
-  <div class="form-row">
-    <div class="col col-md-3">
+  <div class="form-row mb-3">
+    <div class="col-12 col-md-6">
       
       <label for="model_type">{{ _('Type of model') }}</label>
       <select name="model_type" class="selectpicker form-control" data-selected-text-format="{{ dataset.model_type }}">
@@ -88,9 +93,39 @@ block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1
     </button>
   </div>
 </form>
+</div>
+<!-- Datasets modules cards -->
+<div class="col-6">
+  {% if dataset.module_pandas_profiling is defined %}
+  <div class="row mb-3">
+    <div class="col-12">
+      {{ card(text=_('Analyse Dataset'),
+      href='/datasets/'+dataset.name+'/analyse-dataset', status=dataset.module_pandas_profiling.status, 
+      subtext=_('It requires to have a valid file path.')) }}
+    </div>
+  </div>
+  {% endif %}
 
-<div class="row">
-  
+  {% if dataset.module_performance is defined %}
+  <div class="row mb-3">
+    <div class="col-12">
+      {{ card(text=_('Analyse AI Performance'),
+      href='/datasets/'+dataset.name+'/analyse-performance', status=dataset.module_performance.status,
+      subtext=_('It requires both target and prediction columns to be set correctly with the correct model type.')) }}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if dataset.module_bias is defined %}
+  <div class="row mb-3">
+    <div class="col-12">
+      {{ card(text=_('Analyse Bias'),
+      href='/datasets/'+dataset.name+'/analyse-bias', status=dataset.module_bias.status,
+      subtext=_('It requires both target and prediction columns to be set correctly with the correct model type and also the protected attributes.')) }}
+    </div>
+  </div>
+  {% endif %}
+  </div>
 </div>
 {% endblock %}
 

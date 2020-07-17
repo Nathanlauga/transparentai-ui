@@ -9,6 +9,7 @@ from .services.commons import get_header_attributes
 from .controller_class import Controller
 
 from ..utils import add_in_db, exists_in_db
+from ..src import get_questions
 
 project_controller = Controller(component=Project,
                                 format_fn=format_project,
@@ -71,7 +72,9 @@ def get_instance(name):
     header = get_header_attributes()
     header['current_project'] = name
 
-    return render_template("projects/instance.html", session=session, project=project, header=header, title=title)
+    questions = get_questions()
+
+    return render_template("projects/instance.html", session=session, project=project, header=header, title=title, questions=questions)
 
 
 def get_instance_json(name):

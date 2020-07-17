@@ -1,0 +1,39 @@
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
+<!-- {% block head %}{% endblock %} -->
+{% block h1 %}{{ title }}{% endblock %} {% block content %} {% if
+dataset.module_pandas_profiling is defined %}
+<!-- Details Row -->
+<div class="row">
+  <div class="col">
+    <strong>Status:</strong> {{ dataset.module_pandas_profiling.status }}
+  </div>
+  <div class="col">
+    <strong>Created at:</strong> {{
+    dataset.module_pandas_profiling.created_at.strftime('%Y-%m-%d')}}
+  </div>
+  <div class="col"></div>
+</div>
+<!-- End details row -->
+<hr />
+
+<!-- Content Row -->
+<div class="row">
+    <a
+      role="btn"
+      class="btn btn-outline-primary"
+      href="/show-report?name={{dataset.name+'.html'}}"
+      target="_blank"
+      >Voir le rapport</a
+    >
+  <a
+    role="btn"
+    class="btn btn-outline-primary"
+    href="/show-report?name={{dataset.name+'.html'}}"
+    download="{{dataset.name+'.html'}}"
+    >Télécharger le rapport</a
+  >
+</div>
+{% endif %} {% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+<!-- {% block scripts %}{% endblock %} -->

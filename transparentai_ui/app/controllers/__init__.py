@@ -73,6 +73,16 @@ app.add_url_rule('/datasets/<name>', endpoint='datasets.update',
                  view_func=datasets.update, methods=['PUT'])
 app.add_url_rule('/datasets/<name>', endpoint='datasets.delete',
                  view_func=datasets.delete, methods=['DELETE'])
+
+# Datasets Modules
+app.add_url_rule('/datasets/<name>/analyse-dataset', endpoint='datasets.analyse_dataset',
+                 view_func=datasets.analyse_dataset, methods=['GET'])
+app.add_url_rule('/show-report', view_func=datasets.show_report, methods=['GET'])
+app.add_url_rule('/datasets/<name>/analyse-performance', endpoint='datasets.analyse_performance',
+                 view_func=datasets.analyse_performance, methods=['GET'])
+app.add_url_rule('/datasets/<name>/analyse-bias', endpoint='datasets.analyse_bias',
+                 view_func=datasets.analyse_bias, methods=['GET'])
+
 # API
 app.add_url_rule('/api/datasets', endpoint='api.datasets',
                  view_func=datasets.get_all_instances_json, methods=['GET'])
