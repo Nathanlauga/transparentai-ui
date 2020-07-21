@@ -1,6 +1,6 @@
 {% from "commons/forms/input.html" import form_input with context %} {% from
 "commons/forms/input_search_list.html" import input_search_list with context %}
-{% from "commons/forms/select_list.html" import select_list with context %} 
+{% from "commons/forms/multiple_select_list.html" import multiple_select_list with context %} 
 {% from "commons/components/card.html" import card with context %}
 {% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %} {%
 block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
@@ -58,11 +58,11 @@ block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1
   </div>
   <div class="form-row mb-3">
     <div class="col-12 col-md-6">
-      {{ select_list(name='protected_attr', label=_('Protected attributes'),
+      {{ multiple_select_list(name='protected_attr', label=_('Protected attributes'),
       list=dataset.columns, value=dataset.protected_attr) }}
     </div>
     <div class="col-12 col-md-6">
-      {{ select_list(name='model_columns', label=_('Model columns'),
+      {{ multiple_select_list(name='model_columns', label=_('Model columns'),
       list=dataset.columns, value=dataset.model_columns) }}
     </div>
   </div>

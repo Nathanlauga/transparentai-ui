@@ -18,6 +18,8 @@ class Dataset(BaseModel):
     _protected_attr = db.Column(db.String, default='')
     _model_columns = db.Column(db.String, default='')
     length = db.Column(db.Integer)
+    sep = db.Column(db.String, default=',')
+    encoding = db.Column(db.String, default='utf_8')
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(

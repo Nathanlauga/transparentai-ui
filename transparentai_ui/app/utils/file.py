@@ -16,14 +16,14 @@ def get_file_extension(fpath):
     return str(fpath).split('.')[-1]
 
 
-def read_dataset_file(path, nrows=None):
+def read_dataset_file(path, nrows=None, sep=',', encoding='utf_8'):
     """
     """
     ext = get_file_extension(path)
 
     if ext == 'csv':
-        return pd.read_csv(path, sep=None, engine='python', nrows=nrows)
+        return pd.read_csv(path, sep=sep, encoding=encoding, nrows=nrows)
     elif ext.startswith('xls'):
-        return pd.read_excel(path, nrows=nrows)
+        return pd.read_excel(path, encoding=encoding, nrows=nrows)
 
     return None

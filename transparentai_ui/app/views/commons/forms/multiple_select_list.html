@@ -1,4 +1,4 @@
-{% macro select_list(name, label, list, value=None) -%} {% if 'errors' in
+{% macro multiple_select_list(name, label, list, value=None) -%} {% if 'errors' in
 session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
 
@@ -8,7 +8,9 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
     name="{{ name }}"
     id="{{ name }}"
     class="selectpicker form-control {% if is_not_valid %}is-invalid{% endif %}"
+    multiple
     title="{{ _('Select columns') }}"
+    data-selected-text-format="count > 3"
   >
   {% for elem in list %}
   <option {% if value is not none %}{% if elem in value %}selected{% endif %}{% endif %}>{{ elem }}</option>
@@ -19,4 +21,18 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
     {% if 'errors' in session %} {{ session['errors'][name] }} {% endif %}
   </div>
 </div>
+<button
+  type="button"
+  class="btn btn-outline-info"
+  onclick="selectAll('#{{ name }}');"
+>
+  {{ _('Select all') }}
+</button>
+<button
+  type="button"
+  class="btn btn-outline-info"
+  onclick="deselectAll('#{{ name }}');"
+>
+  {{ _('Deselect all') }}
+</button>
 {%- endmacro %}

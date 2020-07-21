@@ -3,6 +3,7 @@ from flask_babel import _
 import os.path
 from os import listdir
 from os.path import isfile, join
+from encodings.aliases import aliases
 
 import pandas as pd
 
@@ -18,6 +19,8 @@ dataset_controller = Controller(component=Dataset,
                                 format_fn=format_dataset,
                                 control_fn=control_dataset,
                                 module_fn=load_dataset_modules_in_background)
+
+encodings = list(sorted(set([v for k,v in aliases.items()])))
 
 
 def index():
@@ -44,7 +47,8 @@ def new():
         if dataset is not None:
             return redirect(url_for('datasets.get_instance', name=dataset.name))
 
-    return render_template("datasets/new.html", title=title, session=session, header=header, previous=previous)
+    return render_template("datasets/new.html", title=title, session=session, 
+                            header=header, previous=previous, encodings=encodings)
 
 
 def new_from_project(project_name):
@@ -58,7 +62,8 @@ def new_from_project(project_name):
         if dataset is not None:
             return redirect(url_for('datasets.get_instance', name=dataset.name))
 
-    return render_template("projects/new-dataset.html", title=title, session=session, header=header, previous=previous, project_name=project_name)
+    return render_template("projects/new-dataset.html", title=title, session=session, header=header, 
+                            previous=previous, project_name=project_name, encodings=encodings)
 
 
 def edit(name):
@@ -76,7 +81,8 @@ def edit(name):
         if dataset is not None:
             return redirect(url_for('datasets.get_instance', name=dataset.name))
 
-    return render_template("datasets/edit.html", title=title, session=session, header=header, previous=previous, dataset=dataset)
+    return render_template("datasets/edit.html", title=title, session=session, 
+                            header=header, previous=previous, dataset=dataset, encodings=encodings)
 
 
 def get_instance(name):

@@ -4,6 +4,8 @@ from flask_babel import _
 from ..utils import set_session_var, check_if_session_var_exists
 from ..utils.db import add_in_db, update_in_db, delete_in_db, select_from_db
 
+from threading import Thread
+
 
 def get_only_updated_values(instance, data):
     """

@@ -14,7 +14,7 @@ def get_save_path():
         '/views/modules/pandas_profiling_reports/'
 
 
-def generate_pandas_prof_report(df, title, explorative=False, dataset=None):
+def generate_pandas_prof_report(df, title, explorative=False, dataset=None, minimal=True):
     """
     """
     if dataset is not None:
@@ -22,7 +22,7 @@ def generate_pandas_prof_report(df, title, explorative=False, dataset=None):
         update_in_db(module, {'status': 'loading'})
 
     try:
-        profile = ProfileReport(df, title=title, explorative=explorative)
+        profile = ProfileReport(df, title=title, explorative=explorative, minimal=minimal)
 
         output_path = get_save_path()
         output_path = output_path + title + '.html'

@@ -1,5 +1,6 @@
 import pandas as pd
 import os.path
+from encodings.aliases import aliases
 
 from ...models import Project, Dataset
 from ...utils import key_in_dict_not_empty, is_empty
@@ -7,7 +8,7 @@ from ...utils import key_in_dict_not_empty, is_empty
 from ...utils.errors import get_errors
 
 from ...utils import drop_dupplicates_values
-from ...utils.components import format_str_strip, clean_errors, init_dataset_module_db
+from ...utils.components import format_str_strip, clean_errors, update_dataset_module_db
 from ...utils.file import get_file_extension, read_dataset_file
 from ...utils.db import select_from_db, exists_in_db, update_in_db
 
@@ -31,19 +32,19 @@ def is_dataset_extension_valid(path):
     return (ext == 'csv') | (ext.startswith('xls'))
 
 
-def is_dataset_file_readable(path):
+def is_dataset_file_readable(path, sep=',', encoding='utf_8'):
     """
     """
     ext = get_file_extension(path)
 
     if ext == 'csv':
         try:
-            pd.read_csv(path, sep=None, engine='python', nrows=1)
+            pd.read_csv(path, sep=sep, encoding=encoding, nrows=1)
         except:
             return False
     elif ext.startswith('xls'):
         try:
-            pd.read_excel(path, nrows=1)
+            pd.read_excel(path, encoding=encoding, nrows=1)
         except:
             return False
     else:
@@ -51,24 +52,25 @@ def is_dataset_file_readable(path):
     return True
 
 
-def get_columns_from_file(path):
+def get_columns_from_file(path, sep=',', encoding='utf_8'):
     """
     """
     ext = get_file_extension(path)
 
     if ext == 'csv':
         try:
-            data = pd.read_csv(path, sep=None, engine='python', nrows=0)
+            data = pd.read_csv(path, sep=sep, encoding=encoding, nrows=0)
         except:
             return None
     elif ext.startswith('xls'):
         try:
-            data = pd.read_excel(path, nrows=0)
+            data = pd.read_excel(path, encoding=encoding, nrows=0)
         except:
             return None
     else:
         return None
     return list(data.columns.values)
+
 
 def get_project_from_name(form_data):
     """
@@ -114,7 +116,7 @@ def format_dataset_columns(form_data, key):
 
     col_names = form_data.getlist(key)
     if len(col_names) == 1:
-        col_names = col_names[0] 
+        col_names = col_names[0]
 
     if type(col_names) == str:
         if col_names.startswith('[') & col_names.endswith(']'):
@@ -166,6 +168,33 @@ def control_dataset_model_type(form_data):
     return None
 
 
+def control_dataset_sep(form_data):
+    """
+    """
+    errors_dict = get_errors()
+
+    if not key_in_dict_not_empty('sep', form_data):
+        return errors_dict['DatasetSepNotSet']
+
+    return None
+
+
+def control_dataset_encoding(form_data):
+    """
+    """
+    errors_dict = get_errors()
+
+    if not key_in_dict_not_empty('encoding', form_data):
+        return errors_dict['DatasetEncodingNotSet']
+
+    encoding = form_data['encoding']
+
+    if encoding not in list(set([v for k, v in aliases.items()])):
+        return errors_dict['DatasetEncodingNotValid']
+
+    return None
+
+
 def control_dataset_path(form_data):
     """
     """
@@ -187,8 +216,17 @@ def control_dataset_path(form_data):
     if not is_dataset_extension_valid(path):
         return errors_dict['DatasetPathExtension']
 
-    # Check if we can read the file
-    if not is_dataset_file_readable(path):
+    check_sep = control_dataset_sep(form_data)
+    print(check_sep)
+    if check_sep is not None:
+        return errors_dict['DatasetPathSepNotValid']
+
+    check_encoding = control_dataset_encoding(form_data)
+    if check_encoding is not None:
+        return errors_dict['DatasetPathEncodingNotValid']
+
+        # Check if we can read the file
+    if not is_dataset_file_readable(path, sep=form_data['sep'], encoding=form_data['encoding']):
         return errors_dict['DatasetPathCantOpen']
 
     return None
@@ -229,9 +267,11 @@ def control_dataset(form_data, create=False, obj=None):
     else:
         path = obj.path
 
-    columns = get_columns_from_file(path)
-
     if path != '':
+        columns = get_columns_from_file(
+            path, sep=form_data['sep'], encoding=form_data['encoding'])
+        print(columns)
+
         errors['target'] = control_dataset_columns(
             form_data, 'target', columns)
         errors['score'] = control_dataset_columns(form_data, 'score', columns)
@@ -254,9 +294,14 @@ def format_dataset(form_data, create=False):
     if create:
         data['name'] = format_dataset_name(form_data)
 
+    # Advanced params
+    data['sep'] = form_data['sep']
+    data['encoding'] = form_data['encoding']
+
     if key_in_dict_not_empty('path', form_data):
         data['path'] = format_dataset_path(form_data)
-        data['columns'] = get_columns_from_file(form_data['path'])
+        data['columns'] = get_columns_from_file(
+            form_data['path'], sep=form_data['sep'], encoding=form_data['encoding'])
 
     data['target'] = format_dataset_columns(form_data, key='target')
     data['score'] = format_dataset_columns(form_data, key='score')
@@ -265,7 +310,7 @@ def format_dataset(form_data, create=False):
         form_data, key='protected_attr')
     data['model_columns'] = format_dataset_columns(
         form_data, key='model_columns')
-    
+
     if key_in_dict_not_empty('project_name', form_data):
         project = get_project_from_name(form_data)
 
@@ -314,12 +359,12 @@ def load_bias_module(df, dataset):
     thread.start()
 
 
-def load_dataset_from_path(path):
+def load_dataset_from_path(path, sep=',', encoding='utf_8'):
     """
     """
     with concurrent.futures.ThreadPoolExecutor() as executor:
         print('Launch dataset module thread : read_dataset_file')
-        future = executor.submit(read_dataset_file, path)
+        future = executor.submit(read_dataset_file, path, None, sep, encoding)
         df = future.result()
 
     return df
@@ -330,15 +375,15 @@ def init_dataset_modules(dataset):
     """
     # init pandas profiling module
     if dataset.module_pandas_profiling is None:
-        init_dataset_module_db(ModulePandasProfiling, dataset=dataset)
+        update_dataset_module_db(ModulePandasProfiling, dataset=dataset)
 
     # init bias module
     if dataset.module_bias is None:
-        init_dataset_module_db(ModuleBias, dataset=dataset)
+        update_dataset_module_db(ModuleBias, dataset=dataset)
 
     # init performance module
     if dataset.module_performance is None:
-        init_dataset_module_db(ModulePerformance, dataset=dataset)
+        update_dataset_module_db(ModulePerformance, dataset=dataset)
 
 
 def set_dataset_length(dataset, df):
@@ -348,22 +393,55 @@ def set_dataset_length(dataset, df):
     update_in_db(dataset, data)
 
 
+def load_dataset_modules(dataset, data):
+    """Loads the Dataset modules in background using Thread.
+
+    It applies the following rules:
+
+    If the path is refer in the data dictionnary (it means it has been updated) then:
+
+    - Load the full dataset and generate pandas profiling report
+    - If the score, target and model_type are set : Load the performance module
+    - If the score, target, model_type and protected_attr are set : Load the bias module
+
+    Else if the path is set:
+
+    - Load the full dataset but do not generate a new pandas profiling report
+    - If the score, target and model_type are set : Load the performance module
+    - If the score, target, model_type and protected_attr are set : Load the bias module
+
+    """
+    df = None
+
+    if key_in_dict_not_empty('path', data):
+        df = load_dataset_from_path(
+            data['path'], sep=dataset.sep, encoding=dataset.encoding)
+
+        load_pandas_profiling_module(
+            df, title=dataset.name, explorative=False, dataset=dataset)
+
+    elif dataset.path != '':
+        df = load_dataset_from_path(
+            dataset.path, sep=dataset.sep, encoding=dataset.encoding)
+
+        if key_in_dict_not_empty('sep', data) | key_in_dict_not_empty('encoding', data):
+            load_pandas_profiling_module(
+                df, title=dataset.name, explorative=False, dataset=dataset)
+
+    if df is not None:
+        set_dataset_length(dataset, df)
+        load_performance_module(df, dataset=dataset)
+        load_bias_module(df, dataset=dataset)
+
+
 def load_dataset_modules_in_background(dataset, data):
     """
     """
     init_dataset_modules(dataset)
 
     if key_in_dict_not_empty('path', data):
-        df = load_dataset_from_path(data['path'])
-        set_dataset_length(dataset, df)
+        update_dataset_module_db(
+            ModulePandasProfiling, dataset=dataset, status='loading')
 
-        load_pandas_profiling_module(
-            df, title=dataset.name, explorative=False, dataset=dataset)
-        load_performance_module(df, dataset=dataset)
-        load_bias_module(df, dataset=dataset)
-
-    elif dataset.path != '':
-        df = load_dataset_from_path(dataset.path)
-
-        load_performance_module(df, dataset=dataset)
-        load_bias_module(df, dataset=dataset)
+    thread = Thread(target=load_dataset_modules, args=(dataset, data,))
+    thread.start()

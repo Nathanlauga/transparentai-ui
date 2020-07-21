@@ -21,6 +21,8 @@ def get_errors():
         'DatasetNameAlreadyUsed': _('This dataset name is already used.'),
         'DatasetPathNotExists': _('The dataset path is not pointing to a file.'),
         'DatasetPathExtension': _('The dataset extension is not valid.'),
+        'DatasetPathSepNotValid': _('The dataset separator is not valid.'),
+        'DatasetPathEncodingNotValid': _('The dataset encoding is not valid.'),
         'DatasetPathCantOpen': _('Impossible to open the dataset file. Check that you can open your file with an other application.'),
         'DatasetColumnNotFound': _(' column not found in the data.'),
         'DatasetModelTypeNotValid': _('The dataset model type is not valid, please use one of the following : binary-classification, multiclass-classification or regression'),
@@ -31,6 +33,9 @@ def get_errors():
         'ProjectNameNotSet': _('The name of the project is not set.'),
         'ProjectNameAlreadyUsed': _('This project name is already used.'),
         'ProjectDatasetNameNotValid': _('This Dataset does not exist in the database.'),
+        'DatasetSepNotSet': _('The separator of the dataset is not set'),
+        'DatasetEncodingNotSet': _('The encoding of the dataset is not set'),
+        'DatasetEncodingNotValid': _('The dataset encoding is not valid, please check valid Python encodings.'),
      }
 
     return errors_dict

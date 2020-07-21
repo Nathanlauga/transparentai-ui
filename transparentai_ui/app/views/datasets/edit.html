@@ -1,18 +1,41 @@
 {% from "commons/forms/input.html" import form_input with context %}
+{% from "commons/forms/select_list.html" import select_list with context %}
 
 {% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
 {% block h1 %}{{ title }}{% endblock %} {% block content %}
 <!-- Content Row -->
 <div class="row">
-  <form action="/edit-dataset/{{ dataset.name }}" method="post" class="w-50 ml-3">
+  <div class="col">
+  <form action="/edit-dataset/{{ dataset.name }}" method="post" class="ml-3">
 
     <div class="form-group">
         {{ form_input(name='path', label=_("File path"), required=True)}}
     </div>
 
+    <div class="card shadow mb-4">
+      <!-- Card Header - Accordion -->
+      <a href="#datasetAdvanced" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="datasetAdvanced">
+        <h6 class="m-0 font-weight-bold text-primary">{{ _('Advanced') }}</h6>
+      </a>
+      <!-- Card Content - Collapse -->
+      <div class="collapse show" id="datasetAdvanced">
+        <div class="card-body">
+          
+        <div class="form-group">
+          {{ form_input(name='sep', label=_("Separator"), required=True, value=',')}}
+        </div>
+        <div class="form-group">
+          {{ select_list(name='encoding', label=_("Encoding"), list=encodings, value='utf_8') }}
+          
+        </div>
+
+        </div>
+      </div>
+
     <button class="btn btn-primary" type="submit">{{ _('Update dataset') }}</button>
   </form>
+</div>
 </div>
 {% endblock %}
 

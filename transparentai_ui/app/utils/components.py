@@ -20,13 +20,13 @@ def clean_errors(errors):
             new_errors[k] = v
     return new_errors
 
-def init_dataset_module_db(ModuleModel, dataset):
+def update_dataset_module_db(ModuleModel, dataset, status='init'):
     """
     """
     module = ModuleModel(
         dataset_id=dataset.id,
         dataset=dataset,
-        status='init'
+        status=status
     )
     add_in_db(module)
 
