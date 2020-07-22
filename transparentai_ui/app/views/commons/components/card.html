@@ -1,5 +1,10 @@
 {% macro card(text, href=None, fa=None, subtext=None, color='gray-500',
-border_color='light', bg='None', disable=False, status='') -%}
+border_color='light', bg='None', disable=False, status='', complement=None) -%}
+
+{% if disable %}
+  {% set color = 'gray-500' %}
+  {% set border_color = 'light' %}
+{% endif %}
 
 {% if status == 'init' %}
   {% set disable = True %}
@@ -23,7 +28,7 @@ border_color='light', bg='None', disable=False, status='') -%}
 {% endif %}
 
 {% if not disable and href is not none %}
-<a href="{{ href }}" class="nounderline">
+<a href="{{ href }}" class="nounderline" {% if complement is not none %}{{complement}}{% endif %}>
   {% endif %}
 <div
   class="card 

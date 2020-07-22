@@ -8,7 +8,9 @@ from encodings.aliases import aliases
 import pandas as pd
 
 from ..models import Dataset
-from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
+from ..models.modules import ModulePandasProfiling
+from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background, load_pandas_prof_report
+from .services.modules import pandas_profiling
 from .services.modules.pandas_profiling import get_save_path
 from .services.commons import get_header_attributes
 from .controller_class import Controller
@@ -20,7 +22,12 @@ dataset_controller = Controller(component=Dataset,
                                 control_fn=control_dataset,
                                 module_fn=load_dataset_modules_in_background)
 
-encodings = list(sorted(set([v for k,v in aliases.items()])))
+
+pandas_prof_controller = Controller(component=ModulePandasProfiling,
+                                    format_fn=pandas_profiling.format_module,
+                                    control_fn=pandas_profiling.control_module)
+
+encodings = list(sorted(set([v for k, v in aliases.items()])))
 
 
 def index():
@@ -47,8 +54,8 @@ def new():
         if dataset is not None:
             return redirect(url_for('datasets.get_instance', name=dataset.name))
 
-    return render_template("datasets/new.html", title=title, session=session, 
-                            header=header, previous=previous, encodings=encodings)
+    return render_template("datasets/new.html", title=title, session=session,
+                           header=header, previous=previous, encodings=encodings)
 
 
 def new_from_project(project_name):
@@ -62,8 +69,8 @@ def new_from_project(project_name):
         if dataset is not None:
             return redirect(url_for('datasets.get_instance', name=dataset.name))
 
-    return render_template("projects/new-dataset.html", title=title, session=session, header=header, 
-                            previous=previous, project_name=project_name, encodings=encodings)
+    return render_template("projects/new-dataset.html", title=title, session=session, header=header,
+                           previous=previous, project_name=project_name, encodings=encodings)
 
 
 def edit(name):
@@ -81,8 +88,8 @@ def edit(name):
         if dataset is not None:
             return redirect(url_for('datasets.get_instance', name=dataset.name))
 
-    return render_template("datasets/edit.html", title=title, session=session, 
-                            header=header, previous=previous, dataset=dataset, encodings=encodings)
+    return render_template("datasets/edit.html", title=title, session=session,
+                           header=header, previous=previous, dataset=dataset, encodings=encodings)
 
 
 def get_instance(name):
@@ -139,10 +146,30 @@ def analyse_dataset(name):
     title = _('Analyse Dataset: ') + name
     header = get_header_attributes()
     dataset = dataset_controller.get_instance(name)
+    if dataset is None:
+        return abort(404)
+    
+    module = dataset.module_pandas_profiling
+    if module is None:
+        return abort(404)
+
+    previous = module.to_dict()
+    previous['minimal'] = int(previous['minimal'])
+
     if dataset.project is not None:
         header['current_project'] = dataset.project.name
 
-    return render_template("modules/analyse-dataset.html", session=session, dataset=dataset, header=header, title=title)
+    if request.method == 'POST':
+        previous = request.form
+        module = pandas_prof_controller.update(module.id, id_col='id')
+
+        if module is not None:
+            load_pandas_prof_report(title=dataset.name, dataset=dataset, nrows=module.nrows,
+                                    explorative=module.explorative, minimal=module.minimal)
+            return redirect(url_for('datasets.analyse_dataset', name=name))
+
+    return render_template("modules/analyse-dataset.html", session=session, dataset=dataset,
+                           header=header, title=title, previous=previous)
 
 
 def show_report():

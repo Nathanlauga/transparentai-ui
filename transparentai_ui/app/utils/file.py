@@ -27,3 +27,13 @@ def read_dataset_file(path, nrows=None, sep=',', encoding='utf_8'):
         return pd.read_excel(path, encoding=encoding, nrows=nrows)
 
     return None
+
+
+def get_file_length(fpath):
+    """
+    """
+    with open(fpath, 'r') as file:
+        cnt = sum(1 for row in file) - 1
+    file.close()
+
+    return cnt

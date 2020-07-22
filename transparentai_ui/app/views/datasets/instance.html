@@ -1,5 +1,6 @@
-{% from "commons/forms/input.html" import form_input with context %} {% from
-"commons/forms/input_search_list.html" import input_search_list with context %}
+{% from "commons/forms/input.html" import form_input with context %} 
+{% from "commons/forms/input_search_list.html" import input_search_list with context %}
+{% from "commons/forms/select_list.html" import select_list with context %} 
 {% from "commons/forms/multiple_select_list.html" import multiple_select_list with context %} 
 {% from "commons/components/card.html" import card with context %}
 {% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %} {%
@@ -38,64 +39,61 @@ block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1
 
 <!-- Components Row -->
 <div class="row">
+  
   <div class="col-6">
-<form action="/datasets/{{ dataset.name }}" method="post" class="ml-3">
-  <div class="form-row mb-3">
-    <div class="col-12 col-md-6">
-      <div class="form-group">
-        {{ input_search_list(name='target', label=_('Target column'),
-        id='selectTarget', list=dataset.columns, value=dataset.target,
-        placeholder=_('Select a column')) }}
+    <form action="/datasets/{{ dataset.name }}" method="post" class="ml-3">
+      <div class="form-row mb-3">
+        <div class="col-12 col-md-6">
+          <div class="form-group">
+            {{ select_list(name='target', label=_('Target column'), list=dataset.columns, value=dataset.target) }}
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="form-group">
+            {{ select_list(name='score', label=_('Prediction column'), list=dataset.columns, value=dataset.score ) }}
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="col-12 col-md-6">
-      <div class="form-group">
-        {{ input_search_list(name='score', label=_('Prediction column'),
-        id='selectScore', list=dataset.columns, value=dataset.score,
-        placeholder=_('Select a column')) }}
+      <div class="form-row mb-3">
+        <div class="col-12 col-md-6">
+          {{ multiple_select_list(name='protected_attr', label=_('Protected attributes'),
+          list=dataset.columns, value=dataset.protected_attr) }}
+        </div>
+        <div class="col-12 col-md-6">
+          {{ multiple_select_list(name='model_columns', label=_('Model columns'),
+          list=dataset.columns, value=dataset.model_columns) }}
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="form-row mb-3">
-    <div class="col-12 col-md-6">
-      {{ multiple_select_list(name='protected_attr', label=_('Protected attributes'),
-      list=dataset.columns, value=dataset.protected_attr) }}
-    </div>
-    <div class="col-12 col-md-6">
-      {{ multiple_select_list(name='model_columns', label=_('Model columns'),
-      list=dataset.columns, value=dataset.model_columns) }}
-    </div>
-  </div>
-  <div class="form-row mb-3">
-    <div class="col-12 col-md-6">
-      
-      <label for="model_type">{{ _('Type of model') }}</label>
-      <select name="model_type" class="selectpicker form-control" data-selected-text-format="{{ dataset.model_type }}">
-        <option value="">None</option>
-        <option value="binary-classification" 
-        {% if dataset.model_type is defined %}{% if dataset.model_type == 'binary-classification' %}selected{% endif %}{% endif %}  %}
-          >{{ _('Binary Classification') }}</option
-        >
-        <option value="multiclass-classification"
-        {% if dataset.model_type is defined %}{% if dataset.model_type == 'multiclass-classification' %}selected{% endif %}{% endif %}  %}
-          >{{ _('Multi Classes Classification') }}</option
-        >
-        <option value="regression" {% if dataset.model_type is defined %}{% if dataset.model_type == 'regression' %}selected{% endif %}{% endif %}  %}
-        >{{ _('Regression') }}</option>
-      </select>
-    </div>
-  </div>
+      <div class="form-row mb-3">
+        <div class="col-12 col-md-6">
+          
+          <label for="model_type">{{ _('Type of model') }}</label>
+          <select name="model_type" class="selectpicker form-control" data-selected-text-format="{{ dataset.model_type }}">
+            <option value="">None</option>
+            <option value="binary-classification" 
+            {% if dataset.model_type is defined %}{% if dataset.model_type == 'binary-classification' %}selected{% endif %}{% endif %}  %}
+              >{{ _('Binary Classification') }}</option
+            >
+            <option value="multiclass-classification"
+            {% if dataset.model_type is defined %}{% if dataset.model_type == 'multiclass-classification' %}selected{% endif %}{% endif %}  %}
+              >{{ _('Multi Classes Classification') }}</option
+            >
+            <option value="regression" {% if dataset.model_type is defined %}{% if dataset.model_type == 'regression' %}selected{% endif %}{% endif %}  %}
+            >{{ _('Regression') }}</option>
+          </select>
+        </div>
+      </div>
 
-  <div class="form-row mt-3">
-    <input type="hidden" name="_method" value="PUT" />
-    <button class="btn btn-primary" type="submit">
-      {{ _("Update dataset") }}
-    </button>
+      <div class="form-row mt-3">
+        <input type="hidden" name="_method" value="PUT" />
+        <button class="btn btn-primary" type="submit">
+          {{ _("Update dataset") }}
+        </button>
+      </div>
+    </form>
   </div>
-</form>
-</div>
-<!-- Datasets modules cards -->
-<div class="col-6">
+  <!-- Datasets modules cards -->
+  <div class="col-6">
   {% if dataset.module_pandas_profiling is defined %}
   <div class="row mb-3">
     <div class="col-12">

@@ -1,8 +1,9 @@
 from ... import db
 from ...utils.models import dict_property
+from ..base_model import BaseModel
 
 
-class ModulePerformance(db.Model):
+class ModulePerformance(BaseModel):
     """
     """
     __tablename__ = 'transparentai-module-performance'
@@ -18,6 +19,16 @@ class ModulePerformance(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+    _default_fields = [
+        "results",
+        "status"
+        "dataset_id"
+    ]
+    _hidden_fields = [
+        "dataset"
+    ]
+    _readonly_fields = []
 
     def __repr__(self):
         id = 'None' if self.id is None else str(self.id)

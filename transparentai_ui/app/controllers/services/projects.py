@@ -115,7 +115,7 @@ def control_project(form_data, create=False, obj=None):
     return errors
 
 
-def format_project(form_data, create=False):
+def format_project(form_data, create=False, obj=None):
     """
     """
     data = dict()

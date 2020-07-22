@@ -36,6 +36,12 @@ def get_errors():
         'DatasetSepNotSet': _('The separator of the dataset is not set'),
         'DatasetEncodingNotSet': _('The encoding of the dataset is not set'),
         'DatasetEncodingNotValid': _('The dataset encoding is not valid, please check valid Python encodings.'),
+        'PandasProfMinimalNotSet': _('The minimal argument is not set.'),
+        'PandasProfMinimalNotValid': _('The minimal argument has to be Yes or No.'),
+        'PandasProfExplorativeNotSet': _('The explorative argument is not set.'),
+        'PandasProfExplorativeNotValid': _('The explorative argument has to be Yes or No.'),
+        'PandasProfNrowsNotValid': _('You need to use an integer.'),
+        'PandasProfNrowsOverLimit': _('The number of rows is inserted is greater than the length of the dataset.'),
      }
 
     return errors_dict

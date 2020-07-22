@@ -252,7 +252,7 @@ def control_model(form_data, create=False, obj=None):
     return errors
 
 
-def format_model(form_data, create=False):
+def format_model(form_data, create=False, obj=None):
     """
     """
     data = dict()

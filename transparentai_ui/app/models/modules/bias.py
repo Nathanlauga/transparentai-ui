@@ -1,8 +1,9 @@
 from ... import db
 from ...utils.models import dict_property
+from ..base_model import BaseModel
 
 
-class ModuleBias(db.Model):
+class ModuleBias(BaseModel):
     """
     """
     __tablename__ = 'transparentai-module-bias'
@@ -19,6 +20,17 @@ class ModuleBias(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+    _default_fields = [
+        "results",
+        "privileged_group",
+        "status"
+        "dataset_id"
+    ]
+    _hidden_fields = [
+        "dataset"
+    ]
+    _readonly_fields = []
 
     def __repr__(self):
         id = 'None' if self.id is None else str(self.id)

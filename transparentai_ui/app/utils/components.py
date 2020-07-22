@@ -1,4 +1,4 @@
-from ..utils.db import select_from_db, add_in_db
+from ..utils.db import select_from_db, add_in_db, update_in_db
 from ..models import Dataset
 
 
@@ -11,6 +11,34 @@ def format_str_strip(form_data, key):
     return form_data[key].strip()
 
 
+def format_bool(form_data, key):
+    """
+    """
+    if key not in form_data:
+        return None
+
+    try:
+        res = bool(int(form_data[key]))
+    except:
+        return None
+
+    return res
+
+
+def format_int(form_data, key):
+    """
+    """
+    if key not in form_data:
+        return None
+
+    try:
+        res = int(form_data[key])
+    except:
+        return None
+
+    return res
+
+
 def clean_errors(errors):
     """
     """
@@ -20,15 +48,13 @@ def clean_errors(errors):
             new_errors[k] = v
     return new_errors
 
+
 def update_dataset_module_db(ModuleModel, dataset, status='init'):
     """
     """
-    module = ModuleModel(
-        dataset_id=dataset.id,
-        dataset=dataset,
-        status=status
-    )
-    add_in_db(module)
+    module = select_from_db(ModuleModel,
+                            'dataset_id', dataset.id)
+    update_in_db(module, {'status': 'loading'})
 
 
 def init_model_module_db(ModuleModel, model):

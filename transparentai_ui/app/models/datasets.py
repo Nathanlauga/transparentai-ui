@@ -51,7 +51,9 @@ class Dataset(BaseModel):
         "protected_attr",
         "model_columns",
         "length",
-        "project_id"
+        "project_id",
+        "sep",
+        "encoding"
     ]
     _hidden_fields = [
         "model",

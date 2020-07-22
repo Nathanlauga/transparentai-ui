@@ -40,7 +40,7 @@ class Controller():
         if len(errors) > 0:
             return errors, None
 
-        data = self.format_fn(form_data, create)
+        data = self.format_fn(form_data, create, obj=obj)
 
         return errors, data
 
@@ -115,10 +115,10 @@ class Controller():
 
         return instance
 
-    def update(self, name):
+    def update(self, id, id_col='name'):
         """Update a dataset based on PUT args
         """
-        instance = self.get_one_instance('name', name)
+        instance = self.get_one_instance(id_col, id)
 
         if type(instance) != self.Component:
             set_session_var('errors', str(instance))

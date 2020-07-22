@@ -1,8 +1,9 @@
 from ... import db
 from ...utils.models import dict_property
+from ..base_model import BaseModel
 
 
-class AIEvaluation(db.Model):
+class AIEvaluation(BaseModel):
     """
     """
     __tablename__ = 'transparentai-module-ai-evaluation'
@@ -19,6 +20,16 @@ class AIEvaluation(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+    _default_fields = [
+        "answers",
+        "status"
+        "project_id"
+    ]
+    _hidden_fields = [
+        "model"
+    ]
+    _readonly_fields = []
 
     def __repr__(self):
         id = 'None' if self.id is None else str(self.id)

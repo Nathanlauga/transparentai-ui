@@ -1,8 +1,9 @@
 from ... import db
 from ...utils.models import dict_property
+from ..base_model import BaseModel
 
 
-class ModuleInterpretability(db.Model):
+class ModuleInterpretability(BaseModel):
     """
     """
     __tablename__ = 'transparentai-module-interpretability'
@@ -19,6 +20,16 @@ class ModuleInterpretability(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+    _default_fields = [
+        "variable_influence",
+        "status"
+        "model_id"
+    ]
+    _hidden_fields = [
+        "model"
+    ]
+    _readonly_fields = []
 
     def __repr__(self):
         id = 'None' if self.id is None else str(self.id)

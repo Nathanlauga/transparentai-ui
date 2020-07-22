@@ -76,7 +76,7 @@ app.add_url_rule('/datasets/<name>', endpoint='datasets.delete',
 
 # Datasets Modules
 app.add_url_rule('/datasets/<name>/analyse-dataset', endpoint='datasets.analyse_dataset',
-                 view_func=datasets.analyse_dataset, methods=['GET'])
+                 view_func=datasets.analyse_dataset, methods=['GET','POST'])
 app.add_url_rule('/show-report', view_func=datasets.show_report, methods=['GET'])
 app.add_url_rule('/datasets/<name>/analyse-performance', endpoint='datasets.analyse_performance',
                  view_func=datasets.analyse_performance, methods=['GET'])

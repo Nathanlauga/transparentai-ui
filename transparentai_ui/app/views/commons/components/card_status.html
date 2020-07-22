@@ -1,0 +1,29 @@
+{% macro card_status(status='init') -%}
+
+{% if status == 'init' %}
+  {% set color = 'gray-500' %}
+  {% set bg_color = 'light' %}
+  {% set fa = 'hourglass-start' %}
+  {% set text = _('Initialized.') %}
+{% elif status == 'failed' %}
+  {% set color = 'white' %}
+  {% set bg_color = 'danger' %}
+  {% set fa = 'times' %}
+  {% set text = _('Failed to load.') %}
+{% elif status == 'loading' %}
+  {% set color = 'white' %}
+  {% set bg_color = 'warning' %}
+  {% set fa = 'spinner' %}
+  {% set text = _('Loading...') %}
+{% elif status == 'loaded' %}
+  {% set color = 'white' %}
+  {% set bg_color = 'success' %}
+  {% set fa = 'check' %}
+  {% set text = _('Loaded.') %}
+{% endif %}
+
+<div class="bg-{{bg_color}} text-{{color}} shadow px-4 py-2 rounded">
+    <i class="fas fa-{{fa}} text-{{color}}}"></i> {{ text }}
+</div>
+
+{% endmacro %}

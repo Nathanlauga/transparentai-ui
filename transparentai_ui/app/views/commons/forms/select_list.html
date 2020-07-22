@@ -1,6 +1,12 @@
-{% macro select_list(name, label, list, value=None) -%} {% if 'errors' in
+{% macro select_list(name, label, list, list_labels=None, value=None, title=_('Select column'), search=True, none_value=True, default=None) -%} {% if 'errors' in
 session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
+
+{% if previous is defined %}
+{% if previous[name] is not none %} 
+  {% set value = previous[name] %}
+{% endif %}
+{% endif %}
 
 <div class="form-group">
   <label for="{{ name }}"><span>{{ label }}</span></label>
@@ -8,10 +14,28 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
     name="{{ name }}"
     id="{{ name }}"
     class="selectpicker form-control {% if is_not_valid %}is-invalid{% endif %}"
-    title="{{ _('Select columns') }}"
+    title="{{ title }}"
+    {% if search %} data-live-search="true" {% endif %}
   >
+  {% if none_value %}<option value=''>None</option>{% endif %}
   {% for elem in list %}
-  <option {% if value is not none %}{% if elem in value %}selected{% endif %}{% endif %}>{{ elem }}</option>
+  <option value={{elem}}
+  {% if value is not none %}
+    {% if elem == value %}
+      selected
+    {% endif %}
+  {% elif default is not none%}
+    {% if elem == default %}
+      selected
+    {% endif %}
+  {% endif %}>
+    
+    {% if list_labels is not none %}
+      {{ list_labels[loop.index-1] }}
+    {% else %}
+      {{ elem }}
+    {% endif %}
+  </option>
     {% endfor %}
   </select>
 

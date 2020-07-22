@@ -9,12 +9,12 @@
 <label for="{{ name }}">{{ label }}</label>
 <input
 name="{{ name }}"
-type="text"
+type="{{ type }}"
 class="form-control {% if is_not_valid %}is-invalid{% endif %}"
 id="{{ name }}"
 placeholder="{{ placeholder }}"
 {% if previous is defined %}
-    {% if previous[name] is defined and previous[name]|length > 0 %} 
+    {% if previous[name] is not none %} 
         value="{{ previous[name] }}"
     {% elif value is not none %}
         value="{{ value }}"

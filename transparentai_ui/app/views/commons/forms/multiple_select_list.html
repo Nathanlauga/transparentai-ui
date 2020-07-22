@@ -1,4 +1,4 @@
-{% macro multiple_select_list(name, label, list, value=None) -%} {% if 'errors' in
+{% macro multiple_select_list(name, label, list, value=None, title=_('Select columns')) -%} {% if 'errors' in
 session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
 
@@ -9,7 +9,7 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
     id="{{ name }}"
     class="selectpicker form-control {% if is_not_valid %}is-invalid{% endif %}"
     multiple
-    title="{{ _('Select columns') }}"
+    title="{{ title }}"
     data-selected-text-format="count > 3"
   >
   {% for elem in list %}

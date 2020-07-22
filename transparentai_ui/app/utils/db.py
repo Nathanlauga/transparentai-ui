@@ -11,7 +11,7 @@ def select_from_db(Model, col, value):
     kwargs = {col: value}
     try:
         instance = Model.query.filter_by(**kwargs).first()
-        
+
     except Exception as exception:
         db.session.rollback()
         return exception
@@ -55,7 +55,9 @@ def update_in_db(obj, args):
     try:
         for key, value in args.items():
             setattr(obj, key, value)
+
         db.session.commit()
+
     except:
         db.session.rollback()
         return errors_dict['UpdateInDB']
