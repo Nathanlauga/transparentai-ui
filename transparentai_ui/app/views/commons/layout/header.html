@@ -1,28 +1,29 @@
  <!-- Topbar -->
  <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+    {% if header['projects']|length > 0 %}
+    {% if  header['current_project'] is defined and header['current_project']|length %}
+    <a href="/projects/{{ header['current_project'] }}" role="button" class="btn btn-outline-primary">{{ header['current_project'] }}</a>
+  {% endif %} 
 
     <!-- Topbar Search -->
-    {% if header['projects']|length > 0 %}
-    <div class="dropdown" id="searchProject">
-      <button class="btn btn-outline-primary dropdown-toggle text-left" type="button" data-toggle="dropdown">
-        {% if  header['current_project'] is defined and header['current_project']|length %}
-          {{ header['current_project'] }}
-        {% else %}   
-          {{ _('Select a project') }}
-        {% endif %}
-      <span class="caret"></span></button>
-      {% if  header['projects'] is defined and header['projects']|length %}
-      <ul class="dropdown-menu">
-        <input class="form-control" id="projectSelect" type="text" placeholder="Search..">
-        {% for project in header['projects'] %}
-        <li><a href="/projects/{{ project.name }}">{{ project.name }}</a></li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
+    <form class="d-none d-sm-inline-block form-inline ml-md-3 my-2 my-md-0 mw-100 navbar-search dropdown">  
+      <div class="input-group">
+          <input class="form-control bg-light border-0 small dropdown-toggle" data-toggle="dropdown" type="search" placeholder="Choose a project" aria-label="Search" id="projects-search" autocomplete="off">
+          <div class="dropdown-menu" aria-labelledby="projects-search" id="projects-search-results">
+            {% for project in header['projects'] %}
+              <a class="dropdown-item" href="/projects/{{ project.name }}">{{ project.name }}</a>
+            {% endfor %}
+          </div>
+          <div class="input-group-append">
+            <div class="btn text-white bg-primary">
+              <i class="fas fa-search fa-sm"></i>
+            </div>
+          </div>
+      </div>
+    </form>
     {% endif %}
 
-    <div class="ml-3">
+    <div class="ml-3 mr-auto">
       <a href="/new-project" class="btn btn-primary">
         <i class="fa fa-plus"></i><span class="bot-line">{% if header['projects']|length == 0 %} New project {% endif %}</span>
       </a>

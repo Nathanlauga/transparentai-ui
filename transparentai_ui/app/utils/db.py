@@ -55,12 +55,14 @@ def update_in_db(obj, args):
     try:
         for key, value in args.items():
             setattr(obj, key, value)
+            db.session.commit()
+        # obj.update(args)
 
-        db.session.commit()
+        # db.session.commit()
 
-    except:
+    except Exception as exception:
         db.session.rollback()
-        return errors_dict['UpdateInDB']
+        return exception #errors_dict['UpdateInDB']
     return 'updated'
 
 

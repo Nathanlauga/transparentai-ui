@@ -54,7 +54,19 @@ def update_dataset_module_db(ModuleModel, dataset, status='init'):
     """
     module = select_from_db(ModuleModel,
                             'dataset_id', dataset.id)
-    update_in_db(module, {'status': 'loading'})
+    res = update_in_db(module, {'status': 'loading'})
+    print(res)
+
+
+def init_dataset_module_db(ModuleModel, dataset):
+    """
+    """
+    module = ModuleModel(
+        dataset_id=dataset.id,
+        dataset=dataset,
+        status='init'
+    )
+    add_in_db(module)
 
 
 def init_model_module_db(ModuleModel, model):

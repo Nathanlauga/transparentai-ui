@@ -8,7 +8,7 @@ from ...utils import key_in_dict_not_empty, is_empty
 from ...utils.errors import get_errors
 
 from ...utils import drop_dupplicates_values
-from ...utils.components import format_str_strip, clean_errors, update_dataset_module_db
+from ...utils.components import format_str_strip, clean_errors, update_dataset_module_db, init_dataset_module_db
 from ...utils.file import get_file_extension, read_dataset_file, get_file_length
 from ...utils.db import select_from_db, exists_in_db, update_in_db
 
@@ -217,7 +217,6 @@ def control_dataset_path(form_data):
         return errors_dict['DatasetPathExtension']
 
     check_sep = control_dataset_sep(form_data)
-    print(check_sep)
     if check_sep is not None:
         return errors_dict['DatasetPathSepNotValid']
 
@@ -401,15 +400,15 @@ def init_dataset_modules(dataset):
     """
     # init pandas profiling module
     if dataset.module_pandas_profiling is None:
-        update_dataset_module_db(ModulePandasProfiling, dataset=dataset)
+        init_dataset_module_db(ModulePandasProfiling, dataset=dataset)
 
     # init bias module
     if dataset.module_bias is None:
-        update_dataset_module_db(ModuleBias, dataset=dataset)
+        init_dataset_module_db(ModuleBias, dataset=dataset)
 
     # init performance module
     if dataset.module_performance is None:
-        update_dataset_module_db(ModulePerformance, dataset=dataset)
+        init_dataset_module_db(ModulePerformance, dataset=dataset)
 
 
 def set_dataset_length(dataset):
@@ -445,6 +444,9 @@ def load_dataset_modules(dataset, data):
         df = load_dataset_from_path(
             data['path'], sep=dataset.sep, encoding=dataset.encoding)
 
+        print('=========================')
+        print(df.head())
+
         load_pandas_profiling_module(
             df, title=dataset.name, explorative=False, dataset=dataset, minimal=True)
 
@@ -458,7 +460,7 @@ def load_dataset_modules(dataset, data):
 
     if df is not None:
         load_performance_module(df, dataset=dataset)
-        load_bias_module(df, dataset=dataset)
+        # load_bias_module(df, dataset=dataset)
 
 
 def load_dataset_modules_in_background(dataset, data):

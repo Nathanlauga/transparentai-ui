@@ -1,4 +1,4 @@
-{% macro form_input(name, label, type='text', placeholder='', required=False, value=None) -%}
+{% macro form_input(name, label, type='text', placeholder=None, required=False, value=None) -%}
 
 {% if 'errors' in session %}
 {% set is_not_valid = session['errors'][name] is defined %}
@@ -6,19 +6,24 @@
 {% set is_not_valid = False %}
 {% endif %}
 
+{% if previous is defined %}
+{% if previous[name] is defined %} 
+{% if previous[name] is not none %}
+  {% set value = previous[name] %}
+{% endif %}
+{% endif %}
+{% endif %}
+
+
 <label for="{{ name }}">{{ label }}</label>
 <input
 name="{{ name }}"
 type="{{ type }}"
 class="form-control {% if is_not_valid %}is-invalid{% endif %}"
 id="{{ name }}"
-placeholder="{{ placeholder }}"
-{% if previous is defined %}
-    {% if previous[name] is not none %} 
-        value="{{ previous[name] }}"
-    {% elif value is not none %}
-        value="{{ value }}"
-    {% endif %}
+{% if placeholder is not none %}placeholder="{{ placeholder }}"{% endif %}
+{% if value is not none %}
+value="{{ value }}"
 {% endif %}
 {% if required %}required{% endif %}
 />

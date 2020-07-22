@@ -3,8 +3,10 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
 
 {% if previous is defined %}
-{% if previous[name] is not none %} 
+{% if previous[name] is defined %} 
+{% if previous[name] is not none %}
   {% set value = previous[name] %}
+{% endif %}
 {% endif %}
 {% endif %}
 
