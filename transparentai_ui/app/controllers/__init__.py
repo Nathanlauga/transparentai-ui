@@ -79,9 +79,12 @@ app.add_url_rule('/datasets/<name>/analyse-dataset', endpoint='datasets.analyse_
                  view_func=datasets.analyse_dataset, methods=['GET','POST'])
 app.add_url_rule('/show-report', view_func=datasets.show_report, methods=['GET'])
 app.add_url_rule('/datasets/<name>/analyse-performance', endpoint='datasets.analyse_performance',
-                 view_func=datasets.analyse_performance, methods=['GET'])
+                 view_func=datasets.analyse_performance, methods=['GET','POST'])
+                 
 app.add_url_rule('/datasets/<name>/analyse-bias', endpoint='datasets.analyse_bias',
-                 view_func=datasets.analyse_bias, methods=['GET'])
+                 view_func=datasets.analyse_bias, methods=['GET','POST'])
+app.add_url_rule('/datasets/<name>/bias-results', endpoint='datasets.bias_results',
+                 view_func=datasets.bias_results, methods=['GET','POST'])
 
 # API
 app.add_url_rule('/api/datasets', endpoint='api.datasets',

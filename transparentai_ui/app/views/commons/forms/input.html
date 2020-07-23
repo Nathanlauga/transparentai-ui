@@ -19,6 +19,7 @@
 <input
 name="{{ name }}"
 type="{{ type }}"
+{% if type == 'number' %}step="0.01"{% endif %}
 class="form-control {% if is_not_valid %}is-invalid{% endif %}"
 id="{{ name }}"
 {% if placeholder is not none %}placeholder="{{ placeholder }}"{% endif %}

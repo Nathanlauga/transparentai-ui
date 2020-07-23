@@ -8,9 +8,11 @@ from encodings.aliases import aliases
 import pandas as pd
 
 from ..models import Dataset
-from ..models.modules import ModulePandasProfiling
-from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background, load_pandas_prof_report
+from ..models.modules import ModulePandasProfiling, ModuleBias
+from .services.datasets import format_dataset, control_dataset, load_dataset_modules_in_background
+from .services.datasets import load_pandas_prof_report, load_bias_module_without_df
 from .services.modules import pandas_profiling
+from .services.modules import bias
 from .services.modules.pandas_profiling import get_save_path
 from .services.commons import get_header_attributes
 from .controller_class import Controller
@@ -26,6 +28,10 @@ dataset_controller = Controller(component=Dataset,
 pandas_prof_controller = Controller(component=ModulePandasProfiling,
                                     format_fn=pandas_profiling.format_module,
                                     control_fn=pandas_profiling.control_module)
+
+bias_controller = Controller(component=ModuleBias,
+                             format_fn=bias.format_module,
+                             control_fn=bias.control_module)
 
 encodings = list(sorted(set([v for k, v in aliases.items()])))
 
@@ -121,7 +127,12 @@ def update(name):
 
 
 def delete(name):
+    dataset = dataset_controller.get_instance(name)
     dataset_controller.delete(name)
+
+    if dataset.project is not None:
+        return redirect(url_for('projects.get_instance', name=dataset.project.name))
+
     return redirect(url_for('index'))
 
 
@@ -148,7 +159,7 @@ def analyse_dataset(name):
     dataset = dataset_controller.get_instance(name)
     if dataset is None:
         return abort(404)
-    
+
     module = dataset.module_pandas_profiling
     if module is None:
         return abort(404)
@@ -198,7 +209,45 @@ def analyse_bias(name):
     title = _('Analyse Bias: ') + name
     header = get_header_attributes()
     dataset = dataset_controller.get_instance(name)
+    if dataset is None:
+        return abort(404)
+
+    module = dataset.module_bias
+    if module is None:
+        return abort(404)
+
+    previous = module.to_dict()
+
     if dataset.project is not None:
         header['current_project'] = dataset.project.name
 
-    return render_template("modules/analyse-bias.html", session=session, dataset=dataset, header=header, title=title)
+    if request.method == 'POST':
+        previous = request.form
+        module = bias_controller.update(module.id, id_col='id')
+
+        if module is not None:
+            load_bias_module_without_df(dataset)
+            return redirect(url_for('datasets.bias_results', name=name))
+
+    return render_template("modules/analyse-bias.html", session=session, dataset=dataset, header=header, title=title, previous=previous)
+
+def bias_results(name):
+    title = _('Bias report: ') + name
+    header = get_header_attributes()
+    dataset = dataset_controller.get_instance(name)
+    if dataset is None:
+        return abort(404)
+    
+    if dataset.project is not None:
+        header['current_project'] = dataset.project.name
+
+    module = dataset.module_bias
+    if module is None:
+        return abort(404)
+    
+    if module.results is None:
+        return redirect(url_for('datasets.analyse_bias', name=name))
+
+    
+    return render_template("modules/bias-results.html", session=session, dataset=dataset, header=header, title=title)
+

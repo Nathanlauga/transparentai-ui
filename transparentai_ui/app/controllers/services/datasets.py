@@ -14,7 +14,7 @@ from ...utils.db import select_from_db, exists_in_db, update_in_db
 
 from .modules import generate_pandas_prof_report
 from .modules import compute_performance_metrics
-from .modules import compute_bias_metrics
+from .modules import bias
 
 from ...models.modules import ModulePandasProfiling
 from ...models.modules import ModulePerformance
@@ -341,6 +341,44 @@ def load_pandas_profiling_module(df, title, explorative, dataset, minimal):
     thread.start()
 
 
+def init_bias_module(df, dataset):
+    """
+    """
+    if (is_empty(dataset.path)) | (is_empty(dataset.score)) | (is_empty(dataset.model_type)) | (
+            is_empty(dataset.target)) | (is_empty(dataset.protected_attr)):
+        return
+
+    print('Launch dataset module thread : init_bias_module')
+    thread = Thread(target=bias.init_bias_module,
+                    args=(df, dataset,))
+    thread.start()
+
+
+def load_bias_module(df, dataset):
+    """
+    """
+    print('Launch dataset module thread : load_bias_module')
+    thread = Thread(target=bias.compute_bias_metrics,
+                    args=(df, dataset,))
+    thread.start()
+
+
+def load_bias_module_without_df(dataset):
+    """
+    """
+    update_dataset_module_db(
+        ModuleBias, dataset=dataset, status='loading')
+    try:
+        df = load_dataset_from_path(
+            dataset.path, sep=dataset.sep, encoding=dataset.encoding)
+    except:
+        update_dataset_module_db(
+            ModuleBias, dataset=dataset, status='failed')
+        return
+
+    load_bias_module(df, dataset)
+
+
 def load_performance_module(df, dataset):
     """
     """
@@ -353,18 +391,6 @@ def load_performance_module(df, dataset):
                     args=(df, dataset, None,))
     thread.start()
 
-
-def load_bias_module(df, dataset):
-    """
-    """
-    if (is_empty(dataset.path)) | (is_empty(dataset.score)) | (is_empty(dataset.model_type)) | (
-            is_empty(dataset.target)) | (is_empty(dataset.protected_attr)):
-        return
-
-    print('Launch dataset module thread : compute_bias_metrics')
-    thread = Thread(target=compute_bias_metrics,
-                    args=(df, dataset,))
-    thread.start()
 
 
 def load_dataset_from_path(path, sep=',', encoding='utf_8', nrows=None):
@@ -444,9 +470,6 @@ def load_dataset_modules(dataset, data):
         df = load_dataset_from_path(
             data['path'], sep=dataset.sep, encoding=dataset.encoding)
 
-        print('=========================')
-        print(df.head())
-
         load_pandas_profiling_module(
             df, title=dataset.name, explorative=False, dataset=dataset, minimal=True)
 
@@ -460,16 +483,16 @@ def load_dataset_modules(dataset, data):
 
     if df is not None:
         load_performance_module(df, dataset=dataset)
-        # load_bias_module(df, dataset=dataset)
+        init_bias_module(df, dataset=dataset)
 
 
 def load_dataset_modules_in_background(dataset, data):
     """
     """
     init_dataset_modules(dataset)
-    set_dataset_length(dataset)
 
     if key_in_dict_not_empty('path', data):
+        set_dataset_length(dataset)
         update_dataset_module_db(
             ModulePandasProfiling, dataset=dataset, status='loading')
 

@@ -1,14 +1,88 @@
-{% extends "commons/layout.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% extends "commons/layout.html" %} {% from
+"commons/components/card_status.html" import card_status with context %} {% from
+"commons/forms/multiple_select_list.html" import multiple_select_list with
+context %} {% from "commons/components/card.html" import card with context %} {%
+from "commons/forms/select_list.html" import select_list with context %} {% from
+"commons/forms/input.html" import form_input with context %} {% block title %}{{
+title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
-{% block h1 %}{{ title }}{% endblock %}
-
-{% block content %}
-<!-- Content Row -->
+{% block h1 %}{{ title }}{% endblock %} {% block content %} {% if
+dataset.module_bias is defined %}
+<!-- Details Row -->
 <div class="row">
-    Page not found.
+  <div class="col-6 col-lg-2">
+    {{ card_status(status=dataset.module_bias.status )}}
+  </div>
+  <div class="col-6 col-lg-2">
+    <strong>Created at:</strong> {{
+    dataset.module_bias.created_at.strftime('%Y-%m-%d')}}
+  </div>
+  <div class="col"></div>
 </div>
-{% endblock %}
+<!-- End details row -->
+<hr />
+
+<!-- Components Row -->
+<div class="row">
+  <div class="col-12 col-sm-6">
+    <form action="./analyse-bias" method="post" class="ml-3">
+      <div class="form-row mb-3">
+        <div class="col-12">
+          <div class="form-group">
+            {{ select_list(name='group_selection', label=_('How do you want to
+            determine the privileged group'), list=['custom','majority'],
+            list_labels=[_('Custom group (Select your own)'),_('Majority group
+            (Automatically select the largest group)')], search=False,
+            none_value=False, default='custom') }}
+            <div
+              class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1"
+            >
+              {{ _('Priviliged groups are used to calculate relative disparities
+              in our Bias Audit. For example, you might select Male as the
+              reference group for Gender. ') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if dataset.module_bias.privileged_group is defined %} {% for key, group
+      in dataset.module_bias.privileged_group.items() %}
+
+      <div class="form-row mb-3">
+        {% if group.dtype == 'object' %} {{ multiple_select_list(name=key,
+        label=key, list=group['values'], value=group['values'][0],
+        with_btn=False) }} {% else %}
+
+          {{ form_input(name=key, label=key, type='number',
+          value=group['values'][0])}}
+        {% endif %}
+      </div>
+      {% endfor %} {% endif %}
+
+      <div class="form-row mt-3">
+        <input type="hidden" name="_method" value="PUT" />
+        <button class="btn btn-primary" type="submit">
+          {{ _("Update report") }}
+        </button>
+      </div>
+    </form>
+  </div>
+  <!-- Datasets modules cards -->
+  {% set disable = dataset.module_pandas_profiling.status != 'loaded' %}
+
+  <div class="col-12 col-sm-6">
+    <div class="row mb-3">
+      <div class="col-12">
+        {{ card(text=_('See the report'),
+        href='/datasets/'+dataset.name+'/bias-results', disable=disable,
+        fa='chart-line', color='info', border_color='info', bg='white',
+        subtext=_('Link to the bias report..')) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
 <!-- {% block scripts %}{% endblock %} -->

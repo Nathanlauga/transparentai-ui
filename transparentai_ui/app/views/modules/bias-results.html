@@ -1,0 +1,40 @@
+{% extends "commons/layout.html" %} {% from
+    "commons/components/card_status.html" import card_status with context %} {% from
+    "commons/forms/multiple_select_list.html" import multiple_select_list with
+    context %} {% from "commons/components/card.html" import card with context %} {%
+    from "commons/forms/select_list.html" import select_list with context %} {% from
+    "commons/forms/input.html" import form_input with context %} {% block title %}{{
+    title }}{% endblock %}
+    <!-- {% block head %}{% endblock %} -->
+    {% block h1 %}{{ title }}{% endblock %} {% block content %} {% if
+    dataset.module_bias is defined %}
+    <!-- Details Row -->
+    <div class="row">
+      <div class="col-6 col-lg-2">
+        {{ card_status(status=dataset.module_bias.status )}}
+      </div>
+      <div class="col-6 col-lg-2">
+        <strong>Created at:</strong> {{
+        dataset.module_bias.created_at.strftime('%Y-%m-%d')}}
+      </div>
+      <div class="col"></div>
+    </div>
+    <!-- End details row -->
+    <hr />
+    
+    <!-- Components Row -->
+    <div class="row">
+
+        {% for k, v in dataset.module_bias.to_dict()['results'].items() %}
+            <div>
+                {{ k }}
+                <br>
+                {{ v }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %} {% endblock %}
+    
+    <!-- {% block footer %}{% endblock %} -->
+    <!-- {% block scripts %}{% endblock %} -->
+    

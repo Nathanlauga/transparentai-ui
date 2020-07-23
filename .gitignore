@@ -138,3 +138,6 @@ tmp
 transparentai_ui/app/views/modules/pandas_profiling_reports/
 startbootstrap-sb-admin-2-master.zip
 tranparentai-html.zip
+
+
+!*/__init__.py

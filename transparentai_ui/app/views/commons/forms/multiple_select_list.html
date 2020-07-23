@@ -1,8 +1,8 @@
-{% macro multiple_select_list(name, label, list, value=None, title=_('Select columns')) -%} {% if 'errors' in
+{% macro multiple_select_list(name, label, list, value=None, title=_('Select columns'), with_btn=True) -%} {% if 'errors' in
 session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
 
-<div class="form-group">
+<!-- <div class="form-group"> -->
   <label for="{{ name }}"><span>{{ label }}</span></label>
   <select
     name="{{ name }}"
@@ -20,7 +20,8 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
   <div class="invalid-feedback">
     {% if 'errors' in session %} {{ session['errors'][name] }} {% endif %}
   </div>
-</div>
+<!-- </div> -->
+{% if with_btn %}
 <button
   type="button"
   class="btn btn-outline-info"
@@ -35,4 +36,5 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 >
   {{ _('Deselect all') }}
 </button>
+{% endif %}
 {%- endmacro %}

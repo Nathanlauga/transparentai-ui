@@ -9,10 +9,10 @@ title }}{% endblock %}
 dataset.module_pandas_profiling is defined %}
 <!-- Details Row -->
 <div class="row">
-  <div class="col-2">
+  <div class="col-6 col-md-2">
     {{ card_status(status=dataset.module_pandas_profiling.status )}}
   </div>
-  <div class="col">
+  <div class="col-6 col-md-2">
     <strong>Created at:</strong> {{
     dataset.module_pandas_profiling.created_at.strftime('%Y-%m-%d')}}
   </div>
@@ -48,7 +48,8 @@ dataset.module_pandas_profiling is defined %}
           <div
             class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1"
           >
-            {{ _('If you want to use all the dataset put nothing in this field.') }}
+            {{ _('If you want to use all the dataset put nothing in this
+            field.') }}
           </div>
         </div>
       </div>

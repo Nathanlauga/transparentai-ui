@@ -14,6 +14,7 @@ class ModuleBias(BaseModel):
     dataset = db.relationship('Dataset', back_populates='module_bias')
 
     status = db.Column(db.String, default='loading')
+    group_selection = db.Column(db.String, default='custom')
     _results = db.Column(db.String, default='')
     _privileged_group = db.Column(db.String, default='')
 
@@ -24,8 +25,9 @@ class ModuleBias(BaseModel):
     _default_fields = [
         "results",
         "privileged_group",
-        "status"
-        "dataset_id"
+        "status",
+        "dataset_id",
+        "group_selection"
     ]
     _hidden_fields = [
         "dataset"
