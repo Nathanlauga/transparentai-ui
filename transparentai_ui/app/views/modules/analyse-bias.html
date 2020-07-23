@@ -46,16 +46,19 @@ dataset.module_bias is defined %}
       </div>
 
       {% if dataset.module_bias.privileged_group is defined %} {% for key, group
-      in dataset.module_bias.privileged_group.items() %}
+      in dataset.module_bias.privileged_group.items() %} {% if
+      dataset.module_bias.group_selection is defined %} {% set disable =
+      dataset.module_bias.group_selection == 'majority' %} {% else %} {% set
+      disable = False %} {% endif %}
 
       <div class="form-row mb-3">
         {% if group.dtype == 'object' %} {{ multiple_select_list(name=key,
         label=key, list=group['values'], value=group['values'][0],
-        with_btn=False) }} {% else %}
-
-          {{ form_input(name=key, label=key, type='number',
-          value=group['values'][0])}}
-        {% endif %}
+        with_btn=False, disable=disable) }} {% else %} {% if
+        group['privileged_values'] is defined %} {% set value =
+        group['privileged_values'] %} {% else %} {% set value =
+        group['values'][0] %} {% endif %} {{ form_input(name=key, label=key,
+        type='number', value=value, disable=disable)}} {% endif %}
       </div>
       {% endfor %} {% endif %}
 
@@ -68,7 +71,7 @@ dataset.module_bias is defined %}
     </form>
   </div>
   <!-- Datasets modules cards -->
-  {% set disable = dataset.module_pandas_profiling.status != 'loaded' %}
+  {% set disable = dataset.module_bias.status != 'loaded' %}
 
   <div class="col-12 col-sm-6">
     <div class="row mb-3">
@@ -85,4 +88,54 @@ dataset.module_bias is defined %}
 {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
-<!-- {% block scripts %}{% endblock %} -->
+{% block scripts %}
+
+<script>
+  const updateGroupSelection = function (clickedIndex, elemType) {
+    let elems = $(elemType);
+
+    console.log(elems)
+
+    if (clickedIndex === 1) {
+      // Custom selection choosed
+      elems.each((id) => {
+        if (elems[id].id !== "group_selection") {
+          let elem = $("#" + elems[id].id);
+          let btn = $("#" + elems[id].id + " + button");
+
+          elem.prop("disabled", false);
+          btn.removeClass("disabled");
+        }
+      });
+    } else {
+      // Majority selection choosed
+
+      elems.each((id) => {
+        if (elems[id].id !== "group_selection") {
+          let elem = $("#" + elems[id].id);
+          let btn = $("#" + elems[id].id + " + button");
+
+          elem.prop("disabled", true);
+          btn.addClass("disabled");
+
+          elem.selectpicker("deselectAll");
+          let first_val = $("#" + elems[id].id + " option:first").val();
+          elem.selectpicker("val", first_val);
+        }
+      });
+    }
+  };
+
+  $("#group_selection").on("changed.bs.select", function (
+    e,
+    clickedIndex,
+    isSelected,
+    previousValue
+  ) {
+    updateGroupSelection(clickedIndex, 'select');
+    updateGroupSelection(clickedIndex, 'input');
+    
+  });
+</script>
+
+{% endblock %}

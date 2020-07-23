@@ -1,4 +1,4 @@
-{% macro multiple_select_list(name, label, list, value=None, title=_('Select columns'), with_btn=True) -%} {% if 'errors' in
+{% macro multiple_select_list(name, label, list, value=None, title=_('Select columns'), with_btn=True, disable=False) -%} {% if 'errors' in
 session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
 
@@ -11,6 +11,7 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
     multiple
     title="{{ title }}"
     data-selected-text-format="count > 3"
+    {% if disable %}disabled{% endif %}
   >
   {% for elem in list %}
   <option {% if value is not none %}{% if elem in value %}selected{% endif %}{% endif %}>{{ elem }}</option>

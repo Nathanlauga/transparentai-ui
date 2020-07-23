@@ -15,11 +15,13 @@ border_color='light', bg='None', disable=False, status='', complement=None) -%}
   {% set color = 'danger' %}
   {% set border_color = 'danger' %}
   {% set fa = 'times' %}
+  {% set disable = True %}
 {% elif status == 'loading' %}
   {% set color = 'warning' %}
   {% set border_color = 'warning' %}
   {% set fa = 'spinner' %}
   {% set subtext = _('Loading...') %}
+  {% set disable = True %}
 {% elif status == 'loaded' %}
   {% set color = 'success' %}
   {% set border_color = 'success' %}

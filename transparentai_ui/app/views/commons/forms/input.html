@@ -1,4 +1,4 @@
-{% macro form_input(name, label, type='text', placeholder=None, required=False, value=None) -%}
+{% macro form_input(name, label, type='text', placeholder=None, required=False, value=None, disable=False) -%}
 
 {% if 'errors' in session %}
 {% set is_not_valid = session['errors'][name] is defined %}
@@ -27,6 +27,7 @@ id="{{ name }}"
 value="{{ value }}"
 {% endif %}
 {% if required %}required{% endif %}
+{% if disable %} disabled {% endif %}
 />
 <div class="invalid-feedback">
 {% if 'errors' in session %}

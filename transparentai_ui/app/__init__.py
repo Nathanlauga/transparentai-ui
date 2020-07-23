@@ -1,4 +1,6 @@
 import os
+import matplotlib
+matplotlib.use('Agg')
 
 from flask import Flask, request, session
 from flask_babel import Babel

@@ -227,7 +227,7 @@ def analyse_bias(name):
 
         if module is not None:
             load_bias_module_without_df(dataset)
-            return redirect(url_for('datasets.bias_results', name=name))
+            return redirect(url_for('datasets.analyse_bias', name=name))
 
     return render_template("modules/analyse-bias.html", session=session, dataset=dataset, header=header, title=title, previous=previous)
 

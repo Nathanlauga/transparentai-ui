@@ -113,7 +113,6 @@ def format_module(form_data, create=False, obj=None):
     """
     data = dict()
 
-    print(form_data)
     data['group_selection'] = format_module_group_selection(form_data)
 
     attributes = list(obj.privileged_group.keys()) #[k for k in form_data.keys() if k.startswith('attr_')]
@@ -131,7 +130,6 @@ def format_module(form_data, create=False, obj=None):
     if privileged_group != {}:
         data['privileged_group'] = privileged_group
 
-    print(data)
     return data
 
 # LOAD MODULE FUNCTIONS
@@ -153,7 +151,11 @@ def init_bias_module(df, dataset):
         uniq_values = list(df[attr].value_counts().index)
 
         if dtype != 'object':
-            uniq_values = [np.mean(uniq_values)]
+            if len(uniq_values) > 10:
+                uniq_values = [round(np.mean(uniq_values),2)]
+            else:
+                dtype = 'object'
+                uniq_values = list(df[attr].value_counts().index)
 
         privileged_group[attr]['dtype'] = dtype
         privileged_group[attr]['values'] = uniq_values
@@ -188,7 +190,7 @@ def compute_bias_metrics(df, dataset):
     
     for k, v in privileged_group.items():
         if privileged_group[k]['dtype'] != 'object':
-            priv_format[k] = lambda x: x > int(privileged_group[k]['privileged_values'][0])
+            priv_format[k] = lambda x: x > float(privileged_group[k]['privileged_values'][0])
         else: 
             priv_format[k] = privileged_group[k]['privileged_values']
 

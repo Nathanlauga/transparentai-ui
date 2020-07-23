@@ -6,7 +6,9 @@
 {% block content %}
 <!-- Content Row -->
 <div class="row">
-    Page not found.
+    {% if dataset.module_performance is defined %}
+        {{ dataset.module_performance.results }}
+    {% endif %}
 </div>
 {% endblock %}
 
