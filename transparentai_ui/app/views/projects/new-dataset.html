@@ -12,9 +12,9 @@
       method="post"
       class="ml-3"
     >
-      <div class="form-group">
+      <!-- <div class="form-group">
         {{ form_input(name='name', label=_("Dataset's name"), required=True)}}
-      </div>
+      </div> -->
 
       <div class="form-group">
         {{ form_input(name='path', label=_("File path"), required=True)}}
@@ -41,6 +41,7 @@
         </div>
       </div>
 
+      <input type="hidden" name="name" value="{{ project_name }}">
       <input type="hidden" name="project_name" value="{{ project_name }}">
       <button class="btn btn-primary" type="submit">
         {{ _('Create new dataset') }}

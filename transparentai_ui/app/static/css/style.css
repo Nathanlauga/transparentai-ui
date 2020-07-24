@@ -1,3 +1,6 @@
+html {
+  height: 100%;
+}
 #searchProject .dropdown-toggle::after {
   margin-left: 10vh;
 }
@@ -42,4 +45,11 @@
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #d1d3e2;
+}
+.breadcrumb-item.active a{
+  color: #000 !important;
+}
+
+.breadcrumb-item a{
+  color: #858796 !important;
 }

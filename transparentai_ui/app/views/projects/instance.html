@@ -94,20 +94,22 @@
   </div>
   {% endif %}
 </div>
-<hr />
 
-<div class="d-sm-flex align-items-center mb-4">
+<div style="height: 5vh;"></div>
+
+<!-- Form section -->
+<!-- <div class="d-sm-flex align-items-center mb-4">
   <h2 class="h3 mb-0 text-gray-800">
     <span>{{ _('AI Evaluation') }}</span>
   </h2>
-</div>
+</div> -->
 
-<div id="#frame" class="card shadow mb-4" style="min-height: 100vh;">
+<div id="#frame" class="mb-4">
   <!-- Card Header - Accordion -->
   <!-- <div class="d-sm-flex align-items-center justify-content-between mb-4"> -->
   <a
     href="#frameCollapse"
-    class="d-block card-header py-3"
+    class="d-block border-top border-bottom px-2 py-3 text-decoration-none text-dark"
     data-toggle="collapse"
     role="button"
     aria-expanded="true"
@@ -115,13 +117,13 @@
   >
     <div class="row">
       <div class="col">
-        <h2 class="h3 my-auto m-0 font-weight-bold text-secondary">
+        <h2 class="h2 my-auto m-0 font-weight-bold ">
           <i class="fas fa-cubes"></i> {{ _('Frame') }}
         </h2>
       </div>
       <div class="col">
-        <span class="small font-weight-bold text-secondary">
-          {{ _('Questions answered') }} <span class="float-right">4/10</span>
+        <span class="small font-weight-bold">
+          {{ _('Questions answered') }} <span class="float-right">4/{{questions['start']|length}}</span>
         </span>
         <div class="progress mb-4">
           <div
@@ -139,22 +141,87 @@
   <!-- Card Content - Collapse -->
   <div class="collapse show" id="frameCollapse">
     <div class="card-body">
-      {% for aspect in questions['start'] %}
-      <div class="row mb-5">
-        <div class="w-100 text-bold">
-          <h6 class="text-uppercase font-weight-bold">{{ aspect.id }} - {{aspect.name}}</h6>
-        </div>
-        
-        {% for question in aspect['questions'] %}
-        
-        <form>
-          <label for="{{ aspect.id }}_{{ question.order }}">{{ question.question }}</label>
-        </form>
-        
+      <div class="card bg-light">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            {% for aspect in questions['start'] %}
+            <li id="li-aspect-{{aspect.id}}" class="breadcrumb-item {% if loop.index == 1 %}active{% endif %}">
+              <a onclick="changeAspect(this)" href="#aspect-{{aspect.id}}">{{ aspect.id }} - {{aspect.name}}</a>
+            </li>
+            {% endfor %}
+          </ol>
+        </nav>
+        {% for aspect in questions['start'] %}
+
+          <div id="aspect-{{aspect.id}}" class="aspect p-2 {% if loop.index != 1 %}d-none{%else%}d-block{% endif %}" style="min-height: 40vh !important;">
+            
+          <div class="mx-auto my-auto" style="min-width: 50% !important; max-width: 80% !important;">
+            <h5 class="h6 text-uppercase text-primary font-weight-bold">{{ aspect.id }} - {{aspect.name}}</h5>
+          {% for question in aspect['questions'] %}
+            <form class="mb-5">
+              <div class="form-group">
+              <div class="my-2 text-lg text-gray-800 font-weight-normal" for="{{ aspect.id }}_{{ question.order }}">{{ question.question }}</div>
+
+              {% if question['question_type'] == 'boolean' %}
+
+              <div id="{{ aspect.id }}_{{ question.order }}" class="text-lg btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-light text-uppercase active" style="width: 120px !important;">
+                  <input type="radio" name="options" id="option1" autocomplete="off"> {{ _('Yes')}}
+                </label>
+                <label class="btn btn-light text-uppercase" style="width: 120px !important;">
+                  <input type="radio" name="options" id="option2" autocomplete="off"> {{ _('No')}}
+                </label>
+              </div>        
+              {% else %}
+              
+                {{ question }}
+
+              {% endif %}
+
+              {% if question['example'] != 'None' %}
+                <div class="mt-3 mb-3 ml-4">
+                  <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">{{ _('Example') }}</div>
+                  <div class="text-md mb-0 font-weight-light text-gray-800">
+                    {{ question['example'] }}
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if question['suggestion'] != 'None' %}
+                <div class="mt-3">
+                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{ _('Suggestion') }}</div>
+                  <div class="text-md mb-0 font-weight-light text-gray-800">
+                    {{ question['suggestion'] }}
+                  </div>
+                </div>
+              {% endif %}
+
+              </div>
+              
+            </form>
+
+          {% endfor %}
+
+          <div class="row">
+            {% if loop.index > 1 %}
+            <div class="col">
+              <a class="btn btn-primary" role="button" onclick="changeAspect(this)" href="#aspect-{{aspect.id-1}}">Previous</a>
+            </div>
+            {% endif %}
+            {% if loop.index < questions['start']|length %}
+            <div class="col text-right">
+              <a class="btn btn-primary" role="button" onclick="changeAspect(this)" href="#aspect-{{aspect.id+1}}">Next</a>
+            </div>
+            {% endif %}
+
+            </div>
+            </div>
+
+          </div>
+
         {% endfor %}
-      </div>
-      <hr>
-      {% endfor %}
+
+    </div>
     </div>
   </div>
 </div>
@@ -166,4 +233,26 @@
 {% endfor %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
-<!-- {% block scripts %}{% endblock %} -->
+{% block scripts %}
+
+<script>
+const changeAspect = function(newA){
+  let aspectId = newA.href.split('#')[1];
+  let aspects = $('.aspect');
+  let aspectSelected = $('#'+aspectId);
+
+  let oldItem = $('.breadcrumb-item.active');
+  let newItem = $('#li-'+aspectId);
+  
+  aspects.removeClass('d-block');
+  aspects.addClass('d-none');
+
+  aspectSelected.removeClass('d-none');
+  aspectSelected.addClass('d-block');
+
+  oldItem.removeClass('active');
+  newItem.addClass('active');
+}
+</script>
+
+{% endblock %}

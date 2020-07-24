@@ -43,7 +43,7 @@ def format_module_privileged_group(form_data, key, module, group_selection='majo
         if privileged_group[key]['dtype'] == 'object':
             privileged_group[key]['privileged_values'] = form_data.getlist(key)
         else:
-            privileged_group[key]['privileged_values'] = form_data[key]
+            privileged_group[key]['privileged_values'] = [float(form_data[key])]
 
     return privileged_group[key]
 

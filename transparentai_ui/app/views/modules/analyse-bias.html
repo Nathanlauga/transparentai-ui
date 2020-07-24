@@ -52,13 +52,19 @@ dataset.module_bias is defined %}
       disable = False %} {% endif %}
 
       <div class="form-row mb-3">
-        {% if group.dtype == 'object' %} {{ multiple_select_list(name=key,
-        label=key, list=group['values'], value=group['values'][0],
-        with_btn=False, disable=disable) }} {% else %} {% if
-        group['privileged_values'] is defined %} {% set value =
-        group['privileged_values'] %} {% else %} {% set value =
-        group['values'][0] %} {% endif %} {{ form_input(name=key, label=key,
-        type='number', value=value, disable=disable)}} {% endif %}
+        {% if group.dtype == 'object' %} 
+          {{ multiple_select_list(name=key, label=key, list=group['values'], value=group['values'][0], with_btn=False, disable=disable) }} 
+        {% else %} 
+          {% if group['privileged_values'] is defined %} 
+            {% set value = group['privileged_values'][0] %} 
+          {% else %} 
+            {% set value = group['values'][0] %} 
+          {% endif %}
+         {{ form_input(name=key, label=key, type='number', value=value, disable=disable)}}
+         <div class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1">
+         {{ _('Choose a number to split your attribute in two categories (greater and lower than the selected number)') }}
+       </div> 
+        {% endif %}
       </div>
       {% endfor %} {% endif %}
 
@@ -71,7 +77,7 @@ dataset.module_bias is defined %}
     </form>
   </div>
   <!-- Datasets modules cards -->
-  {% set disable = dataset.module_bias.status != 'loaded' %}
+  {% set disable = (dataset.module_bias.status != 'loaded') and (dataset.module_bias.results is not none) %}
 
   <div class="col-12 col-sm-6">
     <div class="row mb-3">
