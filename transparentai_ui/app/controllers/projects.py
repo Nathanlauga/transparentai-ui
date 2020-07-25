@@ -4,7 +4,7 @@ import os.path
 import pandas as pd
 
 from ..models import Project
-from .services.projects import format_project, control_project
+from .services.projects import format_project, control_project, init_anwsers
 from .services.commons import get_header_attributes
 from .controller_class import Controller
 
@@ -38,6 +38,8 @@ def new():
 
     if request.method == 'POST':
         project = project_controller.create()
+        init_anwsers(project)
+
         if project is not None:
             return redirect(url_for('projects.get_instance', name=project.name))
 
@@ -83,7 +85,9 @@ def get_instance_json(name):
 
 
 def create():
-    project_controller.create()
+    project = project_controller.create()
+    init_anwsers(project)
+
     return redirect(url_for('projects.index'))
 
 

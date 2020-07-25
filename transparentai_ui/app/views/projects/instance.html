@@ -97,12 +97,7 @@
 
 <div style="height: 5vh;"></div>
 
-<!-- Form section -->
-<!-- <div class="d-sm-flex align-items-center mb-4">
-  <h2 class="h3 mb-0 text-gray-800">
-    <span>{{ _('AI Evaluation') }}</span>
-  </h2>
-</div> -->
+{{ project.answers }}
 
 <div id="#frame" class="mb-4">
   <!-- Card Header - Accordion -->
@@ -158,18 +153,27 @@
           <div class="mx-auto my-auto" style="min-width: 50% !important; max-width: 80% !important;">
             <h5 class="h6 text-uppercase text-primary font-weight-bold">{{ aspect.id }} - {{aspect.name}}</h5>
           {% for question in aspect['questions'] %}
+            {% if question.order == 'None' %}
+              {% set order = 0 %}
+            {% else %}
+              {% set order = question.order %}
+            {% endif %}
+
             <form class="mb-5">
               <div class="form-group">
               <div class="my-2 text-lg text-gray-800 font-weight-normal" for="{{ aspect.id }}_{{ question.order }}">{{ question.question }}</div>
 
               {% if question['question_type'] == 'boolean' %}
-
-              <div id="{{ aspect.id }}_{{ question.order }}" class="text-lg btn-group-toggle" data-toggle="buttons">
+              <div onclick="updateProject(this)" id="{{ aspect.id }}_{{ question.order }}" class="text-lg btn-group-toggle" data-toggle="buttons">
                 <label class="btn btn-light text-uppercase active" style="width: 120px !important;">
-                  <input type="radio" name="options" id="option1" autocomplete="off"> {{ _('Yes')}}
+                  <input type="radio" name="aspect-{{aspect.id}}" id="aspect-{{aspect.id}}-yes" autocomplete="off" 
+                  {% if project.answers[aspect.id|string][order] == 'yes' %}checked{% endif %}
+                    > {{ _('Yes')}}
                 </label>
                 <label class="btn btn-light text-uppercase" style="width: 120px !important;">
-                  <input type="radio" name="options" id="option2" autocomplete="off"> {{ _('No')}}
+                  <input type="radio" name="aspect-{{aspect.id}}" id="aspect-{{aspect.id}}-no" autocomplete="off"
+                  {% if project.answers[aspect.id|string][order] == 'no' %}checked{% endif %}
+                    >  {{ _('No')}}
                 </label>
               </div>        
               {% else %}
@@ -225,7 +229,6 @@
     </div>
   </div>
 </div>
-
 {% for question in questions %}
 <div class="row">
   {{ question }}
@@ -236,23 +239,42 @@
 {% block scripts %}
 
 <script>
-const changeAspect = function(newA){
-  let aspectId = newA.href.split('#')[1];
-  let aspects = $('.aspect');
-  let aspectSelected = $('#'+aspectId);
+  const changeAspect = function(newA){
+    let aspectId = newA.href.split('#')[1];
+    let aspects = $('.aspect');
+    let aspectSelected = $('#'+aspectId);
 
-  let oldItem = $('.breadcrumb-item.active');
-  let newItem = $('#li-'+aspectId);
-  
-  aspects.removeClass('d-block');
-  aspects.addClass('d-none');
+    let oldItem = $('.breadcrumb-item.active');
+    let newItem = $('#li-'+aspectId);
+    
+    aspects.removeClass('d-block');
+    aspects.addClass('d-none');
 
-  aspectSelected.removeClass('d-none');
-  aspectSelected.addClass('d-block');
+    aspectSelected.removeClass('d-none');
+    aspectSelected.addClass('d-block');
 
-  oldItem.removeClass('active');
-  newItem.addClass('active');
-}
+    oldItem.removeClass('active');
+    newItem.addClass('active');
+  }
+
+
+  const updateProject = function(e){
+    let id = e.id.split('_');
+    console.log(id)
+    let aspectId = 'answers_'+id[0]+'_'+id[1];
+
+    let data = {};
+    data[aspectId] = "yes"
+    
+    $.ajax({
+			data : data,
+			type : 'PUT',
+			url : '/projects/{{project.name}}',
+			error: function(error){
+				console.log(error);
+			}
+		});
+  }
 </script>
 
 {% endblock %}

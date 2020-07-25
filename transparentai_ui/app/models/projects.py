@@ -1,5 +1,5 @@
 from .. import db
-from ..utils.models import list_property, list_property_setter
+from ..utils.models import list_property, list_property_setter, dict_property
 from .base_model import BaseModel
 
 
@@ -12,6 +12,7 @@ class Project(BaseModel):
     desc = db.Column(db.String)
     name = db.Column(db.String, unique=True, nullable=False)
     _members = db.Column(db.String, default='')
+    _answers = db.Column(db.String, default='')
     
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
@@ -26,6 +27,7 @@ class Project(BaseModel):
         "name",
         "desc",
         "members",
+        "answers"
     ]
     _hidden_fields = [
         "dataset"
@@ -44,3 +46,11 @@ class Project(BaseModel):
     def members(self, value):
         self._members = list_property_setter(
             self._members, value)
+
+    @property
+    def answers(self):
+        return dict_property(self._answers)
+
+    @answers.setter
+    def answers(self, value):
+        self._answers = str(value).replace("'", '"')

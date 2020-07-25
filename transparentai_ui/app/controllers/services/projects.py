@@ -1,7 +1,10 @@
 from ...models import Project
 from ...models import Dataset
+from ...src import get_questions
 
-from ...utils.db import exists_in_db, select_from_db
+import json
+
+from ...utils.db import exists_in_db, select_from_db, update_in_db
 
 from ...utils.errors import get_errors
 from ...utils import key_in_dict_not_empty, is_empty
@@ -9,7 +12,49 @@ from ...utils import key_in_dict_not_empty, is_empty
 from ...utils.components import format_str_strip, clean_errors
 
 
+def init_anwsers(project):
+    """
+    """
+    questions = get_questions()
+    ids = [(elem['id'], len(elem['questions'])) for k, section in questions.items() for elem in section]
+
+    answers = {}
+    for id, n_questions in ids:
+        answers[str(id)] = ['None' for i in range(n_questions)]
+
+    data = {
+        "answers": answers
+    }
+
+    res = update_in_db(project, data)
+
 # ======= FORMAT MODEL FUNCTIONS ======= #
+
+
+def format_answers(project, form_data):
+    """
+    """
+    if project is None:
+        return {}
+
+    answers = project.answers
+
+    keys = [k for k, v in form_data.items() if 'answers' in k]
+
+    if len(keys) == 0:
+        return answers
+
+    for k in keys:
+        splt = k.split('_')
+        aspect_id = splt[1]
+        order = splt[2]
+
+        if order == "None":
+            answers[aspect_id][0] = form_data[k]
+        else:
+            answers[aspect_id][int(order)] = form_data[k]
+
+    return answers
 
 
 def format_project_name(form_data):
@@ -22,6 +67,7 @@ def format_project_dataset_name(form_data):
     """
     """
     return format_str_strip(form_data, key='dataset_name')
+
 
 def format_project_desc(form_data):
     """
@@ -120,11 +166,13 @@ def format_project(form_data, create=False, obj=None):
     """
     data = dict()
 
+    print(form_data)
     if create:
         data['name'] = format_project_name(form_data)
 
     data['desc'] = format_project_desc(form_data)
     data['members'] = format_project_members(form_data)
+    data['answers'] = format_answers(obj, form_data)
 
     if key_in_dict_not_empty('dataset_name', form_data):
         dataset = get_model_dataset_from_name(form_data)
