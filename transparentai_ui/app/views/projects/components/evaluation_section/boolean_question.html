@@ -1,0 +1,30 @@
+{% macro boolean_question(aspect, question, order) %}
+
+<div
+id="{{ aspect.id }}_{{ question.order|int }}"
+class="text-lg btn-group-toggle"
+data-toggle="buttons"
+>
+<label
+  class="btn btn-light text-uppercase active"
+  style="width: 120px !important;"
+>
+  <input onclick="updateProject(this)"
+  id="aspect-{{aspect.id}}-yes" type="radio"
+  name="aspect-{{aspect.id}}" value="yes" autocomplete="off"
+  {% if project.answers[aspect.id|string][order] == 'yes'
+  %}checked{% endif %} > {{ _('Yes')}}
+</label>
+<label
+  class="btn btn-light text-uppercase"
+  style="width: 120px !important;"
+>
+  <input onclick="updateProject(this)"
+  id="aspect-{{aspect.id}}-no" type="radio"
+  name="aspect-{{aspect.id}}" value="no" autocomplete="off" {%
+  if project.answers[aspect.id|string][order] == 'no'
+  %}checked{% endif %} > {{ _('No')}}
+</label>
+</div>
+
+{% endmacro %}

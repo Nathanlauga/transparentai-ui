@@ -1,5 +1,6 @@
-{% from "commons/components/card.html" import card with context %} {% extends
-"commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
+{% from "commons/components/card.html" import card with context %} 
+{% from "projects/components/evaluation_section.html" import evaluation_section with context %} 
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
 {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
 <div class="d-inline-block">
@@ -97,150 +98,30 @@
 
 <div style="height: 5vh;"></div>
 
-{{ project.answers }}
+{{ evaluation_section(id='frame', label=_('Frame'), section_id='start', project=project) }}
 
-<div id="#frame" class="mb-4">
-  <!-- Card Header - Accordion -->
-  <!-- <div class="d-sm-flex align-items-center justify-content-between mb-4"> -->
-  <a
-    href="#frameCollapse"
-    class="d-block border-top border-bottom px-2 py-3 text-decoration-none text-dark"
-    data-toggle="collapse"
-    role="button"
-    aria-expanded="true"
-    aria-controls="frameCollapse"
-  >
-    <div class="row">
-      <div class="col">
-        <h2 class="h2 my-auto m-0 font-weight-bold ">
-          <i class="fas fa-cubes"></i> {{ _('Frame') }}
-        </h2>
-      </div>
-      <div class="col">
-        <span class="small font-weight-bold">
-          {{ _('Questions answered') }} <span class="float-right">4/{{questions['start']|length}}</span>
-        </span>
-        <div class="progress mb-4">
-          <div
-            class="progress-bar bg-warning"
-            role="progressbar"
-            style="width: 40%;"
-            aria-valuenow="40"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
-        </div>
-      </div>
-    </div>
-  </a>
-  <!-- Card Content - Collapse -->
-  <div class="collapse show" id="frameCollapse">
-    <div class="card-body">
-      <div class="card bg-light">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            {% for aspect in questions['start'] %}
-            <li id="li-aspect-{{aspect.id}}" class="breadcrumb-item {% if loop.index == 1 %}active{% endif %}">
-              <a onclick="changeAspect(this)" href="#aspect-{{aspect.id}}">{{ aspect.id }} - {{aspect.name}}</a>
-            </li>
-            {% endfor %}
-          </ol>
-        </nav>
-        {% for aspect in questions['start'] %}
+<div style="height: 5vh;"></div>
 
-          <div id="aspect-{{aspect.id}}" class="aspect p-2 {% if loop.index != 1 %}d-none{%else%}d-block{% endif %}" style="min-height: 40vh !important;">
-            
-          <div class="mx-auto my-auto" style="min-width: 50% !important; max-width: 80% !important;">
-            <h5 class="h6 text-uppercase text-primary font-weight-bold">{{ aspect.id }} - {{aspect.name}}</h5>
-          {% for question in aspect['questions'] %}
-            {% if question.order == 'None' %}
-              {% set order = 0 %}
-            {% else %}
-              {% set order = question.order %}
-            {% endif %}
+{{ evaluation_section(id='validation', label=_('Validation'), section_id='validation', project=project) }}
 
-            <form class="mb-5">
-              <div class="form-group">
-              <div class="my-2 text-lg text-gray-800 font-weight-normal" for="{{ aspect.id }}_{{ question.order }}">{{ question.question }}</div>
+<div style="height: 5vh;"></div>
 
-              {% if question['question_type'] == 'boolean' %}
-              <div onclick="updateProject(this)" id="{{ aspect.id }}_{{ question.order }}" class="text-lg btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-light text-uppercase active" style="width: 120px !important;">
-                  <input type="radio" name="aspect-{{aspect.id}}" id="aspect-{{aspect.id}}-yes" autocomplete="off" 
-                  {% if project.answers[aspect.id|string][order] == 'yes' %}checked{% endif %}
-                    > {{ _('Yes')}}
-                </label>
-                <label class="btn btn-light text-uppercase" style="width: 120px !important;">
-                  <input type="radio" name="aspect-{{aspect.id}}" id="aspect-{{aspect.id}}-no" autocomplete="off"
-                  {% if project.answers[aspect.id|string][order] == 'no' %}checked{% endif %}
-                    >  {{ _('No')}}
-                </label>
-              </div>        
-              {% else %}
-              
-                {{ question }}
+{{ evaluation_section(id='security', label=_('Security'), section_id='safety', project=project) }}
 
-              {% endif %}
+<div style="height: 5vh;"></div>
 
-              {% if question['example'] != 'None' %}
-                <div class="mt-3 mb-3 ml-4">
-                  <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">{{ _('Example') }}</div>
-                  <div class="text-md mb-0 font-weight-light text-gray-800">
-                    {{ question['example'] }}
-                  </div>
-                </div>
-              {% endif %}
+{{ evaluation_section(id='monitoring', label=_('Monitoring'), section_id='monitoring', project=project) }}
 
-              {% if question['suggestion'] != 'None' %}
-                <div class="mt-3">
-                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{ _('Suggestion') }}</div>
-                  <div class="text-md mb-0 font-weight-light text-gray-800">
-                    {{ question['suggestion'] }}
-                  </div>
-                </div>
-              {% endif %}
-
-              </div>
-              
-            </form>
-
-          {% endfor %}
-
-          <div class="row">
-            {% if loop.index > 1 %}
-            <div class="col">
-              <a class="btn btn-primary" role="button" onclick="changeAspect(this)" href="#aspect-{{aspect.id-1}}">Previous</a>
-            </div>
-            {% endif %}
-            {% if loop.index < questions['start']|length %}
-            <div class="col text-right">
-              <a class="btn btn-primary" role="button" onclick="changeAspect(this)" href="#aspect-{{aspect.id+1}}">Next</a>
-            </div>
-            {% endif %}
-
-            </div>
-            </div>
-
-          </div>
-
-        {% endfor %}
-
-    </div>
-    </div>
-  </div>
-</div>
-{% for question in questions %}
-<div class="row">
-  {{ question }}
-</div>
-{% endfor %} {% endblock %}
+{% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
 {% block scripts %}
 
 <script>
   const changeAspect = function(newA){
-    let aspectId = newA.href.split('#')[1];
+    let aspectId = newA.classList[0].split('#')[1];
+
+    console.log(newA.classList)
     let aspects = $('.aspect');
     let aspectSelected = $('#'+aspectId);
 
@@ -257,15 +138,17 @@
     newItem.addClass('active');
   }
 
-
   const updateProject = function(e){
-    let id = e.id.split('_');
-    console.log(id)
-    let aspectId = 'answers_'+id[0]+'_'+id[1];
+    let div = e.closest("div");
+    let id = div.id.split('_');
+    let aspectId = 'answers_'+id[0]+'_'+(parseInt(id[1]));
+    let value = e.value;
 
     let data = {};
-    data[aspectId] = "yes"
-    
+    data[aspectId] = value;
+
+    console.log(data);
+
     $.ajax({
 			data : data,
 			type : 'PUT',

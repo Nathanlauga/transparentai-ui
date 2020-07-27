@@ -1,0 +1,158 @@
+{% from "projects/components/evaluation_section/boolean_question.html" import boolean_question with context %} 
+
+{% macro evaluation_section(id, label, section_id, project) -%}
+
+{% set prct_answered = ((project.n_answered[section_id]*100 / questions[section_id]|length)|int)/100 %}
+
+{% if prct_answered < 0.5 %}
+    {% set bar_color = 'warning' %}
+{% elif prct_answered < 1 %}
+    {% set bar_color = 'info' %}
+{% else %}
+    {% set bar_color = 'success' %}
+{% endif %}
+
+<div id="{{ id }}" class="mb-4">
+  <!-- Card Header - Accordion -->
+  <a
+    href="#{{ id }}Collapse"
+    class="d-block border-top border-bottom px-2 py-3 text-decoration-none text-dark"
+    data-toggle="collapse"
+    role="button"
+    aria-expanded="true"
+    aria-controls="{{ id }}Collapse"
+  >
+    <div class="row">
+      <div class="col">
+        <h2 class="h2 my-auto m-0 font-weight-bold">
+          <i class="fas fa-cubes"></i> {{ label }}
+        </h2>
+      </div>
+      <div class="col">
+        <span class="small font-weight-bold">
+          {{ _('Questions answered') }}
+          <span class="float-right">{{ project.n_answered[section_id]}}/{{questions[section_id]|length}}</span>
+        </span>
+        <div class="progress mb-4">
+          <div
+            class="progress-bar bg-{{bar_color}}"
+            role="progressbar"
+            style="width: {{ (prct_answered*100)|int}}%;"
+            aria-valuenow="prct_answered"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- Card Content - Collapse -->
+  <div class="collapse show" id="{{ id }}Collapse">
+    <div class="card-body">
+      <div class="card bg-light">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            {% for aspect in questions[section_id] %}
+            <li
+              id="li-aspect-{{aspect.id}}"
+              class="breadcrumb-item {% if loop.index == 1 %}active{% endif %}"
+            >
+              <a onclick="changeAspect(this)" class="#aspect-{{aspect.id}} pointer"
+                >{{ aspect.id }} - {{aspect.name}}</a
+              >
+            </li>
+            {% endfor %}
+          </ol>
+        </nav>
+        {% for aspect in questions[section_id] %}
+
+        <div
+          id="aspect-{{aspect.id}}"
+          class="aspect p-2 {% if loop.index != 1 %}d-none{%else%}d-block{% endif %}"
+          style="min-height: 40vh !important;"
+        >
+          <div
+            class="mx-auto my-auto"
+            style="min-width: 50% !important; max-width: 80% !important;"
+          >
+            <h5 class="h6 text-uppercase text-primary font-weight-bold">
+              {{ aspect.id }} - {{aspect.name}}
+            </h5>
+            {% for question in aspect['questions'] %} {% if question.order ==
+            'None' %} {% set order = 0 %} {% else %} {% set order =
+            question.order %} {% endif %}
+
+            <form class="mb-5">
+              <div class="form-group">
+                <div
+                  class="my-2 text-lg text-gray-800 font-weight-normal"
+                  for="{{ aspect.id }}_{{ question.order|int }}"
+                >
+                  {{ question.question }}
+                </div>
+
+                {% if question['question_type'] == 'boolean' %}
+
+                {{ boolean_question(aspect, question, order) }}
+
+                {% else %} {{ question }} {% endif %} {% if question['example']
+                != 'None' %}
+                <div class="mt-3 mb-3 ml-4">
+                  <div
+                    class="text-xs font-weight-bold text-secondary text-uppercase mb-1"
+                  >
+                    {{ _('Example') }}
+                  </div>
+                  <div class="text-md mb-0 font-weight-light text-gray-800">
+                    {{ question['example'] }}
+                  </div>
+                </div>
+                {% endif %} {% if question['suggestion'] != 'None' %}
+                <div class="mt-3">
+                  <div
+                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                  >
+                    {{ _('Suggestion') }}
+                  </div>
+                  <div class="text-md mb-0 font-weight-light text-gray-800">
+                    {{ question['suggestion'] }}
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </form>
+
+            {% endfor %}
+
+            <div class="row">
+              {% if loop.index > 1 %}
+              <div class="col">
+                <a
+                  class="#aspect-{{aspect.id-1}} btn btn-primary pointer"
+                  role="button"
+                  onclick="changeAspect(this)"
+                  >{{ _('Previous') }}</a
+                >
+              </div>
+              {% endif %} {% if loop.index < questions[section_id]|length %}
+              <div class="col text-right">
+                <a
+                  class="#aspect-{{aspect.id+1}} btn btn-primary pointer"
+                  role="button"
+                  onclick="changeAspect(this)"
+                  >{{ _('Next') }}</a
+                >
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% endmacro %}
+</div>

@@ -36,7 +36,7 @@
                 <div class="row no-gutters align-items-center">
                   <div class="col-auto">
                     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                      {{ 75 }}%
+                      {{ project.n_answered['total'] }}%
                     </div>
                   </div>
                   <div class="col">
@@ -44,8 +44,8 @@
                       <div
                         class="progress-bar bg-info"
                         role="progressbar"
-                        style="width: {{ 75 }}%;"
-                        aria-valuenow="{{ 75 }}"
+                        style="width: {{ project.n_answered['total'] }}%;"
+                        aria-valuenow="{{ project.n_answered['total'] }}"
                         aria-valuemin="0"
                         aria-valuemax="100"
                       ></div>

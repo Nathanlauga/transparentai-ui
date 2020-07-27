@@ -2,6 +2,7 @@ from .. import db
 from ..utils.models import list_property, list_property_setter, dict_property
 from .base_model import BaseModel
 
+from ..src import get_questions
 
 class Project(BaseModel):
     """
@@ -54,3 +55,29 @@ class Project(BaseModel):
     @answers.setter
     def answers(self, value):
         self._answers = str(value).replace("'", '"')
+
+    @property
+    def n_answered(self):
+        questions = get_questions()
+        questions_by_section = [(k, elem['id']) for k, section in questions.items() for elem in section]
+        sections = list(questions.keys())
+
+        n_answered = {}
+        total = 0
+
+        for section in sections:
+            n_answered[section] = 0
+
+        for section, q_id in questions_by_section:
+            print(section, q_id)
+            answer = self.answers[str(q_id)]
+
+            is_answered = sum([e == 'None' for e in answer]) == 0
+            if is_answered:
+                n_answered[section] = n_answered[section] + 1
+                total += 1
+        
+        n_answered['total'] = total
+
+
+        return n_answered
