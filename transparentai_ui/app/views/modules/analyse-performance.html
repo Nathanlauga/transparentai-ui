@@ -1,16 +1,30 @@
-{% extends "commons/layout.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
-{% block h1 %}{{ title }}{% endblock %}
-
-{% block content %}
+{% block h1 %}{{ title }}{% endblock %} {% block content %}
 <!-- Content Row -->
+{% if dataset.module_performance.status != 'loaded' %}
+
 <div class="row">
-    {% if dataset.module_performance is defined %}
-        {{ dataset.module_performance.results }}
-    {% endif %}
+  <div class="alert w-100 alert-info text-center" role="alert">
+    {{ _('To access this module, you need to set the target, score columns and
+    the model type and wait for the software to load the report.') }}
+    <a class="text-info" href="/datasets/{{ dataset.name }}"
+      >{{ _('Please go to the Dataset page') }}</a
+    >
+    {{ _('or') }}
+    <a class="text-info" href="./analyse-performance"
+      >{{ _('reload this page.') }}</a
+    >
+  </div>
 </div>
-{% endblock %}
+
+{% else %}
+
+<div class="row">
+  {% if dataset.module_performance is defined %} {{
+  dataset.module_performance.results }} {% endif %}
+</div>
+{% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
 <!-- {% block scripts %}{% endblock %} -->

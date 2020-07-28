@@ -23,6 +23,18 @@ dataset.module_bias is defined %}
 <hr />
 
 <!-- Components Row -->
+{% if dataset.module_bias.status != 'loaded' %}
+
+<div class="row">
+  <div class="alert w-100 alert-info text-center" role="alert">
+    {{ _('To access this module, you need to select the protected attributes and wait bias metrics to be computed.') }}
+    <a class="text-info" href="/datasets/{{ dataset.name }}">{{ _('Please go to the Dataset page') }}</a>
+     {{ _('or') }} 
+    <a class="text-info" href="./analyse-bias">{{ _('reload this page.') }}</a>
+  </div>
+</div>
+
+{% else %}
 <div class="row">
   <div class="col-12 col-sm-6">
     <form action="./analyse-bias" method="post" class="ml-3">
@@ -91,6 +103,7 @@ dataset.module_bias is defined %}
   </div>
 </div>
 
+{% endif %}
 {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->

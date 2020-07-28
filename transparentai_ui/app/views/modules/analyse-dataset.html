@@ -22,6 +22,18 @@ dataset.module_pandas_profiling is defined %}
 <hr />
 
 <!-- Components Row -->
+{% if dataset.module_pandas_profiling.status != 'loaded' %}
+
+<div class="row">
+  <div class="alert w-100 alert-info text-center" role="alert">
+    {{ _('To access this module, you need to set the dataset path correctly and wait for the software to load the report.') }}
+    <a class="text-info" href="/datasets/{{ dataset.name }}">{{ _('Please go to the Dataset page') }}</a>
+     {{ _('or') }} 
+    <a class="text-info" href="./analyse-dataset">{{ _('reload this page.') }}</a>
+  </div>
+</div>
+
+{% else %}
 <div class="row">
   <div class="col-12 col-sm-6">
     <form action="./analyse-dataset" method="post" class="ml-3">
@@ -87,6 +99,7 @@ dataset.module_pandas_profiling is defined %}
   </div>
 </div>
 
+{% endif %}
 {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->

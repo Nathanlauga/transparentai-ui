@@ -1,0 +1,45 @@
+{% macro boolean_plus_one_question(aspect, question, order) %}
+
+{% if 'plus_one_label' in question %}
+  {% set third_label = question['plus_one_label'] %}
+{% else %}
+  {% set third_label = _('Don\'t know') %}
+{% endif %}
+
+<div
+id="{{ aspect.id }}_{{ question.order|int }}"
+class="text-lg btn-group-toggle"
+data-toggle="buttons"
+>
+<label
+  class="btn btn-light text-uppercase active"
+  style="width: 120px !important;"
+>
+  <input onclick="updateProject(this)" data-good-answer="{{question['good_answer']}}"
+  id="aspect-{{aspect.id}}-{{question.order|int}}-yes" type="radio"
+  name="aspect-{{aspect.id}}" value="yes" autocomplete="off"
+  {% if project.answers[aspect.id|string][order] == 'yes'
+  %}checked{% endif %} > {{ _('Yes')}}
+</label>
+<label
+  class="btn btn-light text-uppercase"
+  style="width: 120px !important;"
+>
+  <input onclick="updateProject(this)" data-good-answer="{{question['good_answer']}}"
+  id="aspect-{{aspect.id}}-{{question.order|int}}-no" type="radio"
+  name="aspect-{{aspect.id}}" value="no" autocomplete="off" {%
+  if project.answers[aspect.id|string][order] == 'no'
+  %}checked{% endif %} > {{ _('No')}}
+</label>
+<label
+  class="btn btn-light text-uppercase"
+>
+  <input onclick="updateProject(this)"
+  id="aspect-{{aspect.id}}-{{question.order|int}}-other" type="radio"
+  name="aspect-{{aspect.id}}" value="other" autocomplete="off" {%
+  if project.answers[aspect.id|string][order] == 'other'
+  %}checked{% endif %} > {{ third_label }}
+</label>
+</div>
+
+{% endmacro %}

@@ -1,28 +1,29 @@
 {% macro boolean_question(aspect, question, order) %}
 
+{%set answer = project.answers[aspect.id|string][order] %}
 <div
 id="{{ aspect.id }}_{{ question.order|int }}"
 class="text-lg btn-group-toggle"
 data-toggle="buttons"
 >
 <label
-  class="btn btn-light text-uppercase active"
+  class="btn btn-{% if question['good_answer'] == 1 and answer == 'yes'%}success{%else%}light{%endif%} text-uppercase active"
   style="width: 120px !important;"
 >
-  <input onclick="updateProject(this)"
-  id="aspect-{{aspect.id}}-yes" type="radio"
+  <input onclick="updateProject(this)" data-good-answer="{{question['good_answer']}}"
+  id="aspect-{{aspect.id}}-{{question.order|int}}-yes" type="radio"
   name="aspect-{{aspect.id}}" value="yes" autocomplete="off"
-  {% if project.answers[aspect.id|string][order] == 'yes'
+  {% if answer == 'yes'
   %}checked{% endif %} > {{ _('Yes')}}
 </label>
 <label
-  class="btn btn-light text-uppercase"
+  class="btn btn-{% if question['good_answer'] == 1 and answer == 'no'%}warning{%else%}light{%endif%} text-uppercase"
   style="width: 120px !important;"
 >
-  <input onclick="updateProject(this)"
-  id="aspect-{{aspect.id}}-no" type="radio"
+  <input onclick="updateProject(this)" data-good-answer="{{question['good_answer']}}"
+  id="aspect-{{aspect.id}}-{{question.order|int}}-no" type="radio"
   name="aspect-{{aspect.id}}" value="no" autocomplete="off" {%
-  if project.answers[aspect.id|string][order] == 'no'
+  if answer == 'no'
   %}checked{% endif %} > {{ _('No')}}
 </label>
 </div>

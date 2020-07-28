@@ -4,6 +4,7 @@ from .base_model import BaseModel
 
 from ..src import get_questions
 
+
 class Project(BaseModel):
     """
     """
@@ -14,7 +15,7 @@ class Project(BaseModel):
     name = db.Column(db.String, unique=True, nullable=False)
     _members = db.Column(db.String, default='')
     _answers = db.Column(db.String, default='')
-    
+
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
@@ -23,7 +24,6 @@ class Project(BaseModel):
     dataset = db.relationship(
         'Dataset', uselist=False, back_populates='project', cascade='save-update, merge, delete')
 
-    
     _default_fields = [
         "name",
         "desc",
@@ -34,7 +34,6 @@ class Project(BaseModel):
         "dataset"
     ]
     _readonly_fields = []
-
 
     def __repr__(self):
         return '<Project %r>' % self.name
@@ -59,25 +58,42 @@ class Project(BaseModel):
     @property
     def n_answered(self):
         questions = get_questions()
-        questions_by_section = [(k, elem['id']) for k, section in questions.items() for elem in section]
+        questions_by_section = [
+            (k, elem) for k, section in questions.items() for elem in section]
         sections = list(questions.keys())
 
         n_answered = {}
         total = 0
+        to_improve = 0
+        good_answers = 0
 
         for section in sections:
             n_answered[section] = 0
 
-        for section, q_id in questions_by_section:
-            print(section, q_id)
-            answer = self.answers[str(q_id)]
+        for section, question in questions_by_section:
+            answer = self.answers[str(question['id'])]
 
             is_answered = sum([e == 'None' for e in answer]) == 0
             if is_answered:
                 n_answered[section] = n_answered[section] + 1
                 total += 1
-        
-        n_answered['total'] = total
 
+            is_to_improve = sum([(e == 'no') & (q['good_answer'] == 1) for (
+                e, q) in zip(answer, question['questions'])]) > 0
+            if is_to_improve:
+                to_improve += 1
+
+            is_good = sum([(e == 'yes') & (q['good_answer'] == 1)
+                           for (e, q) in zip(answer, question['questions'])]) > 0
+            if is_good:
+                good_answers += 1
+
+        n_answered['total'] = total
+        n_answered['to_improve'] = to_improve
+        n_answered['good_answers'] = good_answers
+        
+        # It corresponds to the number of answer for question that do not
+        # requires a good answer or an answer to improve.
+        n_answered['ignored'] = total - to_improve - good_answers
 
         return n_answered

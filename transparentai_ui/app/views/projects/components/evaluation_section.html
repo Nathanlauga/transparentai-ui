@@ -1,22 +1,27 @@
-{% from "projects/components/evaluation_section/boolean_question.html" import boolean_question with context %} 
+{% from "projects/components/evaluation_section/boolean_question.html" import
+boolean_question with context %} {% from
+"projects/components/evaluation_section/boolean_plus_one_question.html" import
+boolean_plus_one_question with context %} 
 
-{% macro evaluation_section(id, label, section_id, project) -%}
+{% macro evaluation_section(id, label, section_id, project, fa) -%} 
 
 {% set prct_answered = ((project.n_answered[section_id]*100 / questions[section_id]|length)|int)/100 %}
 
-{% if prct_answered < 0.5 %}
-    {% set bar_color = 'warning' %}
-{% elif prct_answered < 1 %}
-    {% set bar_color = 'info' %}
-{% else %}
-    {% set bar_color = 'success' %}
+{% set select_idx = 1 %}
+
+{% if prct_answered < 0.5 %} 
+  {% set bar_color = 'warning' %} 
+{% elif prct_answered < 1 %} 
+  {% set bar_color = 'info' %} 
+{% else %} 
+  {% set bar_color = 'success' %} 
 {% endif %}
 
 <div id="{{ id }}" class="mb-4">
   <!-- Card Header - Accordion -->
   <a
     href="#{{ id }}Collapse"
-    class="d-block border-top border-bottom px-2 py-3 text-decoration-none text-dark"
+    class="d-block border-top border-bottom px-2 py-3 text-decoration-none text-dark section-head"
     data-toggle="collapse"
     role="button"
     aria-expanded="true"
@@ -25,13 +30,16 @@
     <div class="row">
       <div class="col">
         <h2 class="h2 my-auto m-0 font-weight-bold">
-          <i class="fas fa-cubes"></i> {{ label }}
+          <i class="fas fa-{{fa}} mr-2"></i> {{ label }}
         </h2>
       </div>
       <div class="col">
         <span class="small font-weight-bold">
           {{ _('Questions answered') }}
-          <span class="float-right">{{ project.n_answered[section_id]}}/{{questions[section_id]|length}}</span>
+          <span class="float-right"
+            >{{
+            project.n_answered[section_id]}}/{{questions[section_id]|length}}</span
+          >
         </span>
         <div class="progress mb-4">
           <div
@@ -48,7 +56,10 @@
   </a>
 
   <!-- Card Content - Collapse -->
-  <div class="collapse show" id="{{ id }}Collapse">
+  <div
+    class="collapse {% if prct_answered < 1 %}show{% endif %}"
+    id="{{ id }}Collapse"
+  >
     <div class="card-body">
       <div class="card bg-light">
         <nav aria-label="breadcrumb">
@@ -56,20 +67,23 @@
             {% for aspect in questions[section_id] %}
             <li
               id="li-aspect-{{aspect.id}}"
-              class="breadcrumb-item {% if loop.index == 1 %}active{% endif %}"
+              class="breadcrumb-item {% if loop.index == select_idx %}active{% endif %}"
             >
-              <a onclick="changeAspect(this)" class="#aspect-{{aspect.id}} pointer"
+              <a
+                onclick="changeAspect(this, '{{section_id}}')"
+                class="#aspect-{{aspect.id}} pointer"
                 >{{ aspect.id }} - {{aspect.name}}</a
               >
             </li>
             {% endfor %}
           </ol>
         </nav>
-        {% for aspect in questions[section_id] %}
 
+        {% for aspect in questions[section_id] %}
+        
         <div
           id="aspect-{{aspect.id}}"
-          class="aspect p-2 {% if loop.index != 1 %}d-none{%else%}d-block{% endif %}"
+          class="aspect {{section_id}} p-2 {% if loop.index != select_idx %}d-none{%else%}d-block{% endif %}"
           style="min-height: 40vh !important;"
         >
           <div
@@ -92,12 +106,12 @@
                   {{ question.question }}
                 </div>
 
-                {% if question['question_type'] == 'boolean' %}
-
-                {{ boolean_question(aspect, question, order) }}
-
-                {% else %} {{ question }} {% endif %} {% if question['example']
-                != 'None' %}
+                {% if question['question_type'] == 'boolean' %} {{
+                boolean_question(aspect, question, order) }} {% elif
+                question['question_type'] == 'boolean_plus_one' %} {{
+                boolean_plus_one_question(aspect, question, order) }} {% else %}
+                {{ question }} {% endif %} {% if question['example'] != 'None'
+                %}
                 <div class="mt-3 mb-3 ml-4">
                   <div
                     class="text-xs font-weight-bold text-secondary text-uppercase mb-1"
@@ -119,6 +133,16 @@
                     {{ question['suggestion'] }}
                   </div>
                 </div>
+                {% endif %} {% if 'module' in question %}
+                <div class="mt-4">
+                  <div
+                    class="text-xs font-weight-bold text-dark text-uppercase mb-1"
+                  >
+                    {{ _('The following module allows you to answer this question: ') }}
+                  </div>
+                  <a class="btn btn-light" href="/projects/{{project.name}}/{{question['module']['url']}}">{{ question['module']['label'] }}</a>
+                  
+                </div>
                 {% endif %}
               </div>
             </form>
@@ -131,7 +155,7 @@
                 <a
                   class="#aspect-{{aspect.id-1}} btn btn-primary pointer"
                   role="button"
-                  onclick="changeAspect(this)"
+                  onclick="changeAspect(this, '{{section_id}}')"
                   >{{ _('Previous') }}</a
                 >
               </div>
@@ -140,7 +164,7 @@
                 <a
                   class="#aspect-{{aspect.id+1}} btn btn-primary pointer"
                   role="button"
-                  onclick="changeAspect(this)"
+                  onclick="changeAspect(this, '{{section_id}}')"
                   >{{ _('Next') }}</a
                 >
               </div>
@@ -153,6 +177,6 @@
       </div>
     </div>
   </div>
-
-  {% endmacro %}
 </div>
+
+{% endmacro %}

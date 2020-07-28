@@ -109,36 +109,18 @@ def get_questions():
         },
         {
             "aspect_id": 6,
-            "order": 0,
+            "order": "None",
             "section": "validation",
-            "question_type": "numeric",
-            "good_answer": "None",
+            "question_type": "boolean",
+            "good_answer": 1,
             "name": "Sustainable, respect for the environment",
-            "question": "How long (cumulated if several trainings) has the model been trained for?",
+            "question": _("Using the Sustainable module, can you consider the environmental impact to be negligible?"),
             "example": "None",
-            "suggestion": "None"
-        },
-        {
-            "aspect_id": 6,
-            "order": 1,
-            "section": "validation",
-            "question_type": "list",
-            "good_answer": "None",
-            "name": "Sustainable, respect for the environment",
-            "question": "In which country is the server used to train the model located?",
-            "example": "None",
-            "suggestion": "None"
-        },
-        {
-            "aspect_id": 6,
-            "order": 2,
-            "section": "validation",
-            "question_type": "numeric",
-            "good_answer": "None",
-            "name": "Sustainable, respect for the environment",
-            "question": "Using the CO2 Evaluation module or the ML CO2 Impact site, can you indicate the amount of CO2 emitted?",
-            "example": "None",
-            "suggestion": "https://mlco2.github.io/impact/#act"
+            "suggestion": "None",
+            "module":{
+                "url": "sustainable",
+                "label": _('Analyse environmental impact')
+            }
         },
         {
             "aspect_id": 7,
@@ -160,7 +142,11 @@ def get_questions():
             "name": "Quality and integrity",
             "question": "Have you carried out a data analysis phase?",
             "example": "None",
-            "suggestion": "Use of the \"Dataset Analysis\" module to analyse the particularities of the data."
+            "suggestion": "Use of the \"Dataset Analysis\" module to analyse the particularities of the data.",
+            "module":{
+                "url": "analyse-dataset",
+                "label": _('Analyse Dataset')
+            }
         },
         {
             "aspect_id": 8,
@@ -182,7 +168,11 @@ def get_questions():
             "name": "Performance validation",
             "question": "Are the criteria met by the model?",
             "example": "None",
-            "suggestion": "Use of the \"Performance\" module to analyze the performance of the model."
+            "suggestion": "Use of the \"Performance\" module to analyze the performance of the model.",
+            "module":{
+                "url": "analyse-performance",
+                "label": _('Analyse Performance')
+            }
         },
         {
             "aspect_id": 9,
@@ -193,7 +183,11 @@ def get_questions():
             "name": "Explanability",
             "question": "Are you aware of how the model works in general, which variables are most important?",
             "example": "None",
-            "suggestion": "Use of the \"Explicability\" module to analyze model behavior."
+            "suggestion": "Use of the \"Interpretability\" module to analyze model behavior.",
+            "module":{
+                "url": "interpretability",
+                "label": _('Interpretability')
+            }
         },
         {
             "aspect_id": 10,
@@ -210,7 +204,8 @@ def get_questions():
             "aspect_id": 11,
             "order": 0,
             "section": "validation",
-            "question_type": "boolean",
+            "question_type": "boolean_plus_one",
+            "plus_one_label": _('No social impact identified'),
             "good_answer": 1,
             "name": "Avoiding unfair bias",
             "question": "If a social impact is identified, have you defined on which attributes a person might be discriminated against?",
@@ -221,12 +216,17 @@ def get_questions():
             "aspect_id": 11,
             "order": 1,
             "section": "validation",
-            "question_type": "boolean",
+            "question_type": "boolean_plus_one",
+            "plus_one_label": _('No social impact identified'),
             "good_answer": 1,
             "name": "Avoiding unfair bias",
             "question": "Have you analysed the potential biases on the attributes to be protected and validated that their incidence does not have a discriminatory impact?",
             "example": "None",
-            "suggestion": "Use the \"Bias analysis\" module to analyze the biases of a model."
+            "suggestion": "Use the \"Bias analysis\" module to analyze the biases of a model.",
+            "module":{
+                "url": "analyse-bias",
+                "label": _('Bias analysis')
+            }
         },
         {
             "aspect_id": 12,
@@ -248,13 +248,17 @@ def get_questions():
             "name": "Model Resilience",
             "question": "Have you tested extreme (rare) and common scenarios to see how the model behaves?",
             "example": "None",
-            "suggestion": "Use of the \"Scenario testing\" module to test the model's behavior."
+            "suggestion": "Use of the \"Scenario testing\" module to test the model's behavior.",
+            "module":{
+                "url": "scenario-testing",
+                "label": _('Scenario testing')
+            }
         },
         {
             "aspect_id": 13,
             "order": 0,
             "section": "safety",
-            "question_type": "boolean_if_yes",
+            "question_type": "boolean",
             "good_answer": 1,
             "name": "Emergency plan",
             "question": "In the event of a model malfunction, have you planned at least one procedure to ensure continuity of service for the AI? ",
@@ -281,7 +285,11 @@ def get_questions():
             "name": "General Safety",
             "question": "Are you sure that the technologies used do not have any known security flaws? ",
             "example": "None",
-            "suggestion": "Use the \"Python Security\" module if you use the Python language, to go further see the CVE Details site."
+            "suggestion": "Use the \"Python Security\" module if you use the Python language, to go further see the CVE Details site.",
+            "module":{
+                "url": "python-safety",
+                "label": _('Python security')
+            }
         },
         {
             "aspect_id": 15,
