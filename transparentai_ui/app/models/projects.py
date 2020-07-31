@@ -23,6 +23,8 @@ class Project(BaseModel):
     # Modules
     dataset = db.relationship(
         'Dataset', uselist=False, back_populates='project', cascade='save-update, merge, delete')
+    module_sustainable = db.relationship(
+        'ModuleSustainable', uselist=False, back_populates='project', cascade='save-update, merge, delete')
 
     _default_fields = [
         "name",
@@ -57,6 +59,11 @@ class Project(BaseModel):
 
     @property
     def n_answered(self):
+        if self.answers is None:
+            return {'total':0}
+        elif len(self.answers) == 0:
+            return {'total':0}
+
         questions = get_questions()
         questions_by_section = [
             (k, elem) for k, section in questions.items() for elem in section]

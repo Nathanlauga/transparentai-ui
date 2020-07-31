@@ -46,6 +46,8 @@ app.add_url_rule('/projects/<project_name>/new-dataset', endpoint='projects.data
                  view_func=datasets.new_from_project, methods=['GET', 'POST'])
 app.add_url_rule('/projects/<project_name>/new-model', endpoint='projects.model.new',
                  view_func=models.new_from_project, methods=['GET', 'POST'])
+app.add_url_rule('/projects/<name>/estimate-co2', endpoint='projects.estimate_co2',
+                 view_func=projects.estimate_co2, methods=['GET', 'POST'])
 
 
 app.add_url_rule('/projects/<name>/analyse-performance', endpoint='projects.analyse_performance',

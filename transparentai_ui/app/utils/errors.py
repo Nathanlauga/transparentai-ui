@@ -42,6 +42,15 @@ def get_errors():
         'PandasProfExplorativeNotValid': _('The explorative argument has to be Yes or No.'),
         'PandasProfNrowsNotValid': _('You need to use an integer.'),
         'PandasProfNrowsOverLimit': _('The number of rows is inserted is greater than the length of the dataset.'),
-     }
+        'SustainableTimeNotSet': _('The time argument is not set.'),
+        'SustainableTimeNotValid': _('The time argument has to be a number.'),
+        'SustainableTimeNotPositive': _('The time argument must be positive.'),
+        'SustainableLocationNotSet': _('The location argument is not set.'),
+        'SustainableLocationNotValid': _('The location argument has to be a string.'),
+        'SustainableLocationNotInList': _('The location argument must be a valid country.'),
+        'SustainableWattsNotSet': _('The watts argument is not set.'),
+        'SustainableWattsNotValid': _('The watts argument has to be a number.'),
+        'SustainableWattsNotPositive': _('The watts argument must be positive.'),
+        }
 
     return errors_dict

@@ -139,6 +139,7 @@ class Controller():
 
         if res != 'updated':
             set_session_var('errors', str(res))
+            return None
         else:
             set_session_var('success', res)
 

@@ -25,18 +25,35 @@ def format_bool(form_data, key):
     return res
 
 
-def format_int(form_data, key):
+def format_dtype(form_data, key, dtype):
     """
     """
     if key not in form_data:
         return None
 
     try:
-        res = int(form_data[key])
+        res = dtype(form_data[key])
     except:
         return None
 
     return res
+
+
+def format_int(form_data, key):
+    """
+    """
+    return format_dtype(form_data, key, int)
+
+
+def format_float(form_data, key):
+    """
+    """
+    return format_dtype(form_data, key, float)
+
+def format_str(form_data, key):
+    """
+    """
+    return format_dtype(form_data, key, str)
 
 
 def clean_errors(errors):
@@ -55,15 +72,24 @@ def update_dataset_module_db(ModuleModel, dataset, status='init'):
     module = select_from_db(ModuleModel,
                             'dataset_id', dataset.id)
     res = update_in_db(module, {'status': 'loading'})
-    print(res)
 
 
-def init_dataset_module_db(ModuleModel, dataset):
+def init_dataset_module_db(ModuleDataset, dataset):
     """
     """
-    module = ModuleModel(
+    module = ModuleDataset(
         dataset_id=dataset.id,
         dataset=dataset,
+        status='init'
+    )
+    add_in_db(module)
+
+def init_project_module_db(ModuleProject, project):
+    """
+    """
+    module = ModuleProject(
+        project_id=project.id,
+        project=project,
         status='init'
     )
     add_in_db(module)

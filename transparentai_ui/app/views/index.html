@@ -35,7 +35,11 @@
           </thead>
           <tbody>
             {% for project in projects %}
+            {% if project.answers|length > 0 %}
             {% set prct_answered = (project.n_answered['total']*100 / project.answers|length)|int %}
+            {% else %}
+            {% set prct_answered = 0 %}
+            {% endif %}
             <tr>
               <td class="w-20">
                 <a href="/projects/{{ project.name }}">{{ project.name }}</a>

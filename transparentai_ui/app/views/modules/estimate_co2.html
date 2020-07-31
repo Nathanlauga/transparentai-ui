@@ -1,0 +1,82 @@
+{% extends "commons/layout.html" %} {% from "commons/forms/input.html" import
+form_input with context %} {% from "commons/forms/select_list.html" import
+select_list with context %} {% block title %}{{ title }}{% endblock %}
+<!-- {% block head %}{% endblock %} -->
+{% block h1 %}{{ title }}{% endblock %} {% block content %}
+<!-- Content Row -->
+
+<div class="row">
+  <div class="col-12">
+    <form action="./estimate-co2" method="post" class="ml-3">
+      <div class="form-row mb-3">
+        <div class="col-12 col-sm-4">
+          <div class="form-group">
+            {{ form_input(name='time', label=_("Training time (in hours)"),
+            type='number', required=True)}}
+          </div>
+        </div>
+        <div class="col-12 col-sm-4">
+          <div class="form-group">
+            {{ select_list(name='location', label=_('Computer location'),
+            list=locations, search=True, none_value=False, default='France',
+            required=True) }}
+          </div>
+        </div>
+        <div class="col-12 col-sm-4">
+          <div class="form-group">
+            {{ form_input(name='watts', label=_("Computer wattage"),
+            type='number', required=True)}}
+            <div
+              class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1"
+            >
+              {{ _('If you don\'t know your computer wattage please use this
+              website :') }}
+              <a
+                href="https://www.newegg.com/tools/power-supply-calculator"
+                target="_blank"
+                >Newegg's Power Supply Calculator</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row mt-3">
+        <input type="hidden" name="_method" value="PUT" />
+        <button class="btn btn-primary" type="submit">
+          {{ _("Estimate CO2") }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if project.module_sustainable is defined %} {% if
+project.module_sustainable.result is defined %} 
+
+{% set color = "success" %}
+{% set fa = "seedling" %}
+
+<div class="row my-4 mx-auto">
+  <div class="col-12 col-sm-6 col-md-4">
+    <div class="card border-left-{{ color }} shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-{{ color }} text-uppercase mb-1">{{ _('Estimation of training emission') }}</div>
+            <div class="h5 mb-0 font-weight-bold text-{{ color }}">
+              {{ "%.2f"|format(project.module_sustainable.result) }} kg CO2
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-{{ fa }} fa-2x text-{{ color }}"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %} {% endif %} {% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+<!-- {% block scripts %}{% endblock %} -->

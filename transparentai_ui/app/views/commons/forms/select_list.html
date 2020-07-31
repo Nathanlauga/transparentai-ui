@@ -1,5 +1,6 @@
-{% macro select_list(name, label, list, list_labels=None, value=None, title=_('Select column'), search=True, none_value=True, default=None, disable=False) -%} {% if 'errors' in
-session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
+{% macro select_list(name, label, list, list_labels=None, value=None, title=_('Select column'), 
+                    search=True, none_value=True, default=None, disable=False, required=False) -%} 
+{% if 'errors' in session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
 %} {% set is_not_valid = False %} {% endif %}
 
 {% if previous is defined %}
@@ -17,12 +18,14 @@ session %} {% set is_not_valid = session['errors'][name] is defined %} {% else
     id="{{ name }}"
     class="selectpicker form-control {% if is_not_valid %}is-invalid{% endif %} disabled"
     title="{{ title }}"
+    data-showContent='false'
     {% if search %} data-live-search="true" {% endif %}
     {% if disable %}disabled{% endif %}
+    {% if required %}required{% endif %}
   >
   {% if none_value %}<option value=''>None</option>{% endif %}
   {% for elem in list %}
-  <option value={{elem}}
+  <option value="{{elem}}"
   {% if value is not none %}
     {% if elem == value %}
       selected

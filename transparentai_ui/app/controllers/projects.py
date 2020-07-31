@@ -1,10 +1,14 @@
-from flask import request, render_template, redirect, url_for, session, jsonify
+from flask import request, render_template, redirect, url_for, session, jsonify, abort
 from flask_babel import _
 import os.path
 import pandas as pd
+from transparentai import sustainable
 
 from ..models import Project
-from .services.projects import format_project, control_project, init_anwsers
+from ..models.modules import ModuleSustainable
+
+from .services.projects import format_project, control_project, load_modules, init_anwsers
+from .services.modules import sustainable as sustainable_module
 from .services.commons import get_header_attributes
 from .controller_class import Controller
 
@@ -14,7 +18,12 @@ from ..src import get_questions
 project_controller = Controller(component=Project,
                                 format_fn=format_project,
                                 control_fn=control_project,
-                                module_fn=None)
+                                module_fn=load_modules)
+
+
+sustainable_controller = Controller(component=ModuleSustainable,
+                                    format_fn=sustainable_module.format_module,
+                                    control_fn=sustainable_module.control_module)
 
 
 def index():
@@ -116,3 +125,31 @@ def post_instance(name):
         return delete(name)
 
     return redirect(url_for('projects.get_instance', name=name))
+
+
+def estimate_co2(name):
+    title = _('Estimate CO2: ') + name
+    header = get_header_attributes()
+    project = project_controller.get_instance(name)
+
+    if project is not None:
+        header['current_project'] = project.name
+
+    module = project.module_sustainable
+    if module is None:
+        return abort(404)
+    
+    previous = module.to_dict()
+
+    if request.method == 'POST':
+        previous = request.form
+        module = sustainable_controller.update(module.id, id_col='id')
+
+        if module is not None:
+            sustainable_module.compute_co2_estimation(project)
+            return redirect(url_for('projects.estimate_co2', name=name))
+
+    locations = list(sustainable.get_energy_data().keys())
+
+    return render_template("modules/estimate_co2.html", session=session, previous=previous,
+                            header=header, title=title, project=project, locations=locations)

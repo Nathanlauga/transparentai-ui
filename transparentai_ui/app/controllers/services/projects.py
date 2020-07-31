@@ -1,5 +1,6 @@
 from ...models import Project
 from ...models import Dataset
+from ...models.modules import ModuleSustainable
 from ...src import get_questions
 
 import json
@@ -9,7 +10,7 @@ from ...utils.db import exists_in_db, select_from_db, update_in_db
 from ...utils.errors import get_errors
 from ...utils import key_in_dict_not_empty, is_empty
 
-from ...utils.components import format_str_strip, clean_errors
+from ...utils.components import format_str_strip, clean_errors, init_project_module_db
 
 
 def init_anwsers(project):
@@ -181,3 +182,12 @@ def format_project(form_data, create=False, obj=None):
             data['dataset'] = dataset
 
     return data
+
+# ============================ #
+
+def load_modules(project, data):
+    """
+    """
+    # init sustainable module
+    if project.module_sustainable is None:
+        init_project_module_db(ModuleSustainable, project=project)

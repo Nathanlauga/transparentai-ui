@@ -90,8 +90,13 @@ boolean_plus_one_question with context %}
             class="mx-auto my-auto"
             style="min-width: 50% !important; max-width: 80% !important;"
           >
-            <h5 class="h6 text-uppercase text-primary font-weight-bold">
+            <h5 class="h5 text-uppercase text-primary font-weight-bold">
               {{ aspect.id }} - {{aspect.name}}
+
+              <div>
+              <!-- <div style="font-size: 1rem;" class="lead font-weight-bold text-secondary text-uppercase">{{ _('EU Commission requirement:') }}  -->
+                <span style="font-size: 0.9rem;" class='p-1 badge badge-light'>{{ aspect['eu_requirement']}}</span>
+              </div>
             </h5>
             {% for question in aspect['questions'] %} {% if question.order ==
             'None' %} {% set order = 0 %} {% else %} {% set order =
@@ -130,7 +135,7 @@ boolean_plus_one_question with context %}
                     {{ _('Suggestion') }}
                   </div>
                   <div class="text-md mb-0 font-weight-light text-gray-800">
-                    {{ question['suggestion'] }}
+                    {{ question['suggestion']|safe }}
                   </div>
                 </div>
                 {% endif %} {% if 'module' in question %}

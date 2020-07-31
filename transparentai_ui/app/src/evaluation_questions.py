@@ -6,10 +6,11 @@ def format_section(section_dict):
     """
     section_formated = list()
 
-    for id, name in set([(q['aspect_id'], q['name']) for q in section_dict]):
+    for id, name, eu_requirement in set([(q['aspect_id'], q['name'], q['eu_requirement']) for q in section_dict]):
         aspect = {}
         aspect['id'] = id
         aspect['name'] = name
+        aspect['eu_requirement'] = eu_requirement
 
         questions = [q for q in section_dict if q['aspect_id'] == id]
         questions = list(sorted(questions, key=lambda item: item['order']))
@@ -43,6 +44,7 @@ def get_questions():
     questions = [
         {
             "aspect_id": 1,
+            "eu_requirement":"Accountability",
             "order": "None",
             "section": "start",
             "question_type": "boolean",
@@ -54,6 +56,7 @@ def get_questions():
         },
         {
             "aspect_id": 2,
+            "eu_requirement":"Diversity, non-discrimination and fairness",
             "order": "None",
             "section": "start",
             "question_type": "boolean",
@@ -65,6 +68,7 @@ def get_questions():
         },
         {
             "aspect_id": 3,
+            "eu_requirement":"Societal and environmental well-being",
             "order": "None",
             "section": "start",
             "question_type": "boolean",
@@ -76,6 +80,7 @@ def get_questions():
         },
         {
             "aspect_id": 4,
+            "eu_requirement":"Privacy and data governance",
             "order": 0,
             "section": "start",
             "question_type": "boolean",
@@ -87,6 +92,7 @@ def get_questions():
         },
         {
             "aspect_id": 4,
+            "eu_requirement":"Privacy and data governance",
             "order": 1,
             "section": "start",
             "question_type": "boolean_plus_one",
@@ -98,6 +104,7 @@ def get_questions():
         },
         {
             "aspect_id": 5,
+            "eu_requirement":"Transparency",
             "order": "None",
             "section": "start",
             "question_type": "boolean",
@@ -109,6 +116,7 @@ def get_questions():
         },
         {
             "aspect_id": 6,
+            "eu_requirement":"Societal and environmental well-being",
             "order": "None",
             "section": "validation",
             "question_type": "boolean",
@@ -118,12 +126,13 @@ def get_questions():
             "example": "None",
             "suggestion": "None",
             "module":{
-                "url": "sustainable",
-                "label": _('Analyse environmental impact')
+                "url": "estimate-co2",
+                "label": _('Estimate CO2 emission')
             }
         },
         {
             "aspect_id": 7,
+            "eu_requirement":"Privacy and data governance",
             "order": 0,
             "section": "validation",
             "question_type": "boolean",
@@ -135,6 +144,7 @@ def get_questions():
         },
         {
             "aspect_id": 7,
+            "eu_requirement":"Privacy and data governance",
             "order": 1,
             "section": "validation",
             "question_type": "boolean",
@@ -150,6 +160,7 @@ def get_questions():
         },
         {
             "aspect_id": 8,
+            "eu_requirement":"Technical robustness and safety",
             "order": 0,
             "section": "validation",
             "question_type": "boolean",
@@ -161,6 +172,7 @@ def get_questions():
         },
         {
             "aspect_id": 8,
+            "eu_requirement":"Technical robustness and safety",
             "order": 1,
             "section": "validation",
             "question_type": "boolean",
@@ -176,6 +188,7 @@ def get_questions():
         },
         {
             "aspect_id": 9,
+            "eu_requirement":"Transparency",
             "order": "None",
             "section": "validation",
             "question_type": "boolean",
@@ -191,6 +204,7 @@ def get_questions():
         },
         {
             "aspect_id": 10,
+            "eu_requirement":"Transparency",
             "order": "None",
             "section": "validation",
             "question_type": "boolean",
@@ -202,6 +216,7 @@ def get_questions():
         },
         {
             "aspect_id": 11,
+            "eu_requirement":"Diversity, non-discrimination and fairness",
             "order": 0,
             "section": "validation",
             "question_type": "boolean_plus_one",
@@ -214,6 +229,7 @@ def get_questions():
         },
         {
             "aspect_id": 11,
+            "eu_requirement":"Diversity, non-discrimination and fairness",
             "order": 1,
             "section": "validation",
             "question_type": "boolean_plus_one",
@@ -230,6 +246,7 @@ def get_questions():
         },
         {
             "aspect_id": 12,
+            "eu_requirement":"Technical robustness and safety",
             "order": 0,
             "section": "safety",
             "question_type": "boolean",
@@ -237,10 +254,11 @@ def get_questions():
             "name": "Model Resilience",
             "question": "Have you identified potential forms of adverse attacks such as data pollution?",
             "example": "None",
-            "suggestion": "https://github.com/IBM/adversarial-robustness-toolbox"
+            "suggestion": "Take a look at possible attacks on <a href=\"https://github.com/IBM/adversarial-robustness-toolbox\" target=\"_blank\">IBM ART tool</a>."
         },
         {
             "aspect_id": 12,
+            "eu_requirement":"Technical robustness and safety",
             "order": 1,
             "section": "safety",
             "question_type": "boolean",
@@ -256,6 +274,7 @@ def get_questions():
         },
         {
             "aspect_id": 13,
+            "eu_requirement":"Technical robustness and safety",
             "order": 0,
             "section": "safety",
             "question_type": "boolean",
@@ -267,6 +286,7 @@ def get_questions():
         },
         {
             "aspect_id": 13,
+            "eu_requirement":"Technical robustness and safety",
             "order": 1,
             "section": "safety",
             "question_type": "boolean",
@@ -278,6 +298,7 @@ def get_questions():
         },
         {
             "aspect_id": 14,
+            "eu_requirement":"Technical robustness and safety",
             "order": "None",
             "section": "safety",
             "question_type": "boolean",
@@ -285,7 +306,7 @@ def get_questions():
             "name": "General Safety",
             "question": "Are you sure that the technologies used do not have any known security flaws? ",
             "example": "None",
-            "suggestion": "Use the \"Python Security\" module if you use the Python language, to go further see the CVE Details site.",
+            "suggestion": "Use the \"Python Security\" module if you use the Python language, to go further see the <a href=\"https://www.cvedetails.com/\" target=\"_blank\">CVE Details site</a>.",
             "module":{
                 "url": "python-safety",
                 "label": _('Python security')
@@ -293,6 +314,7 @@ def get_questions():
         },
         {
             "aspect_id": 15,
+            "eu_requirement":"Transparency",
             "order": 0,
             "section": "monitoring",
             "question_type": "boolean",
@@ -304,6 +326,7 @@ def get_questions():
         },
         {
             "aspect_id": 15,
+            "eu_requirement":"Transparency",
             "order": 1,
             "section": "monitoring",
             "question_type": "boolean",
@@ -315,6 +338,7 @@ def get_questions():
         },
         {
             "aspect_id": 16,
+            "eu_requirement":"Human agency and oversight",
             "order": 0,
             "section": "monitoring",
             "question_type": "boolean",
@@ -326,6 +350,7 @@ def get_questions():
         },
         {
             "aspect_id": 16,
+            "eu_requirement":"Human agency and oversight",
             "order": 1,
             "section": "monitoring",
             "question_type": "boolean_plus_one",
@@ -337,6 +362,7 @@ def get_questions():
         },
         {
             "aspect_id": 17,
+            "eu_requirement":"Accountability",
             "order": "None",
             "section": "monitoring",
             "question_type": "boolean",
