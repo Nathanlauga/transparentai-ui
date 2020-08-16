@@ -293,7 +293,13 @@ def load_model_explainer(model):
 def load_model_explainer_from_obj(model_obj, df):
     """
     """
-    explainer = explainers.ModelExplainer(model_obj, df, model_type=None)
+    # Check if model is from xgboost
+    if 'xgboost' in str(type(model_obj)):
+        model_type = 'tree'
+    else:
+        model_type = None
+
+    explainer = explainers.ModelExplainer(model_obj, df, model_type=model_type)
     explainer.model = None
     gc.collect()
 
@@ -337,7 +343,11 @@ def load_interpretability_module(model, model_obj, df):
         explainer = future.result()
 
     thread = Thread(target=compute_global_influence,
-                    args=(model, explainer, df,))
+                    args=(
+                        model,
+                        explainer,
+                        df,
+                    ))
     thread.start()
 
 

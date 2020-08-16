@@ -4,7 +4,16 @@
 context %} {% from "commons/components/card.html" import card with context %} {%
 from "commons/forms/select_list.html" import select_list with context %} {% from
 "commons/forms/input.html" import form_input with context %} {% block title %}{{
-title }}{% endblock %}
+title }}{% endblock %} 
+
+
+{% macro bias_summary(value, optimal, bias_threshold) %}
+{% set biased = (value - optimal)|abs > bias_threshold %} {% if biased %}
+<span class="text-danger">{{ _('Biased') }}</span>
+{% else %}
+<span class="text-success">{{ _('Not biased') }}</span>
+{% endif %} {% endmacro %}
+
 <!-- {% block head %}{% endblock %} -->
 {% block h1 %}{{ title }}{% endblock %} {% block content %} {% if
 dataset.module_bias is defined %}
@@ -39,14 +48,224 @@ dataset.module_bias is defined %}
 
 <!-- Components Row -->
 <div class="row">
-  {% for k, v in dataset.module_bias.to_dict()['results'].items() %}
   <div>
-    {{ k }}
-    <br />
-    {{ v }}
+    <div class="text-lg mb-4">
+      {{ _('For each protected attributes that you selected you can look at the
+      summary table below. If you want more information, you can go directly to
+      the detail area in this same report.') }}
+      <strong>
+        {{ _('You can click on the cells if you want to see details.') }}
+      </strong>
+    </div>
+
+    <table class="table table-light">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">{{ _('Protected attribute') }}</th>
+          <th scope="col">{{ _('Average odds difference') }}</th>
+          <th scope="col">{{ _('Disparate impact') }}</th>
+          <th scope="col">{{ _('Equal opportunity difference') }}</th>
+          <th scope="col">{{ _('Statistical parity difference') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for k, v in dataset.module_bias.to_dict()['results'].items() %}
+        <tr>
+          <th scope="row"><a href="#{{ k }}">{{ k }}</a></th>
+          <td>
+            <a href="#{{ k }}-bias-1">
+              {{ bias_summary(v['statistical_parity_difference'], optimal=0,
+              bias_threshold=0.2) }}
+            </a>
+          </td>
+          <td>
+            <a href="#{{ k }}-bias-2">
+              {{ bias_summary(v['disparate_impact'], optimal=1,
+              bias_threshold=0.1) }}
+            </a>
+          </td>
+          <td>
+            <a href="#{{ k }}-bias-3">
+              {{ bias_summary(v['equal_opportunity_difference'], optimal=0,
+              bias_threshold=0.2) }}
+            </a>
+          </td>
+          <td>
+            <a href="#{{ k }}-bias-4">
+              {{ bias_summary(v['average_odds_difference'], optimal=0,
+              bias_threshold=0.2) }}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  {% endfor %}
 </div>
+
+{% for k, v in dataset.module_bias.to_dict()['results'].items() %}
+
+<div class="mb-5">
+<h3 class="h2 text-primary" id="{{ k }}">{{ k }}</h3>
+<div class="row">
+
+  <!-- 1st bias metric -->
+  {% set metric_name = 'statistical_parity_difference' %}
+
+  <div class="col-12 col-sm-6 p-2 border">
+    <h6 id="{{ k }}-bias-1" class="text-dark">
+      {{ _('Statistical parity difference') }}
+        {% if v[metric_name]|abs > 0.2 %}
+          <span class="text-danger">considered biased.</span>
+        {% else %}
+          <span class="text-success">considered not biased.</span>
+        {% endif %}
+    </h6>
+    <div class="">
+      <span>
+        {{ _('For this attribute, the metric value is') }}
+        <strong>{{ "%.4f"|format(v[metric_name]) }}</strong>. 
+        {{ _('It means inputs that have an attribute')+ ' ' + k }}  
+        <strong>
+          {% set attr = dataset.module_bias.to_dict()['privileged_group'][k] %}
+
+          {% if attr['dtype'] == 'number' %}
+          {{ _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) }}
+          {% else %}
+          {{ _('which is') + ' ' + attr['privileged_values']|join(' or ') }}
+          {% endif %}
+        </strong>
+
+        {{ _('are predicted with the positive output ') }}
+        <strong>
+          {{ "%.2f"|format((v[metric_name]*100)|abs) }}% 
+          {% if v[metric_name] < 0 %} {{ _('less often ') }} {% else %} {{ _('more often ') }} {% endif %}
+        </strong>
+        {{ _('than the unprivileged inputs') }}.
+        </span>
+    </div>
+  </div>
+
+  <!-- 2nd bias metric -->
+  {% set metric_name = 'disparate_impact' %}
+
+  <div class="col-12 col-sm-6 p-2 border">
+    <h6 id="{{ k }}-bias-1" class="text-dark">
+      {{ _('Disparate impact') }}
+        {% if (v[metric_name] - 1)|abs > 0.1 %}
+          <span class="text-danger">considered biased.</span>
+        {% else %}
+          <span class="text-success">considered not biased.</span>
+        {% endif %}
+    </h6>
+    <div class="">
+      <span>
+        {{ _('For this attribute, the metric value is') }}
+        <strong>{{ "%.4f"|format(v[metric_name]) }}</strong>. 
+        {{ _('It means inputs that have an attribute')+ ' ' + k }}  
+        <strong>
+          {% set attr = dataset.module_bias.to_dict()['privileged_group'][k] %}
+
+          {% if attr['dtype'] == 'number' %}
+          {{ _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) }}
+          {% else %}
+          {{ _('which is') + ' ' + attr['privileged_values']|join(' or ') }}
+          {% endif %}
+        </strong>
+
+        {{ _('are predicted with the positive output ') }}
+        <strong>
+          {% if v[metric_name] < 1 %}
+            {% set format_value = 1 / v[metric_name] %}
+          {% else %}
+            {% set format_value = v[metric_name] %}
+          {% endif %}
+
+          {{ "%.2f"|format(format_value) + ' ' + _('times') }}
+          {% if v[metric_name] < 1 %} {{ _('less often ') }} {% else %} {{ _('more often ') }} {% endif %}
+        </strong>
+        {{ _('than the unprivileged inputs') }}.
+        </span>
+    </div>
+  </div>
+
+  <!-- 3rd bias metric -->
+  {% set metric_name = 'equal_opportunity_difference' %}
+
+  <div class="col-12 col-sm-6 p-2 border">
+    <h6 id="{{ k }}-bias-1" class="text-dark">
+      {{ _('Equal opportunity difference') }}
+        {% if v[metric_name]|abs > 0.2 %}
+          <span class="text-danger">considered biased.</span>
+        {% else %}
+          <span class="text-success">considered not biased.</span>
+        {% endif %}
+    </h6>
+    <div class="">
+      <span>
+        {{ _('For this attribute, the metric value is') }}
+        <strong>{{ "%.4f"|format(v[metric_name]) }}</strong>. 
+        {{ _('It means for inputs that have an attribute')+ ' ' + k }}  
+        <strong>
+          {% set attr = dataset.module_bias.to_dict()['privileged_group'][k] %}
+
+          {% if attr['dtype'] == 'number' %}
+          {{ _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) }}
+          {% else %}
+          {{ _('which is') + ' ' + attr['privileged_values']|join(' or ') }}
+          {% endif %}
+        </strong>
+
+        {{ _('the model predict a correct positive output ') }}
+        <strong>
+          {{ "%.2f"|format((v[metric_name]*100)|abs) }}% 
+          {% if v[metric_name] < 0 %} {{ _('less often ') }} {% else %} {{ _('more often ') }} {% endif %}
+        </strong>
+        {{ _('than the unprivileged inputs') }}.
+        </span>
+    </div>
+  </div>
+
+  <!-- 4th bias metric -->
+  {% set metric_name = 'average_odds_difference' %}
+
+  <div class="col-12 col-sm-6 p-2 border">
+    <h6 id="{{ k }}-bias-1" class="text-dark">
+      {{ _('Average odds difference') }}
+        {% if v[metric_name]|abs > 0.2 %}
+          <span class="text-danger">considered biased.</span>
+        {% else %}
+          <span class="text-success">considered not biased.</span>
+        {% endif %}
+    </h6>
+    <div class="">
+      <span>
+        {{ _('For this attribute, the metric value is') }}
+        <strong>{{ "%.4f"|format(v[metric_name]) }}</strong>. 
+        {{ _('It means for inputs that have an attribute')+ ' ' + k }}  
+        <strong>
+          {% set attr = dataset.module_bias.to_dict()['privileged_group'][k] %}
+
+          {% if attr['dtype'] == 'number' %}
+          {{ _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) }}
+          {% else %}
+          {{ _('which is') + ' ' + attr['privileged_values']|join(' or ') }}
+          {% endif %}
+        </strong>
+
+        {{ _('the model predict a correct output (either positive or negative) ') }}
+        <strong>
+          {{ "%.2f"|format((v[metric_name]*100)|abs) }}% 
+          {% if v[metric_name] < 0 %} {{ _('less often ') }} {% else %} {{ _('more often ') }} {% endif %}
+        </strong>
+        {{ _('than the unprivileged inputs') }}.
+        </span>
+    </div>
+  </div>
+</div>
+</div>
+{% endfor %}
+
 {% endif %} {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->

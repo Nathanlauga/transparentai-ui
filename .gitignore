@@ -135,9 +135,7 @@ dmypy.json
 # Custom
 transparentai_ui/app/src/transparentai.db
 tmp
-transparentai_ui/app/views/modules/pandas_profiling_reports/
+transparentai_ui/app/views/modules/pandas_profiling_reports/*
+!*transparentai_ui/app/views/modules/pandas_profiling_reports/__init__.py
 startbootstrap-sb-admin-2-master.zip
 tranparentai-html.zip
-
-
-!*/__init__.py

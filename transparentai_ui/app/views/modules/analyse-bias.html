@@ -89,7 +89,7 @@ dataset.module_bias is defined %}
     </form>
   </div>
   <!-- Datasets modules cards -->
-  {% set disable = (dataset.module_bias.status != 'loaded') and (dataset.module_bias.results is not none) %}
+  {% set disable = (dataset.module_bias.status != 'loaded') or (dataset.module_bias.results in [none, {}]) %}
 
   <div class="col-12 col-sm-6">
     <div class="row mb-3">
