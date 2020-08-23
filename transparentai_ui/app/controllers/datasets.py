@@ -151,11 +151,12 @@ def update(name):
 
 def delete(name):
     dataset = dataset_controller.get_instance(name)
+    redirect_project = True if dataset.project is not None else False
+
     dataset_controller.delete(name)
 
-    if dataset.project is not None:
-        return redirect(
-            url_for('projects.get_instance', name=dataset.project.name))
+    if redirect_project:
+        return redirect(url_for('projects.get_instance', name=dataset.project.name))
 
     return redirect(url_for('index'))
 

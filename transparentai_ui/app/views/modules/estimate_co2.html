@@ -53,6 +53,7 @@ select_list with context %} {% block title %}{{ title }}{% endblock %}
 {% if project.module_sustainable is defined %} {% if
 project.module_sustainable.result is defined %} 
 
+{% if project.module_sustainable.result is number %}
 {% set color = "success" %}
 {% set fa = "seedling" %}
 
@@ -76,7 +77,7 @@ project.module_sustainable.result is defined %}
   </div>
 </div>
 
-{% endif %} {% endif %} {% endblock %}
+{% endif %} {% endif %} {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
 <!-- {% block scripts %}{% endblock %} -->

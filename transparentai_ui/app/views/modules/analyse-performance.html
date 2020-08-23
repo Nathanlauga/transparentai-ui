@@ -21,9 +21,45 @@
 {% else %}
 
 <div class="row">
-  {% if dataset.module_performance is defined %} {{
-  dataset.module_performance.results }} {% endif %}
+  {% if dataset.module_performance is defined %}
+  <div class="col-12 col-sm-6">
+    <div class="text-lg mb-4">
+      {{ _('In this table you can see the performance metrics that have been automatically computed.') }}
+    </div>
+
+    <table class="table table-light">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">{{ _('Metric name') }}</th>
+          <th scope="col">{{ _('Metric value') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for k, v in dataset.module_performance.results.items() %}
+        {% if v is number %}
+        <tr>
+          <th scope="row">{{ k }}</th>
+          <td>{{ v }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-12 col-sm-6">
+    {% if 'confusion_matrix' in dataset.module_performance.results %}
+    YOLO
+    {% endif %}
+  </div>
+
+  {% else %}
+  <div class="text-lg mb-4">
+    {{ _('No performance metrics computed.') }}
+  </div>
+  {% endif %}
 </div>
+
 {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->

@@ -4,15 +4,15 @@
 {% block h1 %}{{ title }}{% endblock %} {% block content %}
 <!-- Content Row -->
 <div class="row">
-  <div class="col-12 col-md-6">
+  <div class="col-12">
     <form
       action="/projects/{{ project_name }}/new-model"
       method="post"
       class="ml-3"
     >
-      <div class="form-group">
+      <!-- <div class="form-group">
         {{ form_input(name='name', label=_("Model's name"), required=True)}}
-      </div>
+      </div> -->
 
       <div class="form-group">
         {{ form_input(name='path', label=_("File path"), required=True)}}

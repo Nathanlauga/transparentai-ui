@@ -1,0 +1,86 @@
+{% extends "commons/layout.html" %} {% from
+"commons/components/card_status.html" import card_status with context %} {% from
+"commons/components/card.html" import card with context %} {% block title %}{{
+title }}{% endblock %}
+<!-- {% block head %}{% endblock %} -->
+{% block h1 %}{{ title }}{% endblock %} {% block content %} 
+
+{% if model.module_interpretability is defined %}
+<!-- Details Row -->
+<div class="row">
+  <div class="col-6 col-md-2">
+    {{ card_status(status=model.module_interpretability.status )}}
+  </div>
+  <div class="col-6 col-md-2">
+    <strong>Created at:</strong> {{
+    model.module_interpretability.created_at.strftime('%Y-%m-%d')}}
+  </div>
+  <div class="col"></div>
+</div>
+<!-- End details row -->
+<hr />
+
+<!-- Components Row -->
+{% if model.module_interpretability.status != 'loaded' %}
+
+<div class="row">
+  <div class="alert w-100 alert-info text-center" role="alert">
+    {{ _('To access this module, you need to set the dataset path correctly and
+    wait for the software to load the report.') }}
+    <a class="text-info" href="/models/{{ model.name }}"
+      >{{ _('Please go to the Dataset page') }}</a
+    >
+    {{ _('or') }}
+    <a class="text-info" href="./explain-global"
+      >{{ _('reload this page.') }}</a
+    >
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 px-5">
+
+    <canvas id="variableInfluence" width="100" height="50"></canvas>
+  </div>
+
+</div>
+
+
+
+{% endif %} {% endif %} {% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+{% block scripts %}
+
+{% set variables =  model.module_interpretability.variable_influence|dictsort(by='value', reverse=True)  %}
+
+
+<script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+<script>
+
+    let ctx = document.getElementById('variableInfluence').getContext('2d');
+    var color = Chart.helpers.color;
+    let data = {
+        labels: {{ variables|map(attribute=0)|list|safe }},
+        datasets: [
+            {
+                label: "Global variable influence",
+                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                borderColor: 'rgba(0, 0, 0, 0.4)',
+                borderWidth: 1,
+                data: {{ variables|map(attribute=1)|list|safe }}
+            }
+        ]
+    }
+
+
+    let myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: data
+    });
+
+
+</script>
+
+{% endblock %}

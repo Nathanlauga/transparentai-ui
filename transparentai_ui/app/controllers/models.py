@@ -107,7 +107,18 @@ def update(name):
 
 
 def delete(name):
+    model = model_controller.get_instance(name)
+
+    redirect_project = False
+    if model.dataset is not None:
+        redirect_project = True if model.dataset.project is not None else False
+
     model_controller.delete(name)
+
+    if redirect_project:
+        return redirect(
+            url_for('projects.get_instance', name=model.dataset.project.name))
+
     return redirect(url_for('models.index'))
 
 
@@ -126,3 +137,17 @@ def post_instance(name):
         return delete(name)
 
     return redirect(url_for('models.get_instance', name=name))
+
+
+def explain_global(name):
+    model = model_controller.get_instance(name)
+    if model is None:
+        return redirect(url_for('models.index'))
+
+    title = _('Analyse global behavior: ') + name
+    header = get_header_attributes()
+    if model.dataset is not None:
+        if model.dataset.project is not None:
+            header['current_project'] = model.dataset.project.name
+
+    return render_template("modules/explain-global.html", session=session, model=model, header=header, title=title)

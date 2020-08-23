@@ -13,6 +13,9 @@ class ModuleInterpretability(BaseModel):
         db.Integer, db.ForeignKey('transparentai-models.id'))
     model = db.relationship('Model', back_populates='module_interpretability')
 
+    # Todo : custom nrows global influence
+    # nrows = db.Column(db.Integer, default=1000)
+
     status = db.Column(db.String, default='init')
 
     _variable_influence = db.Column(db.String, default='')
@@ -23,8 +26,9 @@ class ModuleInterpretability(BaseModel):
 
     _default_fields = [
         "variable_influence",
-        "status"
-        "model_id"
+        "status",
+        "model_id",
+        # "nrows"
     ]
     _hidden_fields = [
         "model"

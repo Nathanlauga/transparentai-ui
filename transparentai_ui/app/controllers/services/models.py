@@ -71,14 +71,28 @@ def model_has_predict_function(model):
     return hasattr(model, 'predict')
 
 
+def model_columns_in_dataset(df, dataset):
+    """
+    """
+    try:
+        df[dataset.model_columns]
+    except:
+        return False
+
+    return True
+
+
 def is_model_columns_valid(dataset, model):
     """
     """
     columns = dataset.model_columns
-    df = read_dataset_file(dataset.path, nrows=1)
+    df = read_dataset_file(dataset.path,
+                           nrows=1,
+                           sep=dataset.sep,
+                           encoding=dataset.encoding)
 
-    X = df[columns]
     try:
+        X = df[columns]
         model.predict(X)
     except:
         return False
@@ -279,10 +293,18 @@ def format_model(form_data, create=False, obj=None):
 def load_model_explainer(model):
     """
     """
+    dataset = model.dataset
     nrows = 1000
-    nrows = model.dataset.length if nrows > model.dataset.length else nrows
+    nrows = dataset.length if nrows > dataset.length else nrows
 
-    df = read_dataset_file(model.dataset.path, nrows=nrows)
+    df = read_dataset_file(dataset.path,
+                           nrows=nrows,
+                           sep=dataset.sep,
+                           encoding=dataset.encoding)
+
+    if not model_columns_in_dataset(df, dataset):
+        return None
+
     df = df[model.dataset.model_columns]
 
     model_obj = read_model(model.path, model.file_type)
@@ -314,7 +336,8 @@ def load_dataset_sample(dataset, nrows=None):
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         print('Launch model module thread : load_dataset_sample')
-        future = executor.submit(read_dataset_file, dataset.path, nrows)
+        future = executor.submit(read_dataset_file, dataset.path, nrows,
+                                 dataset.sep, dataset.encoding)
         df = future.result()
 
     return df
@@ -335,7 +358,12 @@ def load_interpretability_module(model, model_obj, df):
     """
     """
     print('Launch model module thread : compute_global_influence')
-    df = df[model.dataset.model_columns]
+    dataset = model.dataset
+
+    if not model_columns_in_dataset(df, dataset):
+        return None
+
+    df = df[dataset.model_columns]
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         print('Launch model module thread : load_dataset_sample')
@@ -359,14 +387,11 @@ def init_model_modules(model):
         init_model_module_db(ModuleInterpretability, model=model)
 
 
-def load_model_modules_in_background(model, data):
-    """
-    """
-    init_model_modules(model)
-    gc.collect()
 
-    print(data)
+def load_model_modules(model, data):
+    """Loads the model modules in background using Thread.
 
+    """
     if key_in_dict_not_empty('dataset', data):
         df = load_dataset_sample(data['dataset'], nrows=1000)
         gc.collect()
@@ -376,3 +401,14 @@ def load_model_modules_in_background(model, data):
 
         load_interpretability_module(model, model_obj, df)
         gc.collect()
+
+
+
+def load_model_modules_in_background(model, data):
+    """
+    """
+    init_model_modules(model)
+
+    load_model_modules(model, data)
+    # thread = Thread(target=load_model_modules, args=(model, data,))
+    # thread.start()

@@ -49,7 +49,10 @@ def dict_property(attr):
         return {}
 
     try:
-        res = json.loads(str(attr).replace("'",'"'))
+        json_str = str(attr).replace("'",'"')
+        # Handle numpy array string
+        json_str = json_str.replace('array(','').replace('])',']')
+        res = json.loads(json_str)
     except:
         return str(attr).replace("'",'"')
 

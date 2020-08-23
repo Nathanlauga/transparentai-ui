@@ -1,0 +1,6 @@
+{% macro bias_summary(value, optimal, bias_threshold) %} {% set biased = (value
+- optimal)|abs > bias_threshold %} {% if biased %}
+<span class="text-danger">{{ _('Biased') }}</span>
+{% else %}
+<span class="text-success">{{ _('Not biased') }}</span>
+{% endif %} {% endmacro %}

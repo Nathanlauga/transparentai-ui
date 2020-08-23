@@ -1,6 +1,7 @@
-{% extends "commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
-{% block head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block
-h1_side %}
+{% from "commons/components/card.html" import card with context %} {% extends
+"commons/layout.html" %} {% block title %}{{ title }}{% endblock %} {% block
+head %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {% block h1_side
+%}
 <div class="d-inline-block">
   <a href="/edit-model/{{ model.name }}" class="nounderline">
     <button class="btn bg-info"><i class="fa fa-edit text-white"></i></button>
@@ -30,6 +31,24 @@ h1_side %}
 </div>
 <!-- End details row -->
 <hr />
+
+<!-- Datasets modules cards -->
+<div class="row">
+  {% if model.module_interpretability is defined %}
+  <div class="col-12 col-sm-6 mb-3">
+    {{ card(text=_('Analyse global model behavior'),
+    href='/models/'+model.name+'/explain-global',
+    status=model.module_interpretability.status, subtext=_('It requires a
+    valid model object.')) }}
+  </div>
+  <div class="col-12 col-sm-6 mb-3">
+    {{ card(text=_('Analyse local model behavior (one sample)'),
+    href='/models/'+model.name+'/explain-local',
+    status=model.module_interpretability.status, subtext=_('It requires a
+    valid model object.')) }}
+  </div>
+  {% endif %}
+</div>
 
 {% endblock %}
 

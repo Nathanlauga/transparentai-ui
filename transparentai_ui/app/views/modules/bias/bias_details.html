@@ -1,0 +1,72 @@
+{% macro bias_details(metric_name, values, dataset, attr_key) %}
+
+    {% set attr = dataset.module_bias.to_dict()['privileged_group'][attr_key] %}
+    {% if attr['dtype'] == 'number' %}
+        {% set privileged = attr_key + _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) %}
+    {% else %}
+        {% set privileged = attr_key + ' ' + _('which is') + ' ' + attr['privileged_values']|join(_(' or ')) %}
+    {% endif %}
+
+    <!-- Default -->
+    {% set biased = values[metric_name]|abs > 0.2 %}
+    {% set format_value = "%.2f"|format((values[metric_name]*100)|abs) + '% ' %}
+
+    {% if values[metric_name] < 0 %} 
+        {% set format_value = format_value + _('less often ') %} 
+    {% else %} 
+        {% set format_value =  format_value + _('more often ') %} 
+    {% endif %}
+
+    {% set pred_text = _('are predicted with the positive output') + ' '%}
+
+
+    {% if metric_name == 'statistical_parity_difference' %}
+        {% set title = _('Statistical parity difference') %}
+        {% set text =  ' -0.0796. ' %}
+        
+    {% elif metric_name == 'disparate_impact' %}
+        {% set biased = (values[metric_name] - 1)|abs > 0.1 %}
+        {% if values[metric_name] < 1 %}
+            {% set format_value = "%.2f"|format(1/values[metric_name]) + ' ' + _('times less often') + ' ' %}
+        {% else %}
+            {% set format_value = "%.2f"|format(values[metric_name]) + ' ' + _('times more often ') + ' ' %}
+        {% endif %}
+
+        {% set title = _('Disparate Impact') %}
+
+    {% elif metric_name == 'equal_opportunity_difference' %}
+        {% set title = _('Equal Opportunity Difference') %}
+        {% set pred_text = _('the model predict a correct positive output') + ' '%}
+
+    {% elif metric_name == 'average_odds_difference' %}
+        {% set title = _('Average odds difference') %}
+        {% set pred_text = _('the model predict a correct output (either positive or negative)') + ' '%}
+
+    {% endif %}
+
+
+    <div class="col-12 col-sm-6 p-2 border">
+      <h6 class="text-dark">
+          {{ title }}
+          {% if biased %}
+            <span class="text-danger">considered biased.</span>
+          {% else %}
+            <span class="text-success">considered not biased.</span>
+          {% endif %}
+      </h6>
+
+      <div>
+        <!-- Bias text -->
+        {{ _('For this attribute, the metric value is') }}
+        <strong>{{ "%.4f"|format(values[metric_name]) }}</strong>.
+        {{ _('It means inputs that have an attribute') }}  
+        <strong>{{ privileged }}</strong>
+        {{ pred_text }}
+        {{ format_value }} 
+        {{ _('than the unprivileged inputs') }}.
+
+
+      </div>
+    </div>
+
+{% endmacro %}
