@@ -1,5 +1,5 @@
 from .. import db
-from ..utils.models import list_property, list_property_setter, dict_property
+from ..utils.models import list_property, list_property_setter, dict_property, dict_property_setter
 from .base_model import BaseModel
 
 from ..src import get_questions
@@ -55,7 +55,7 @@ class Project(BaseModel):
 
     @answers.setter
     def answers(self, value):
-        self._answers = str(value).replace("'", '"')
+        self._answers = dict_property_setter(new_dict=value)
 
     @property
     def n_answered(self):

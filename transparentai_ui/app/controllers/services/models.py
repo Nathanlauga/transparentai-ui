@@ -11,7 +11,7 @@ from ...utils.errors import get_errors
 from ...utils import key_in_dict_not_empty, is_empty
 
 from ...utils.components import format_str_strip, clean_errors, init_model_module_db
-from .modules.interpretability import compute_global_influence
+from .modules.interpretability import compute_global_influence, compute_local_influence
 
 from threading import Thread
 import concurrent.futures
@@ -19,6 +19,7 @@ import concurrent.futures
 import gc
 import joblib
 import pickle
+import pandas as pd
 
 
 def read_with_pickle(path):
@@ -328,17 +329,21 @@ def load_model_explainer_from_obj(model_obj, df):
     return explainer
 
 
-def load_dataset_sample(dataset, nrows=None):
+def load_dataset_sample(dataset, nrows=None, thread=True):
     """
     """
     if (nrows is not None) & (dataset.length is not None):
         nrows = dataset.length if nrows > dataset.length else nrows
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        print('Launch model module thread : load_dataset_sample')
-        future = executor.submit(read_dataset_file, dataset.path, nrows,
-                                 dataset.sep, dataset.encoding)
-        df = future.result()
+    if thread:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            print('Launch model module thread : load_dataset_sample')
+            future = executor.submit(read_dataset_file, dataset.path, nrows,
+                                     dataset.sep, dataset.encoding)
+            df = future.result()
+    else:
+        df = read_dataset_file(dataset.path, nrows, dataset.sep,
+                               dataset.encoding)
 
     return df
 
@@ -387,7 +392,6 @@ def init_model_modules(model):
         init_model_module_db(ModuleInterpretability, model=model)
 
 
-
 def load_model_modules(model, data):
     """Loads the model modules in background using Thread.
 
@@ -403,7 +407,6 @@ def load_model_modules(model, data):
         gc.collect()
 
 
-
 def load_model_modules_in_background(model, data):
     """
     """
@@ -412,3 +415,34 @@ def load_model_modules_in_background(model, data):
     load_model_modules(model, data)
     # thread = Thread(target=load_model_modules, args=(model, data,))
     # thread.start()
+
+
+def format_data_to_row(form_data):
+    """
+    """
+    data = form_data.to_dict()
+    data = pd.Series(data).to_frame().T
+    data = data.astype(float)
+
+    return data
+
+
+def get_local_variable_influence(model, form_data):
+    """
+    """
+    row = format_data_to_row(form_data)
+
+    model_obj = read_model(model.path, model.file_type)
+
+
+    df = load_dataset_sample(model.dataset, nrows=50)
+    df = df[model.dataset.model_columns]
+
+    explainer = load_model_explainer_from_obj(model_obj, df)
+
+    prediction = model_obj.predict(row)
+    base_value = explainer.explainer.expected_value
+
+    variable_influence = compute_local_influence(explainer, row)
+
+    return variable_influence, prediction, base_value

@@ -1,5 +1,5 @@
 from ... import db
-from ...utils.models import dict_property
+from ...utils.models import dict_property, dict_property_setter
 from ..base_model import BaseModel
 
 
@@ -45,4 +45,4 @@ class ModuleInterpretability(BaseModel):
 
     @variable_influence.setter
     def variable_influence(self, value):
-        self._variable_influence = str(value).replace("'", '"')
+        self._variable_influence = dict_property_setter(new_dict=value)

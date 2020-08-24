@@ -20,3 +20,17 @@ def compute_global_influence(model, explainer, df):
     except Exception as exception:
         print(exception)
         update_in_db(module, {'status': 'failed'})
+
+
+def compute_local_influence(explainer, row):
+    """
+    """
+    var_influence = None
+
+    try:
+        var_influence = explainer.explain_local_influence(row.loc[0])
+
+    except Exception as exception:
+        print(exception)
+
+    return var_influence

@@ -129,6 +129,8 @@ app.add_url_rule('/models/<name>', endpoint='models.delete',
 
 app.add_url_rule('/models/<name>/explain-global', endpoint='models.explain_global',
                  view_func=models.explain_global, methods=['GET', 'POST'])
+app.add_url_rule('/models/<name>/explain-local', endpoint='models.explain_local',
+                 view_func=models.explain_local, methods=['GET', 'POST'])
 
 # API
 # app.add_url_rule('/api/models', endpoint='api.models',

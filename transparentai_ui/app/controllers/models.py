@@ -2,7 +2,7 @@ from flask import request, render_template, redirect, url_for, session, jsonify
 from flask_babel import _
 
 from ..models import Model, Project
-from .services.models import format_model, control_model, load_model_modules_in_background
+from .services.models import format_model, control_model, load_model_modules_in_background, get_local_variable_influence
 from .services.commons import get_header_attributes
 from .controller_class import Controller
 
@@ -18,7 +18,10 @@ def index():
     title = _('Models')
     header = get_header_attributes()
     models = model_controller.index()
-    return render_template("models/index.html", session=session, models=models, header=header)
+    return render_template("models/index.html",
+                           session=session,
+                           models=models,
+                           header=header)
 
 
 def get_all_instances_json():
@@ -37,7 +40,11 @@ def new():
         if model is not None:
             return redirect(url_for('models.get_instance', name=model.name))
 
-    return render_template("models/new.html", title=title, session=session, header=header, previous=previous)
+    return render_template("models/new.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           previous=previous)
 
 
 def new_from_project(project_name):
@@ -48,15 +55,22 @@ def new_from_project(project_name):
     dataset_name = None
 
     project = select_from_db(Project, 'name', project_name)
-    if project.dataset is not None: 
+    if project.dataset is not None:
         dataset_name = project.dataset.name
 
     if request.method == 'POST':
         model = model_controller.create()
         if model is not None:
-            return redirect(url_for('projects.get_instance', name=project_name))
+            return redirect(url_for('projects.get_instance',
+                                    name=project_name))
 
-    return render_template("projects/new-model.html", title=title, session=session, header=header, previous=previous, dataset_name=dataset_name, project_name=project_name)
+    return render_template("projects/new-model.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           previous=previous,
+                           dataset_name=dataset_name,
+                           project_name=project_name)
 
 
 def edit(name):
@@ -74,7 +88,12 @@ def edit(name):
         if model is not None:
             return redirect(url_for('models.get_instance', name=model.name))
 
-    return render_template("models/edit.html", title=title, session=session, header=header, previous=previous, model=model)
+    return render_template("models/edit.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           previous=previous,
+                           model=model)
 
 
 def get_instance(name):
@@ -88,7 +107,11 @@ def get_instance(name):
         if model.dataset.project is not None:
             header['current_project'] = model.dataset.project.name
 
-    return render_template("models/instance.html", session=session, model=model, header=header, title=title)
+    return render_template("models/instance.html",
+                           session=session,
+                           model=model,
+                           header=header,
+                           title=title)
 
 
 def get_instance_json(name):
@@ -150,4 +173,42 @@ def explain_global(name):
         if model.dataset.project is not None:
             header['current_project'] = model.dataset.project.name
 
-    return render_template("modules/explain-global.html", session=session, model=model, header=header, title=title)
+    return render_template("modules/explain-global.html",
+                           session=session,
+                           model=model,
+                           header=header,
+                           title=title)
+
+
+def explain_local(name):
+    model = model_controller.get_instance(name)
+    if model is None:
+        return redirect(url_for('models.index'))
+
+    title = _('Analyse local behavior: ') + name
+    header = get_header_attributes()
+    if model.dataset is not None:
+        if model.dataset.project is not None:
+            header['current_project'] = model.dataset.project.name
+
+    if request.method == 'POST':
+        form_data = request.form
+        previous = form_data.to_dict()
+
+        variable_influence, prediction, base_value = get_local_variable_influence(
+            model, form_data=form_data)
+    else:
+        variable_influence = None
+        previous = None
+        prediction = None
+        base_value = None
+
+    return render_template("modules/explain-local.html",
+                           session=session,
+                           model=model,
+                           header=header,
+                           title=title,
+                           previous=previous,
+                           prediction=prediction, 
+                           base_value=base_value,
+                           variable_influence=variable_influence)

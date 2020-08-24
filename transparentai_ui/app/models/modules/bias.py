@@ -1,5 +1,5 @@
 from ... import db
-from ...utils.models import dict_property
+from ...utils.models import dict_property, dict_property_setter
 from ..base_model import BaseModel
 
 
@@ -44,7 +44,7 @@ class ModuleBias(BaseModel):
 
     @results.setter
     def results(self, value):
-        self._results = str(value).replace("'", '"')
+        self._results = dict_property_setter(new_dict=value)
 
     @property
     def privileged_group(self):
