@@ -31,18 +31,14 @@ model.module_interpretability is defined %}
       >{{ _('Please go to the Dataset page') }}</a
     >
     {{ _('or') }}
-    <a class="text-info" href="./explain-local"
-      >{{ _('reload this page.') }}</a
-    >
+    <a class="text-info" href="./explain-local">{{ _('reload this page.') }}</a>
   </div>
 </div>
 
-{% else %}
-
-{% if model.dataset.model_columns is defined %}
+{% else %} {% if model.dataset.model_columns is defined %}
 
 <div class="row">
-  <div class="col-12 col-md-4">
+  <div class="col-12 col-lg-4">
     <div class="card shadow mb-4">
       <!-- Card Header - Accordion -->
       <a
@@ -66,30 +62,21 @@ model.module_interpretability is defined %}
                 {{ _("Understand prediction") }}
               </button>
             </div>
-            {% for column in model.dataset.model_columns %}
-              {% if previous is not none %}
-                {% if column in previous %}
-                  {% set value = previous[column] %}
+            {% for column in model.dataset.model_columns %} {% if previous is
+            not none %} {% if column in previous %} {% set value =
+            previous[column] %} {% else %} {% set value = 0 %} {% endif %} {%
+            else %} {% set value = 0 %} {% endif %}
 
-                {% else %}
-                  {% set value = 0 %}
-
-                {% endif %}
-              {% else %}
-                {% set value = 0 %}
-              {% endif %}
-
-              <div class="form-row mb-3">
-                {{ form_input(name=column, label=column, type='number', value=value,
-                disable=False)}}
-                <div
-                  class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1"
-                >
-                  {{ _('Choose a value for this column.') }}
-                </div>
-
+            <div class="form-row mb-3">
+              {{ form_input(name=column, label=column, type='number',
+              value=value, disable=False)}}
+              <div
+                class="text-xs font-weight-bold text-gray-500 text-uppercase mb-1"
+              >
+                {{ _('Choose a value for this column.') }}
+              </div>
             </div>
-              {% endfor %}
+            {% endfor %}
 
             <!-- <div class="form-row mt-3">
               <button class="btn btn-primary" type="submit">
@@ -103,13 +90,64 @@ model.module_interpretability is defined %}
   </div>
 
   {% if variable_influence is not none %}
-  <div class="col-12 col-md-8 px-5">
-    {{ prediction }}
-    {{ base_value}}
+  <div class="col-12 col-lg-8 px-5">
+    {% if prediction is not none %}
+    <div class="col-12 mb-4">
+      {% if prediction|length == 1 %}
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="h5 font-weight-bold text-primary text-uppercase mb-1">
+                {{ _('Model prediction') }} :
+                <span class="mb-0 font-weight-bold text-gray-800"
+                  >{{ prediction[0] }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %} {% set proba = prediction[1][1] * 100 %}
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div
+                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+              >
+                {{ _('Model prediction') }}
+              </div>
+              <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                  <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                    {{ proba }}%
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="progress progress-sm mr-2">
+                    <div
+                      class="progress-bar bg-primary"
+                      role="progressbar"
+                      style="width: {{ proba }}%"
+                      aria-valuenow="{{ proba }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
     <canvas
       id="variableInfluence"
       width="100"
-      height="{{ 5 * variable_influence|length }}"
+      height="{{ 8 * variable_influence|length }}"
     ></canvas>
   </div>
   {% endif %}
@@ -117,12 +155,8 @@ model.module_interpretability is defined %}
 {% endif %} {% endif %} {% endif %} {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
-{% block scripts %} 
-
-
-{% if variable_influence is not none %}
-{% set variables = variable_influence|dictsort(by='value',
-reverse=True) %}
+{% block scripts %} {% if variable_influence is not none %} {% set variables =
+variable_influence|dictsort(by='value', reverse=True) %}
 
 <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
 <script>
@@ -134,10 +168,16 @@ reverse=True) %}
       datasets: [
           {
               label: "Variable influence on the sample",
-              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+
+              backgroundColor: function(context) {
+                  var index = context.dataIndex;
+                  var value = context.dataset.data[index];
+                  return value < 0 ? 'rgba(231, 76, 60, 1.0)' : 'rgba(46, 204, 113,1.0)';
+              },
               borderColor: 'rgba(0, 0, 0, 0.4)',
               borderWidth: 1,
-              data: {{ variables|map(attribute=1)|list|safe }}
+              data: {{ variables|map(attribute=1)|list|safe }},
+
           }
       ]
   }
@@ -145,9 +185,12 @@ reverse=True) %}
 
   let myChart = new Chart(ctx, {
       type: 'horizontalBar',
-      data: data
+      data: data,
+      options: {
+        legend: {
+          display: false
+        }
+      }
   });
 </script>
-{% endif %}
-
-{% endblock %}
+{% endif %} {% endblock %}

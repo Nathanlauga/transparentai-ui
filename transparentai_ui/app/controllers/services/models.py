@@ -440,7 +440,11 @@ def get_local_variable_influence(model, form_data):
 
     explainer = load_model_explainer_from_obj(model_obj, df)
 
-    prediction = model_obj.predict(row)
+    prediction = list()
+    prediction.append(model_obj.predict(row)[0])
+    if hasattr(model_obj, 'predict_proba'):
+        prediction.append(model_obj.predict_proba(row)[0])
+
     base_value = explainer.explainer.expected_value
 
     variable_influence = compute_local_influence(explainer, row)
