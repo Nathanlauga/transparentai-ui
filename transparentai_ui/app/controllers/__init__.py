@@ -41,6 +41,9 @@ app.add_url_rule('/projects/<name>', endpoint='projects.update',
 app.add_url_rule('/projects/<name>', endpoint='projects.delete',
                  view_func=projects.delete, methods=['DELETE'])
 
+app.add_url_rule('/projects/<name>/modules', endpoint='projects.modules',
+                 view_func=projects.modules, methods=['GET'])
+
 
 app.add_url_rule('/projects/<project_name>/new-dataset', endpoint='projects.dataset.new',
                  view_func=datasets.new_from_project, methods=['GET', 'POST'])

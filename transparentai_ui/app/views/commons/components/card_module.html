@@ -1,0 +1,17 @@
+{% from "commons/components/card.html" import card %} 
+
+{% macro card_module(module, text, href, disable) %}
+
+
+<div class="row mb-3">
+    <div class="col-12">
+    {% if disable %}
+      {{ card(text=text, href=href, disable=disable) }}
+    {% else %}
+      {{ card(text=text, href=href, status=module.status) }}  
+    {% endif %}
+    </div>
+  </div>
+
+
+{% endmacro %}

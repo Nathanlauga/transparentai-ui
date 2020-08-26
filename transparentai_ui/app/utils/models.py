@@ -1,5 +1,6 @@
 import json
 from ..utils import drop_dupplicates_values
+import numpy as np
 
 
 def get_request_attribute(form_data, key, default=''):

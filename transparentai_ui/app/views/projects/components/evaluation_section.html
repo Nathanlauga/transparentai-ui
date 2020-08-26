@@ -5,7 +5,13 @@ boolean_plus_one_question with context %}
 
 {% macro evaluation_section(id, label, section_id, project, fa) -%} 
 
-{% set prct_answered = ((project.n_answered[section_id]*100 / questions[section_id]|length)|int)/100 %}
+{% if project.n_answered['total'] == 0 %}
+  {% set prct_answered = 0 %}
+  {% set n_answered = 0 %}
+{% else %}
+  {% set n_answered = project.n_answered[section_id] %}
+  {% set prct_answered = (( project.n_answered[section_id]*100 / questions[section_id]|length)|int)/100 %}
+{% endif %}
 
 {% set select_idx = 1 %}
 
@@ -38,7 +44,7 @@ boolean_plus_one_question with context %}
           {{ _('Questions answered') }}
           <span class="float-right"
             >{{
-            project.n_answered[section_id]}}/{{questions[section_id]|length}}</span
+              n_answered }}/{{questions[section_id]|length}}</span
           >
         </span>
         <div class="progress mb-4">

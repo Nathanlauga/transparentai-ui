@@ -62,7 +62,10 @@ def update_in_db(obj, args):
 
     except Exception as exception:
         db.session.rollback()
+        print(exception)
+        
         return exception #errors_dict['UpdateInDB']
+
     return 'updated'
 
 

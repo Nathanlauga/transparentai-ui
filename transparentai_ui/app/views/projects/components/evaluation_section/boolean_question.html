@@ -1,6 +1,8 @@
 {% macro boolean_question(aspect, question, order) %}
 
-{%set answer = project.answers[aspect.id|string][order] %}
+{% if aspect.id|string in project.answers %}
+  {% set answer = project.answers[aspect.id|string][order] %}
+{% endif %}
 <div
 id="{{ aspect.id }}_{{ question.order|int }}"
 class="text-lg btn-group-toggle"

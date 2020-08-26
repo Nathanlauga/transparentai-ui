@@ -41,5 +41,6 @@ def compute_performance_metrics(df, dataset, metrics=None):
         if res != 'updated':
             update_in_db(module, {'status': 'failed'})
 
-    except:
+    except Exception as exception:
+        print(exception)
         update_in_db(module, {'status': 'failed'})

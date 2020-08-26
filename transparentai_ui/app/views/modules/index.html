@@ -1,0 +1,86 @@
+{% from "commons/components/card.html" import card %} {% from
+"commons/components/card_module.html" import card_module %} {% extends
+"commons/layout.html" %} {% block title %}{{ title }}{% endblock %}
+<!-- {% block head %}{% endblock %} -->
+
+{% block before_h1 %} {% endblock %} {% block h1 %}{{ title }}{% endblock %} {%
+block content %}
+
+<!-- Content Row -->
+<div class="row">
+  <div class="col-12 col-sm-6 col-xl-4">
+    <div class="mb-4">
+      {{ card(text=_('Estimate CO2 emission'),
+      href='/projects/'+project.name+'/estimate-co2', fa='leaf', color='success',
+      border_color='success') }}
+    </div>
+  </div>
+</div>
+
+<h3>{{ _('Dataset modules') }}</h3>
+
+{% if dataset is none %}
+
+<div class="mb-4">
+  {{ _('If you want to access dataset modules, please go on the
+  <a href="/projects/'+project.name+'/new-dataset">Add a dataset page</a>.') }}
+</div>
+{% else %}
+<div class="mb-4">
+  {{ _('If you want to access modules that are not defined, please go on the
+  <a href="/datasets/'+dataset.name+'">Dataset page</a>.') }}
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-12 col-sm-6 col-xl-4">
+    {{ card_module(module=dataset.module_pandas_profiling, text=_('Analyse
+    Dataset'), href='/datasets/'+project.name+'/analyse-dataset',
+    disable=(dataset is none)) }}
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-4">
+    {{ card_module(module=dataset.module_performance, text=_('Analyse AI
+    Performance'), href='/datasets/'+project.name+'/analyse-performance',
+    disable=(dataset is none)) }}
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-4">
+    {{ card_module(module=dataset.module_bias, text=_('Analyse Bias'),
+    href='/datasets/'+project.name+'/analyse-bias', disable=(dataset is none))
+    }}
+  </div>
+</div>
+
+<h3>{{ _('Model modules') }}</h3>
+
+{% if model is none %}
+
+<div class="mb-4">
+  {{ _('If you want to access dataset modules, please go on the
+  <a href="/projects/'+project.name+'/new-model">Add a model page</a>.') }}
+</div>
+{% else %}
+<div class="mb-4">
+  {{ _('If you want to access modules that are not defined, please go on the
+  <a href="/datasets/'+model.name+'">Dataset page</a>.') }}
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-12 col-sm-6 col-xl-4">
+    {{ card_module(module=model.module_interpretability, text=_('Analyse global
+    model behavior'), href='/models/'+project.name+'/explain-global',
+    disable=(model is none)) }}
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-4">
+    {{ card_module(module=model.module_interpretability, text=_('Analyse local
+    model behavior (one sample)'),
+    href='/models/'+project.name+'/explain-local', disable=(model is none)) }}
+  </div>
+</div>
+{% endblock %}
+
+<!-- {% block footer %}{% endblock %} -->
+<!-- {% block scripts %}{% endblock %} -->

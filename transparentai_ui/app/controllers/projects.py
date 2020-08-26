@@ -20,10 +20,10 @@ project_controller = Controller(component=Project,
                                 control_fn=control_project,
                                 module_fn=load_modules)
 
-
-sustainable_controller = Controller(component=ModuleSustainable,
-                                    format_fn=sustainable_module.format_module,
-                                    control_fn=sustainable_module.control_module)
+sustainable_controller = Controller(
+    component=ModuleSustainable,
+    format_fn=sustainable_module.format_module,
+    control_fn=sustainable_module.control_module)
 
 
 def index():
@@ -31,7 +31,11 @@ def index():
     header = get_header_attributes()
     projects = project_controller.index()
 
-    return render_template("projects/index.html", title=title, session=session, projects=projects, header=header)
+    return render_template("projects/index.html",
+                           title=title,
+                           session=session,
+                           projects=projects,
+                           header=header)
 
 
 def get_all_instances_json():
@@ -50,9 +54,14 @@ def new():
         init_anwsers(project)
 
         if project is not None:
-            return redirect(url_for('projects.get_instance', name=project.name))
+            return redirect(url_for('projects.get_instance',
+                                    name=project.name))
 
-    return render_template("projects/new.html", title=title, session=session, header=header, previous=previous)
+    return render_template("projects/new.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           previous=previous)
 
 
 def edit(name):
@@ -69,9 +78,15 @@ def edit(name):
         previous = request.form
         project = project_controller.update(name)
         if project is not None:
-            return redirect(url_for('projects.get_instance', name=project.name))
+            return redirect(url_for('projects.get_instance',
+                                    name=project.name))
 
-    return render_template("projects/edit.html", title=title, session=session, header=header, previous=previous, project=project)
+    return render_template("projects/edit.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           previous=previous,
+                           project=project)
 
 
 def get_instance(name):
@@ -85,7 +100,12 @@ def get_instance(name):
 
     questions = get_questions()
 
-    return render_template("projects/instance.html", session=session, project=project, header=header, title=title, questions=questions)
+    return render_template("projects/instance.html",
+                           session=session,
+                           project=project,
+                           header=header,
+                           title=title,
+                           questions=questions)
 
 
 def get_instance_json(name):
@@ -138,7 +158,7 @@ def estimate_co2(name):
     module = project.module_sustainable
     if module is None:
         return abort(404)
-    
+
     previous = module.to_dict()
 
     if request.method == 'POST':
@@ -151,5 +171,28 @@ def estimate_co2(name):
 
     locations = list(sustainable.get_energy_data().keys())
 
-    return render_template("modules/estimate_co2.html", session=session, previous=previous,
-                            header=header, title=title, project=project, locations=locations)
+    return render_template("modules/estimate_co2.html",
+                           session=session,
+                           previous=previous,
+                           header=header,
+                           title=title,
+                           project=project,
+                           locations=locations)
+
+
+def modules(name):
+    title = _('Analytics libraries')
+    header = get_header_attributes()
+    project = project_controller.get_instance(name)
+    header['current_project'] = name
+
+    dataset = project.dataset 
+    model = dataset.model if dataset is not None else None
+
+    return render_template("modules/index.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           project=project,
+                           dataset=dataset,
+                           model=model)
