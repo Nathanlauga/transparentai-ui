@@ -51,6 +51,7 @@ def get_errors():
         'SustainableWattsNotSet': _('The watts argument is not set.'),
         'SustainableWattsNotValid': _('The watts argument has to be a number.'),
         'SustainableWattsNotPositive': _('The watts argument must be positive.'),
+        'DatasetColumnNotNumber':_('It needs to be a number columns.'),
         }
 
     return errors_dict

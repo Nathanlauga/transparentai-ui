@@ -44,13 +44,16 @@ dataset.module_bias is defined %}
 <!-- Components Row -->
 <div class="row">
   <div>
-    <div class="text-lg mb-4">
+    <div class="mb-2">
       {{ _('For each protected attributes that you selected you can look at the
       summary table below. If you want more information, you can go directly to
       the detail area in this same report.') }}
       <strong>
         {{ _('You can click on the cells if you want to see details.') }}
       </strong>
+    </div>
+    <div class="mb-4">
+      {{ _('This bias analysis was done on the full dataset : it means it anlysed %i rows.'%(dataset.length)) }}
     </div>
 
     <table class="table table-light">

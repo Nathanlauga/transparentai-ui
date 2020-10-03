@@ -1,0 +1,95 @@
+{% from "commons/components/card.html" import card with context %} {% from
+    "projects/evaluation_section/evaluation_section.html" import evaluation_section with
+    context %} {% extends "commons/layout.html" %} {% block title %}{{ title }}{%
+    endblock %}
+    <!-- {% block head %}{% endblock %} -->
+    {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
+    <div class="d-inline-block">
+      <a href="/edit-project/{{ project.name }}" class="nounderline">
+        <button class="btn bg-info"><i class="fa fa-edit text-white"></i></button>
+      </a>
+      <form
+        class="d-inline-block"
+        action="/projects/{{project.name}}"
+        method="post"
+      >
+        <input type="hidden" name="_method" value="DELETE" />
+        <button type="submit" class="btn bg-danger">
+          <i class="fa fa-trash text-white"></i>
+        </button>
+      </form>
+    </div>
+    {% endblock %} {% block content %}
+    
+    <!-- Details Row -->
+    <div class="row">
+      <div class="col">
+        <strong>Created at:</strong> {{ project.created_at.strftime('%Y-%m-%d')}}
+      </div>
+      <div class="col">
+        <strong>Members:</strong> {{ ', '.join(project.members) }}
+      </div>
+      <div class="col">
+        {% if project.desc is defined and project.desc|length %}
+        <p class="mb-1"><strong>Description:</strong> {{ project.desc }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <!-- End details row -->
+    <hr />
+    
+    <!-- Components Row -->
+    <div class="row">
+      <!-- DATASET CARD -->
+      {% if project.dataset is not none %}
+      <div class="col-12 col-sm-6">
+        {{ card(text=_('Dataset')+' - '+project.dataset.name,
+        href='/datasets/'+project.dataset.name, fa='database', color='white',
+        border_color='white', bg='secondary') }}
+      </div>
+      {% else %}
+      <div class="col-12 col-sm-6">
+        {{ card(text=_('Add a Dataset'),
+        href='/projects/'+project.name+'/new-dataset', fa='plus', color='secondary',
+        border_color='secondary', bg='light') }}
+      </div>
+      {% endif %}
+    
+      <!-- MODEL CARD -->
+      {% if project.dataset is none %}
+      <div class="col-12 col-sm-6">
+        {{ card(text=_('Add a Model'), fa='plus', subtext=_('You need to add a
+        Dataset with model columns refered to add a Model.'), disable=True) }}
+      </div>
+      {% else %} {% if project.dataset.model is not none %}
+      <div class="col-12 col-sm-6">
+        {{ card(text=_('Model')+' - '+project.dataset.model.name,
+        href='/models/'+project.dataset.model.name, fa='share-alt', color='white',
+        border_color='white', bg='secondary') }}
+      </div>
+      {% elif project.dataset.model_columns is not defined or
+      project.dataset.model_columns|length == 0 %}
+      <div class="col-12 col-sm-6">
+        {{ card(text=_('Add a Model'), fa='plus', subtext=_('You need to add a
+        Dataset with model columns refered to add a Model.'), disable=True) }}
+      </div>
+      {% else %}
+      <div class="col-12 col-sm-6">
+        {{ card(text=_('Add a Model'), href='/projects/'+project.name+'/new-model',
+        fa='plus', subtext=_('You can add the Model using the same columns refered
+        in the Dataset.'), color='secondary', border_color='secondary', bg='light')
+        }}
+      </div>
+      {% endif %} {% endif %}
+ 
+    </div>
+    
+   
+    {% endblock %}
+    
+    <!-- {% block footer %}{% endblock %} -->
+    {% block scripts %}
+
+    
+    {% endblock %}
+    

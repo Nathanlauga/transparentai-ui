@@ -186,13 +186,60 @@ def modules(name):
     project = project_controller.get_instance(name)
     header['current_project'] = name
 
-    dataset = project.dataset 
+    dataset = project.dataset
     model = dataset.model if dataset is not None else None
 
-    return render_template("modules/index.html",
+    return render_template("projects/modules/index.html",
                            title=title,
                            session=session,
                            header=header,
                            project=project,
                            dataset=dataset,
                            model=model)
+
+
+def components(name):
+    title = _('Project components')
+    header = get_header_attributes()
+    project = project_controller.get_instance(name)
+    header['current_project'] = name
+
+    dataset = project.dataset
+    model = dataset.model if dataset is not None else None
+
+    return render_template("projects/components/index.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           project=project,
+                           dataset=dataset,
+                           model=model)
+
+
+def evaluation(name):
+    title = _('Trusting evaluation')
+    header = get_header_attributes()
+    project = project_controller.get_instance(name)
+    header['current_project'] = name
+
+    dataset = project.dataset
+    model = dataset.model if dataset is not None else None
+
+    questions = get_questions()
+
+    return render_template("projects/evaluation/index.html",
+                           title=title,
+                           session=session,
+                           header=header,
+                           project=project,
+                           dataset=dataset,
+                           model=model,
+                           questions=questions)
+
+
+def model(name):
+    return redirect(url_for('models.get_instance', name=name))
+
+
+def dataset(name):
+    return redirect(url_for('datasets.get_instance', name=name))

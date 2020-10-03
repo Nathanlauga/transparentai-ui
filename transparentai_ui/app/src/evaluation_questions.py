@@ -196,10 +196,10 @@ def get_questions():
             "name": "Explanability",
             "question": "Are you aware of how the model works in general, which variables are most important?",
             "example": "None",
-            "suggestion": "Use of the \"Interpretability\" module to analyze model behavior.",
+            "suggestion": "Use of the \"Analyse local behavior\" module to analyze model behavior.",
             "module":{
-                "url": "interpretability",
-                "label": _('Interpretability')
+                "url": "explain-global",
+                "label": _('Analyse global behavior')
             }
         },
         {
@@ -266,10 +266,10 @@ def get_questions():
             "name": "Model Resilience",
             "question": "Have you tested extreme (rare) and common scenarios to see how the model behaves?",
             "example": "None",
-            "suggestion": "Use of the \"Scenario testing\" module to test the model's behavior.",
+            "suggestion": "Use of the \"Analyse local behavior\" module to test the model's behavior.",
             "module":{
-                "url": "scenario-testing",
-                "label": _('Scenario testing')
+                "url": "explain-local",
+                "label": _('Analyse local behavior')
             }
         },
         {
@@ -308,7 +308,7 @@ def get_questions():
             "example": "None",
             "suggestion": "Use the \"Python Security\" module if you use the Python language, to go further see the <a href=\"https://www.cvedetails.com/\" target=\"_blank\">CVE Details site</a>.",
             "module":{
-                "url": "python-safety",
+                "url": "python-security",
                 "label": _('Python security')
             }
         },

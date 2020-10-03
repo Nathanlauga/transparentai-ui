@@ -1,0 +1,126 @@
+{% from "commons/components/card.html" import card with context %} {% from
+    "projects/evaluation_section/evaluation_section.html" import evaluation_section with
+    context %} {% extends "commons/layout.html" %} {% block title %}{{ title }}{%
+    endblock %}
+    <!-- {% block head %}{% endblock %} -->
+    {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
+    <div class="d-inline-block">
+      <a href="/edit-project/{{ project.name }}" class="nounderline">
+        <button class="btn bg-info"><i class="fa fa-edit text-white"></i></button>
+      </a>
+      <form
+        class="d-inline-block"
+        action="/projects/{{project.name}}"
+        method="post"
+      >
+        <input type="hidden" name="_method" value="DELETE" />
+        <button type="submit" class="btn bg-danger">
+          <i class="fa fa-trash text-white"></i>
+        </button>
+      </form>
+    </div>
+    {% endblock %} {% block content %}
+    
+    <!-- Details Row -->
+    <div class="row">
+      <div class="col">
+        <strong>Created at:</strong> {{ project.created_at.strftime('%Y-%m-%d')}}
+      </div>
+      <div class="col">
+        <strong>Members:</strong> {{ ', '.join(project.members) }}
+      </div>
+      <div class="col">
+        {% if project.desc is defined and project.desc|length %}
+        <p class="mb-1"><strong>Description:</strong> {{ project.desc }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <!-- End details row -->
+    <hr />
+    
+    {{ evaluation_section(id='frame', label=_('Frame'), section_id='start',
+    project=project, fa='cubes') }}
+    
+    <div style="height: 5vh;"></div>
+    
+    {{ evaluation_section(id='validation', label=_('Validation'),
+    section_id='validation', project=project, fa='check') }}
+    
+    <div style="height: 5vh;"></div>
+    
+    {{ evaluation_section(id='security', label=_('Security'), section_id='safety',
+    project=project, fa='shield-alt') }}
+    
+    <div style="height: 5vh;"></div>
+    
+    {{ evaluation_section(id='monitoring', label=_('Monitoring'),
+    section_id='monitoring', project=project, fa='video') }} 
+    {% endblock %}
+    
+    <!-- {% block footer %}{% endblock %} -->
+    {% block scripts %}
+    
+    <script>
+      const changeAspect = function (newA, section) {
+        let aspectId = newA.classList[0].split("#")[1];
+    
+        let aspects = $(".aspect." + section);
+        let aspectSelected = $("#" + aspectId);
+    
+        let oldItem = $(".breadcrumb-item.active");
+        let newItem = $("#li-" + aspectId);
+    
+        aspects.removeClass("d-block");
+        aspects.addClass("d-none");
+    
+        aspectSelected.removeClass("d-none");
+        aspectSelected.addClass("d-block");
+    
+        oldItem.removeClass("active");
+        newItem.addClass("active");
+      };
+    
+      const updateProject = function (e) {
+        let div = e.closest("div");
+        let id = div.id.split("_");
+        let aspectId = "answers_" + id[0] + "_" + parseInt(id[1]);
+        let value = e.value;
+    
+        let yes_label = $($('#aspect-'+id[0]+'-'+id[1]+'-yes').closest("label"))
+        let no_label = $($('#aspect-'+id[0]+'-'+id[1]+'-no').closest("label"))
+        let goodAnswer = e.dataset.goodAnswer;
+        
+    
+        if (goodAnswer == 1 & value == 'yes') {
+          yes_label.removeClass('btn-light');
+          yes_label.addClass('btn-success');
+          no_label.addClass('btn-light');
+          no_label.removeClass('btn-warning');
+        } else if (goodAnswer == 1 & value == 'no') {
+          no_label.removeClass('btn-light');
+          no_label.addClass('btn-warning');   
+          yes_label.addClass('btn-light');
+          yes_label.removeClass('btn-success');   
+        } else {
+          no_label.addClass('btn-light');
+          no_label.removeClass('btn-warning');
+          yes_label.addClass('btn-light');
+          yes_label.removeClass('btn-success');   
+        }
+    
+        let data = {};
+        data[aspectId] = value;
+    
+        $.ajax({
+          data: data,
+          type: "PUT",
+          url: "/projects/{{project.name}}",
+          error: function (error) {
+            //console.log(error);
+          },
+        });
+      };
+    </script>
+    
+    {% endblock %}
+    

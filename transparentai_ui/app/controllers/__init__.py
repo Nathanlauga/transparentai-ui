@@ -43,7 +43,10 @@ app.add_url_rule('/projects/<name>', endpoint='projects.delete',
 
 app.add_url_rule('/projects/<name>/modules', endpoint='projects.modules',
                  view_func=projects.modules, methods=['GET'])
-
+app.add_url_rule('/projects/<name>/components', endpoint='projects.components',
+                 view_func=projects.components, methods=['GET'])
+app.add_url_rule('/projects/<name>/evaluation', endpoint='projects.evaluation',
+                 view_func=projects.evaluation, methods=['GET'])
 
 app.add_url_rule('/projects/<project_name>/new-dataset', endpoint='projects.dataset.new',
                  view_func=datasets.new_from_project, methods=['GET', 'POST'])
@@ -51,6 +54,11 @@ app.add_url_rule('/projects/<project_name>/new-model', endpoint='projects.model.
                  view_func=models.new_from_project, methods=['GET', 'POST'])
 app.add_url_rule('/projects/<name>/estimate-co2', endpoint='projects.estimate_co2',
                  view_func=projects.estimate_co2, methods=['GET', 'POST'])
+
+app.add_url_rule('/projects/<name>/dataset', endpoint='projects.dataset',
+                 view_func=projects.dataset, methods=['GET', 'POST'])
+app.add_url_rule('/projects/<name>/model', endpoint='projects.model',
+                 view_func=projects.model, methods=['GET', 'POST'])
 
 
 app.add_url_rule('/projects/<name>/analyse-performance', endpoint='projects.analyse_performance',
@@ -61,6 +69,10 @@ app.add_url_rule('/projects/<name>/analyse-bias', endpoint='projects.analyse_bia
                  view_func=datasets.analyse_bias, methods=['GET','POST'])
 app.add_url_rule('/projects/<name>/bias-results', endpoint='projects.bias_results',
                  view_func=datasets.bias_results, methods=['GET', 'POST'])
+app.add_url_rule('/projects/<name>/explain-global', endpoint='projects.explain_global',
+                 view_func=models.explain_global, methods=['GET', 'POST'])
+app.add_url_rule('/projects/<name>/explain-local', endpoint='projects.explain_local',
+                 view_func=models.explain_local, methods=['GET', 'POST'])
 
 
 # API

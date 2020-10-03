@@ -1,7 +1,7 @@
 {% from "commons/components/card.html" import card with context %} {% from
-"projects/components/evaluation_section.html" import evaluation_section with
-context %} {% extends "commons/layout.html" %} {% block title %}{{ title }}{%
-endblock %}
+"projects/evaluation_section/evaluation_section.html" import evaluation_section
+with context %} {% extends "commons/layout.html" %} {% block title %}{{ title
+}}{% endblock %}
 <!-- {% block head %}{% endblock %} -->
 {% block h1 %}{{ title }}{% endblock %} {% block h1_side %}
 <div class="d-inline-block">
@@ -39,148 +39,76 @@ endblock %}
 <hr />
 
 <!-- Components Row -->
+
+<div class="d-sm-flex align-items-center text-dark justify-content-between mb-4 mx-2">
+  <h2>{{ _('Synthesis') }}</h2>
+</div>
 <div class="row">
-  <!-- DATASET CARD -->
-  {% if project.dataset is not none %}
-  <div class="col">
-    {{ card(text=_('Dataset')+' - '+project.dataset.name,
-    href='/datasets/'+project.dataset.name, fa='database', color='white',
-    border_color='white', bg='secondary') }}
+  <div class="alert w-100 alert-info" role="alert">
+    {{ _('<strong>You answered ') + project.n_answered['total']|string + _(' questions.</strong>') }} 
+    {% if project.dataset is none %}
+      {{ _('Also, if you want to access technical modules page, you need to set your dataset on the <a href="./'+project.name+'/new-dataset">Add a Dataset page</a> 4
+      and to set a model go to the <a href="./'+project.name+'/new-model">Add a Model page</a>') }}
+    {% else %}
+      {% if project.dataset.model is none %}
+          {{ _('Also, your <a href="./'+project.name+'/dataset">Dataset</a> is set and if you have a model to add go to the <a href="./'+project.name+'/new-model">Add a Model page</a>.') }}
+      {% else %}
+          {{ _('Also, your <a href="./'+project.name+'/dataset">Dataset</a> and <a href="./'+project.name+'/model">Model</a> are set.') }}
+      {% endif %}
+    {% endif %}
   </div>
-  {% else %}
-  <div class="col">
-    {{ card(text=_('Add a Dataset'),
-    href='/projects/'+project.name+'/new-dataset', fa='plus', color='secondary',
-    border_color='secondary', bg='light') }}
-  </div>
-  {% endif %}
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="font-weight-bold text-dark text-uppercase mb-1">
+          {{ _('Evaluation completion') }}
+        </div>
 
-  <!-- MODEL CARD -->
-  {% if project.dataset is none %}
-  <div class="col">
-    {{ card(text=_('Add a Model'), fa='plus', subtext=_('You need to add a
-    Dataset with model columns refered to add a Model.'), disable=True) }}
-  </div>
-  {% else %} {% if project.dataset.model is not none %}
-  <div class="col">
-    {{ card(text=_('Model')+' - '+project.dataset.model.name,
-    href='/models/'+project.dataset.model.name, fa='share-alt', color='white',
-    border_color='white', bg='secondary') }}
-  </div>
-  {% elif project.dataset.model_columns is not defined or
-  project.dataset.model_columns|length == 0 %}
-  <div class="col">
-    {{ card(text=_('Add a Model'), fa='plus', subtext=_('You need to add a
-    Dataset with model columns refered to add a Model.'), disable=True) }}
-  </div>
-  {% else %}
-  <div class="col">
-    {{ card(text=_('Add a Model'), href='/projects/'+project.name+'/new-model',
-    fa='plus', subtext=_('You can add the Model using the same columns refered
-    in the Dataset.'), color='secondary', border_color='secondary', bg='light')
-    }}
-  </div>
-  {% endif %} {% endif %}
+        <div class="row no-gutters align-items-center">
+          <div class="col-auto">
+            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+              {{ project.prct_answered['total']|round(2) }}%
+            </div>
+          </div>
+          <div class="col">
+            <div class="progress progress-sm mr-2 w-100">
+              <div
+                class="progress-bar bg-info"
+                role="progressbar"
+                style="width: {{ project.prct_answered['total'] }}%;"
+                aria-valuenow="{{ project.prct_answered['total'] }}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+          </div>
+        </div>
 
-  <!-- ANALYTICS LIBRARIES CARD -->
-  {% if project.dataset is none %}
-  <div class="col">
-    {{ card(text=_('Analytics libraries'), fa='puzzle-piece', subtext=_('You
-    need to add a Dataset to access this.'), disable=True) }}
+      </div>
+    </div>
+
+    <div class="text-xs font-weight-bold text-gray-500 text-uppercase my-2">
+
+      <a href="./{{ project.name }}/evaluation" class="nounderline">
+        {{ _('Access your evaluation form.')}}
+        </a>
+          </div>
   </div>
-  {% else %}
-  <div class="col">
-    {{ card(text=_('Analytics libraries'),
-    href='/projects/'+project.name+'/modules', fa='puzzle-piece', color='white',
-    border_color='white', bg='secondary') }}
-  </div>
-  {% endif %}
+
+
+  <!-- {{ project.to_dict() }} -->
+  <!-- {{ questions }} -->
+  {{ project.answers_eu_requirement }}
+
+  <hr>
+  {{ project.n_answered }}
+  {{ project.n_questions }}
+  {{ project.prct_answered }}
 </div>
 
-<div style="height: 5vh;"></div>
-
-{{ evaluation_section(id='frame', label=_('Frame'), section_id='start',
-project=project, fa='cubes') }}
-
-<div style="height: 5vh;"></div>
-
-{{ evaluation_section(id='validation', label=_('Validation'),
-section_id='validation', project=project, fa='check') }}
-
-<div style="height: 5vh;"></div>
-
-{{ evaluation_section(id='security', label=_('Security'), section_id='safety',
-project=project, fa='shield-alt') }}
-
-<div style="height: 5vh;"></div>
-
-{{ evaluation_section(id='monitoring', label=_('Monitoring'),
-section_id='monitoring', project=project, fa='video') }} 
 {% endblock %}
 
 <!-- {% block footer %}{% endblock %} -->
-{% block scripts %}
-
-<script>
-  const changeAspect = function (newA, section) {
-    let aspectId = newA.classList[0].split("#")[1];
-
-    let aspects = $(".aspect." + section);
-    let aspectSelected = $("#" + aspectId);
-
-    let oldItem = $(".breadcrumb-item.active");
-    let newItem = $("#li-" + aspectId);
-
-    aspects.removeClass("d-block");
-    aspects.addClass("d-none");
-
-    aspectSelected.removeClass("d-none");
-    aspectSelected.addClass("d-block");
-
-    oldItem.removeClass("active");
-    newItem.addClass("active");
-  };
-
-  const updateProject = function (e) {
-    let div = e.closest("div");
-    let id = div.id.split("_");
-    let aspectId = "answers_" + id[0] + "_" + parseInt(id[1]);
-    let value = e.value;
-
-    let yes_label = $($('#aspect-'+id[0]+'-'+id[1]+'-yes').closest("label"))
-    let no_label = $($('#aspect-'+id[0]+'-'+id[1]+'-no').closest("label"))
-    let goodAnswer = e.dataset.goodAnswer;
-    
-
-    if (goodAnswer == 1 & value == 'yes') {
-      yes_label.removeClass('btn-light');
-      yes_label.addClass('btn-success');
-      no_label.addClass('btn-light');
-      no_label.removeClass('btn-warning');
-    } else if (goodAnswer == 1 & value == 'no') {
-      no_label.removeClass('btn-light');
-      no_label.addClass('btn-warning');   
-      yes_label.addClass('btn-light');
-      yes_label.removeClass('btn-success');   
-    } else {
-      no_label.addClass('btn-light');
-      no_label.removeClass('btn-warning');
-      yes_label.addClass('btn-light');
-      yes_label.removeClass('btn-success');   
-    }
-
-    let data = {};
-    data[aspectId] = value;
-
-    $.ajax({
-      data: data,
-      type: "PUT",
-      url: "/projects/{{project.name}}",
-      error: function (error) {
-        //console.log(error);
-      },
-    });
-  };
-</script>
-
-{% endblock %}
+{% block scripts %} {% endblock %}

@@ -20,41 +20,40 @@
   <hr class="sidebar-divider my-0" />
 
   <!-- Nav Item - Dashboard -->
-  {{ sidebar_item(name='Documentation', href='documentation', fa='book', disabled=False) }}
+  {{ sidebar_item(name=_("Projects"), href='projects', fa='book', disabled=False) }}
 
+  {{ sidebar_item(name=_("Help"), href='help', fa='book', disabled=False) }}
+
+
+  {% if not not_in_project %}
   <!-- Divider -->
   <hr class="sidebar-divider" />
 
   <!-- Heading -->
   <div class="sidebar-heading">
-    Composants de l'IA
+    {{ _('My project') }}
   </div>
 
-  <!-- Datasets -->
-  {{ sidebar_item(name='Données', href='#datasets', fa='database', disabled=not_in_project) }}
-  <!-- Models -->
-  {{ sidebar_item(name='Modèles', href='#models', fa='share-alt', disabled=not_in_project) }}
+  {{ sidebar_item(name=_('Synthesis'), href='/projects/'+header['current_project'], fa='database', disabled=not_in_project) }}
 
+  {{ sidebar_item(name=_('Trust evaluation'), href='/projects/'+header['current_project']+'/evaluation', fa='database', disabled=not_in_project) }}
+  
+  {{ sidebar_item(name=_('Technical modules'), href='/projects/'+header['current_project']+'/modules', fa='database', disabled=not_in_project) }}
+  
+  {{ sidebar_item(name=_('Components'), href='/projects/'+header['current_project']+'/components', fa='database', disabled=not_in_project) }}
+
+
+  {% endif %}
   <!-- Divider -->
   <hr class="sidebar-divider" />
 
   <div class="sidebar-heading">
-    Evalutation de l'IA
+    {{ _('Utils') }}
   </div>
-  <!-- Cadrage -->
-  {{ sidebar_item(name='Cadrage', href='#frame', fa='cubes', disabled=not_in_project) }}
-  <!-- Validation -->
-  {{ sidebar_item(name='Validation', href='#validation', fa='check', disabled=not_in_project) }}
-  <!-- Sécurité -->
-  {{ sidebar_item(name='Sécurité', href='#security', fa='shield-alt', disabled=not_in_project) }}
-  <!-- Suivi -->
-  {{ sidebar_item(name='Suivi', href='#monitoring', fa='video', disabled=not_in_project) }}
 
-  <!-- Divider -->
-  <hr class="sidebar-divider" />
+  {{ sidebar_item(name=_('About'), href='/about', fa='database', disabled=not_in_project) }}
 
-  <!-- Synthèse -->
-  {{ sidebar_item(name='Synthèse', href='#dashboard', fa='tachometer-alt', disabled=not_in_project) }}
+  {{ sidebar_item(name=_('Github'), href='/github', fa='database', disabled=not_in_project) }}
 
   <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block" />

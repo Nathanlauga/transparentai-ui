@@ -2,7 +2,7 @@
 
     {% set attr = dataset.module_bias.to_dict()['privileged_group'][attr_key] %}
     {% if attr['dtype'] == 'number' %}
-        {% set privileged = attr_key + _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) %}
+        {% set privileged = attr_key + ' ' + _('greater than') + ' ' + "%.2f"|format(attr['privileged_values'][0]) %}
     {% else %}
         {% set privileged = attr_key + ' ' + _('which is') + ' ' + attr['privileged_values']|join(_(' or ')) %}
     {% endif %}
